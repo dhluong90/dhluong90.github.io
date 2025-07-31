@@ -1,1 +1,1 @@
-# Welcome to Luong Notes.
+# Welcome to Luong.
