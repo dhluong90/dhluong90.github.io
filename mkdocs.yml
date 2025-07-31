@@ -1,0 +1,31 @@
+site_name: My Docs
+theme:
+  name: material # Applies the MkDocs Material theme [1].
+  features:
+    - navigation.instant # Enables instant page transitions [1].
+    - navigation.tracking # Updates URL in address bar as sections are scrolled [1].
+    - navigation.tabs # Displays top-level navigation as tabs [2].
+    - navigation.sections # Organizes navigation into collapsible sections [2].
+    - navigation.expand # Automatically expands navigation sections [2].
+    - navigation.sticky # Makes navigation tabs sticky as you scroll [2].
+    - navigation.top # Adds a "back to top" button [3].
+    - navigation.progress # Shows a progress indicator [1].
+    - toc.integrate # Integrates the table of contents with the section navigation [3].
+    - search.highlight # Highlights search results on the page [3].
+    - search.suggest # Provides search suggestions [3].
+    - search.sharing # Allows sharing search results [3].
+    - content.code.copy # Adds a copy button to code blocks [4].
+    - content.code.annotate # Likely implied for advanced code highlighting, though not explicitly stated for this feature in the provided text. (Note: The source implies more general code highlighting features, not specifically annotations here)
+  palette: # Configures the color palette and dark/light mode toggle [4].
+    - scheme: default
+      primary: teal
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: lime
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
