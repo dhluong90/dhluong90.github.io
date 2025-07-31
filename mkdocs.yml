@@ -1,4 +1,5 @@
 site_name: My Docs
+site_url: https://dhluong90.github.io
 theme:
   name: material # Applies the MkDocs Material theme [1].
   features:
