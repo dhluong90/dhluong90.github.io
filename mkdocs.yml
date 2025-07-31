@@ -30,3 +30,7 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to light mode
+plugins: 
+  - search # Enables the search functionality [1].
+  - blog
+
