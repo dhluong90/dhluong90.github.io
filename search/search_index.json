@@ -1,0 +1,1 @@
+{"config":{"lang":["en"],"separator":"[\\s\\-]+","pipeline":["stopWordFilter"]},"docs":[{"location":"","title":"Welcome to Luong.","text":""},{"location":"about/","title":"This is about Me.","text":"<p>I am overthinking software architect and I would like to jod down my though.</p>"}]}
