@@ -14,13 +14,13 @@ Firstly, I'm thinking about developing somethings that help me to recall my codi
 
 ## Start my idea
 
-Got the idea, i quickly draft my plan. I choose Notion as the documents and project tool. That is my favorite tool for note and planing. Starting with 0 defintely I will need couples of partners support me on that and AI agents are the best choice at this moment. This is what I need: 
-- **Ikigai Exert**:I need an Ikigai expert as consultant for my application contents. It will help me enric my knowledge about Ikigai to design my application features that's helpful for my users to find their Ikigai. 
-- **Product Manager**: This production manager should have a skill to convert all the knowledge of Ikigai that advise from Ikigai expert into features of my applications then help to define the application roadmap. 
-- **Senior Front End Developer**: I plan to use react native for my mobile application. This FE engineer will not only help me to develop react native application but also design the UI/UX of my first verion.
-- **Backend Developer**: This guy will help me to develop whole backend. I plan to use firebase and Google cloud for my backend system. Java and microservices architecture (This is not the best choice for this applicaiton but simply I want to recall my knowledge)
+Got the idea, i quickly draft my plan. I choose Notion as the documents and project tool. That is my favorite tool for note and planing. Starting with 0 defintely I will need couples of partners support me on that and AI agents are the best choice at this moment. This is what I need:  
+- **Ikigai Exert**:I need an Ikigai expert as consultant for my application contents. It will help me enric my knowledge about Ikigai to design my application features that's helpful for my users to find their Ikigai.  
+- **Product Manager**: This production manager should have a skill to convert all the knowledge of Ikigai that advise from Ikigai expert into features of my applications then help to define the application roadmap.  
+- **Senior Front End Developer**: I plan to use react native for my mobile application. This FE engineer will not only help me to develop react native application but also design the UI/UX of my first verion.  
+- **Backend Developer**: This guy will help me to develop whole backend. I plan to use firebase and Google cloud for my backend system. Java and microservices architecture (This is not the best choice for this applicaiton but simply I want to recall my knowledge)  
 
-Let see how can I do it.
+Let see how can I do it.  
 
 ## Ikigai Expert Agent
 
