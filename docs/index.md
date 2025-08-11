@@ -1,5 +1,2 @@
-# Luong Dinh's Notes
+# About Me
 
-## Latest Posts
-
-{{ blog_posts }}
