@@ -9,3 +9,6 @@ theme:
     - search.sharing # Allows sharing search results [3].
     - content.code.copy # Adds a copy button to code blocks [4].
     - content.code.annotate # Likely implied for advanced code highlighting, though not explicitly stated for this feature in the provided text. (Note: The source implies more general code highlighting features, not specifically annotations here)
+  font: 
+    text: Roboto # Sets the main font to Roboto [2].
+    code: Roboto Mono # Sets the code font to Roboto Mono [2].

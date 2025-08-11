@@ -6,7 +6,7 @@ categories:
   - How to develop protype of Ikigai mobile application using AI with 0$
 ---
 
-#How to develop protype of Ikigai mobile application using AI with 0$#
+# How to develop protype of Ikigai mobile application using AI with 0$
 
 ## Idea
 
