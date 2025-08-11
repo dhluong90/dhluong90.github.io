@@ -9,9 +9,6 @@ theme:
     - search.sharing # Allows sharing search results [3].
     - content.code.copy # Adds a copy button to code blocks [4].
     - content.code.annotate # Likely implied for advanced code highlighting, though not explicitly stated for this feature in the provided text. (Note: The source implies more general code highlighting features, not specifically annotations here)
-  nav: # Navigation structure for the site.
-    - Home: index.md
-    - About: about.md
   palette: # Configures the color palette and dark/light mode toggle [4].
     - scheme: default
       primary: teal
