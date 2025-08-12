@@ -4,7 +4,7 @@ Trong một lần về Viet Nam công tác với nhiệm vụ là giải cứu m
   <br />
 ## Ai là người "thông minh" ? Ai là người "dọn cứt" ?  
 <br />
-Tôi không tiện kể ra chi tiết về câu chuyện của tôi. Nhưng để hiễu bài học này rất đơn giản. Nếu có đôi lúc bạn thấy rất nhiều vấn đề cơ bản. Nó giống như là thấy phân ở dưới nền vậy. Bạn cố gắng giải thích cho những người xung quanh, từ người trẻ hơn tới người già. Từ người quản lý cấp thấp tới cấp cao. Nhưng ai cũng thờ ơ và cảm giác như mình không thấy gì cả, không hiễu gì cả dù bạn cố hết sức để mô tả. Và một hồi lâu thì cuối cùng chỉ có bạn phải là người dọn đống phân đó.  
+Tôi không tiện kể ra chi tiết về câu chuyện của tôi. Nhưng để hiễu bài học này rất đơn giản. Nếu có đôi lúc bạn thấy rất nhiều vấn đề cơ bản. Nó giống như là thấy phân ở dưới nền vậy. Bạn cố gắng giải thích cho những người xung quanh từ trẻ đến già từ mập đến ôm. Nhưng ai cũng thờ ơ và cảm giác như mình không thấy gì cả, không hiễu gì cả dù bạn cố hết sức để mô tả. Và một hồi lâu thì cuối cùng chỉ có bạn phải là người dọn đống phân đó.  
 Nếu lúc đó bạn cho mình là người thông minh hơn người xung quanh thì bài học này nhấc nhở bạn phải nghĩ kỷ.  
 Ngoài ra nó giúp tôi thay đổi hoàn toàn tư duy. Tôi thấy được trên đất không chỉ có nhiều cứt mà còn có nhiều vàng nữa. Chỉ là mình muốn chỉ nhìn thấy cức để rồi toàn đi dọn cức. Hay chỉ thấy vàng để đi nhặt vàng. ^^  
 ## "Rửa chén" sẽ thành công ?  
