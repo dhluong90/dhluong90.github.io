@@ -6,7 +6,7 @@ categories:
   - "AI" có giết chết ngành outsource phần mềm hay không?"
 ---
 
-# "AI" có giết chết ngành outsource phần mềm hay không?
+# AI: Kẻ thù hay bạn đồng hành của ngành outsource phần mềm?
 
 ![alt text](../img/Ai_giet_outsource.png)
 
