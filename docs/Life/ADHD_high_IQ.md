@@ -1,3 +1,14 @@
+<div style="padding: 35px; text-align: center; border-radius: 16px;
+background: linear-gradient(135deg, #ff0080, #ff8c00); color: white;">
+
+<h1 style="font-size: 38px; margin-bottom: 8px;">⚡ ADHD HIGH-IQ MASTERY ⚡</h1>
+<p style="font-size: 20px;">
+Unlock Focus • Control Dopamine • Become Unstoppable
+</p>
+
+</div>
+</br>
+
 # ADHD High-IQ Mastery  
 # 🚀 7 Lời Khuyên Làm Việc Hiệu Quả Cho Người ADHD + High-IQ  
 
