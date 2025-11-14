@@ -3,6 +3,8 @@
 Trong một lần về Viet Nam công tác với nhiệm vụ là giải cứu một dự án triệu đô của công ty. Điều thú vị là dự án đã chạy 3 tháng chỉ còn một tuần để hoàn thành nhưng mà còn đến 60% khối lượng công việc. Tôi biết đây là một nhiệm vụ bất khả thi mặc dù mọi người vẫn bảo tôi về để giải quyết nhưng tôi biết, chuyến này là đi để kích nổ một quả bom nhưng phải đảm bảo không gây thiệt hại gì. Trải qua nhiều gian nan thì sau khi vụ nổ đầu tiên xảy ra tôi đã rút ra cho cá nhân mình những bài học phải ghi nhớ.  
   <br />
 ## Ai là người "thông minh" ? Ai là người "dọn cứt" ?  
+![thongminhdoncuc](../img/thongminhdoncuc.png)
+<br />
 <br />
 Tôi không tiện kể ra chi tiết về câu chuyện của tôi. Nhưng để hiễu bài học này rất đơn giản. Nếu có đôi lúc bạn thấy rất nhiều vấn đề cơ bản. Nó giống như là thấy phân ở dưới nền vậy. Bạn cố gắng giải thích cho những người xung quanh từ trẻ đến già từ mập đến ôm. Nhưng ai cũng thờ ơ và cảm giác như mình không thấy gì cả, không hiễu gì cả dù bạn cố hết sức để mô tả. Và một hồi lâu thì cuối cùng chỉ có bạn phải là người dọn đống phân đó.  
 Nếu lúc đó bạn cho mình là người thông minh hơn người xung quanh thì bài học này nhấc nhở bạn phải nghĩ kỷ.  
