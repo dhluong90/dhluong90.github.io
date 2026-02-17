@@ -1,0 +1,87 @@
+{
+	"type": "object",
+	"properties": {
+		"passions": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"passion": {
+						"type": "string"
+					},
+					"explain": {
+						"type": "string"
+					},
+					"advise": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"professions": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"profession": {
+						"type": "string"
+					},
+					"explain": {
+						"type": "string"
+					},
+					"advise": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"vocations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"vocation": {
+						"type": "string"
+					},
+					"explain": {
+						"type": "string"
+					},
+					"advise": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"missions": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"mission": {
+						"type": "string"
+					},
+					"explain": {
+						"type": "string"
+					},
+					"advise": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"ikigai": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"type": "string"
+				},
+				"explain": {
+					"type": "string"
+				},
+				"advise": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

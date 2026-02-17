@@ -1,3 +1,11 @@
+---
+date: 2024-01-01
+authors:
+  - Luong Dinh
+categories:
+  - Life
+---
+
 # 3 Bài học đáng nhớ trong chuyến công tác giải cứu dự án.
 <br />
 Trong một lần về Viet Nam công tác với nhiệm vụ là giải cứu một dự án triệu đô của công ty. Điều thú vị là dự án đã chạy 3 tháng chỉ còn một tuần để hoàn thành nhưng mà còn đến 60% khối lượng công việc. Tôi biết đây là một nhiệm vụ bất khả thi mặc dù mọi người vẫn bảo tôi về để giải quyết nhưng tôi biết, chuyến này là đi để kích nổ một quả bom nhưng phải đảm bảo không gây thiệt hại gì. Trải qua nhiều gian nan thì sau khi vụ nổ đầu tiên xảy ra tôi đã rút ra cho cá nhân mình những bài học phải ghi nhớ.  

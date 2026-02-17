@@ -1,0 +1,160 @@
+:root {
+  --md-primary-fg-color: #ffffff;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #000000;
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: #1a1a1a;
+  --md-text-font-family: "IBM Plex Mono", monospace;
+  --md-code-font-family: "IBM Plex Mono", monospace;
+}
+
+[data-md-color-scheme="default"] {
+  --md-hue: 0;
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: #1a1a1a;
+  --md-default-fg-color--light: #4b5563;
+  --md-default-fg-color--lighter: #6b7280;
+  --md-default-fg-color--lightest: #9ca3af;
+}
+
+/* Header customization - White with black text and border */
+.md-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb;
+  color: #000 !important;
+  box-shadow: none;
+}
+
+.md-header__title {
+  color: #000 !important;
+  font-weight: 700;
+}
+
+.md-header__button {
+  color: #000 !important;
+}
+
+/* Sidebar & Nav */
+.md-sidebar {
+  background-color: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+.md-nav {
+  background-color: #ffffff;
+}
+
+.md-nav--primary .md-nav__title {
+  background-color: #ffffff;
+  color: #000;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 700;
+}
+
+.md-nav__link--active {
+  color: #000 !important;
+  font-weight: 700;
+  background-color: #f3f4f6;
+  /* Subtle grey highlight */
+}
+
+.md-nav__link:hover {
+  color: #000 !important;
+  text-decoration: underline;
+}
+
+
+/* Typography Overrides - Make it look like a document */
+.md-typeset {
+  font-size: 0.9rem;
+  /* Tech docs often use slightly smaller, denser text */
+  color: #1a1a1a;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  color: #000;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  border-bottom: none;
+  /* Clean look, let spacing define hierarchy */
+}
+
+/* Links */
+.md-typeset a {
+  color: #000;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
+.md-typeset a:hover {
+  color: #000;
+  background-color: #e5e7eb;
+}
+
+/* Code Blocks */
+.md-typeset pre>code {
+  background-color: #f9fafb;
+  /* Very light grey */
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-family: var(--md-code-font-family);
+  color: #1a1a1a;
+}
+
+/* Buttons - "Free" button style (Black bg, White text) */
+.md-button {
+  background-color: #ffffff;
+  color: #000 !important;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.md-button:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 2px 2px 0px #000;
+  /* Brutalist shadow */
+}
+
+.md-button--primary {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 1px solid #000;
+}
+
+.md-button--primary:hover {
+  background-color: #333 !important;
+  box-shadow: 2px 2px 0px #999;
+}
+
+/* Search Bar */
+.md-search__input {
+  background-color: #f3f4f6 !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  color: #000 !important;
+}
+
+.md-search__input:focus {
+  background-color: #fff !important;
+  border-color: #000;
+}
+
+/* Admonitions */
+.md-typeset .admonition {
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 0px;
+  /* Sharp corners */
+  box-shadow: 4px 4px 0px #e5e7eb;
+}
+
+.md-typeset .admonition-title {
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #000;
+  font-weight: 700;
+}
