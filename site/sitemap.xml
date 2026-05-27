@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://dhluong90.github.io/</loc>
-         <lastmod>2026-02-17</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://dhluong90.github.io/Life/chuyen_con_tac_Da_Nang/</loc>
-         <lastmod>2026-02-17</lastmod>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
-         <loc>https://dhluong90.github.io/Tech/2015-08-16-Redux-like_pattern_reactnative/</loc>
-         <lastmod>2026-02-17</lastmod>
-    </url>
-    <url>
-         <loc>https://dhluong90.github.io/Tech/2025-08-10-how_to_develop_Ikgai_App_MVP/</loc>
-         <lastmod>2026-02-17</lastmod>
+         <loc>https://dhluong90.github.io/Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/</loc>
+         <lastmod>2026-05-27</lastmod>
     </url>
     <url>
          <loc>https://dhluong90.github.io/Tech/2025-08-23_AI_kill_outsource/</loc>
-         <lastmod>2026-02-17</lastmod>
+         <lastmod>2026-05-27</lastmod>
+    </url>
+    <url>
+         <loc>https://dhluong90.github.io/Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/</loc>
+         <lastmod>2026-05-27</lastmod>
     </url>
 </urlset>
