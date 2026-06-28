@@ -22,5 +22,6 @@ Các bạn có thể lưu lại link trang này để tiện theo dõi các chư
 
 - **[Phần 1: Chiếc Áo Rộng Vừa Vặn & Cuộc Chơi Định Mệnh](hoi_ky_chuong_1_chiec_ao_rong_vua_van.md)**
 - **[Phần 2: Đêm Khủng Hoảng, Lời Khuyên Ở Spa Và Trạng Thái Siêu Tập Trung](hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa.md)**
+- **[Phần 3: Hai Nửa Thế Giới Và Thế Trận "Vườn Không Nhà Trống"](hoi_ky_chuong_3_hai_nua_the_gioi_va_the_tran_vuon_khong_nha_trong.md)**
 
 *(Các chương mới sẽ được cập nhật liên tục tại đây...)*
