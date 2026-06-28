@@ -19,9 +19,13 @@ tags:
 Cho đến một hôm, khi tôi đang thảnh thơi ở nhà, điện thoại bỗng reo lên. Là sếp tôi gọi.
 
 "Dạ em nghe."
+
 "Chú đang rảnh à?"
+
 "Dạ cũng thoải mái anh, nhàn quá đâm ra hơi chán."
+
 "Có một vụ cần chú xem qua. Mình đang lead dự án hiện đại hóa hệ thống book taxi của công ty ABC. Chú vào review đống tài liệu rồi gửi cho anh comments. Có thể sẽ cần chú qua bên đó hỗ trợ."
+
 "OK anh."
 
 Sếp tôi là một người rất đặc biệt. Ổng sở hữu một chất giọng đều đều, thều thào và bình thản đến mức rợn người. Bất kể tình huống lúc đó có đang yên bình hay cháy nhà chết người đi chăng nữa, thì âm lượng và nhịp điệu của ổng vẫn không hề thay đổi. Thế nên, chỉ nghe giọng ổng, tôi hoàn toàn không thể lường trước được mức độ căng thẳng của cái dự án mà mình sắp phải nhảy vào.
