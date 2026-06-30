@@ -24,6 +24,7 @@ Các bạn có thể lưu lại link trang này để tiện theo dõi các chư
 - **[Phần 2: Đêm Khủng Hoảng, Lời Khuyên Ở Spa Và Trạng Thái Siêu Tập Trung](hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa.md)**
 - **[Phần 3: Chuyến Tàu Điện Ngầm Và Cái Boongke Cách Ly](hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly.md)** *(Đang Review)*
 - **[Phần 4: Vỏ Bọc Lính Mới Và Nút Thắt Tổ Chức](hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc.md)**
+- **[Phần 5: Bản Đồ Trí Mạng Và Thế Trận "Vườn Không Nhà Trống"](hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong.md)**
 
 
 *(Các chương mới sẽ được cập nhật liên tục tại đây...)*
