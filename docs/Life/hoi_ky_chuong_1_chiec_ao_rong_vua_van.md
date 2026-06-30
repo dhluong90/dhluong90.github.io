@@ -52,3 +52,7 @@ Ví dụ, khi nhắc đến *Event-driven design* để dễ dàng mở rộng (
 Bác CIO không thể hiện cảm xúc thái quá ra mặt, nhưng thái độ đã cho thấy bác rất hài lòng. Đó là cảm giác của một người vừa tìm đúng chỗ cần tìm. Bác bắt đầu cất giọng, đặt ra vài câu hỏi và tiếp tục mở đường cho những vòng đàm phán tiếp theo (engagement).
 
 Và đó cũng chính là lần khởi đầu cho cuộc chơi định mệnh của tôi, khi bác CIO yêu cầu các buổi tiếp theo phải tập trung chi tiết vào đúng phần mà tôi vừa trình bày. Họ muốn tiếp tục được nghe câu chuyện từ gã kiến trúc sư này.
+
+---
+
+👉 **[Đọc tiếp Phần 2: Đêm Khủng Hoảng, Lời Khuyên Ở Spa Và Trạng Thái Siêu Tập Trung](hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa.md)**

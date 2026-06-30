@@ -59,3 +59,7 @@ Tôi nghĩ cũng có nhiều người sở hữu khả năng giống tôi. Một
 Nhưng để hiểu được câu chuyện của tôi có sức nặng và độ thuyết phục cỡ nào, xin hãy tạm gác lại cuộc họp sắp tới.
 
 Hãy cùng tôi nhìn lại quá khứ: Hành trình 2 năm ròng rã tôi làm Kiến trúc sư trưởng, gánh vác trọng trách hiện đại hóa toàn bộ hệ thống taxi booking cho gã khổng lồ ngành vận tải lớn nhất Singapore. Đó chính là trận đánh đã rèn giũa nên tôi của ngày hôm nay.
+
+---
+
+👉 **[Đọc tiếp Phần 3: Chuyến Tàu Điện Ngầm Và Cái Boongke Cách Ly](hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly.md)**

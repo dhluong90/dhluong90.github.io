@@ -86,3 +86,7 @@ Tôi bước vào phòng. Đáng lý ra, một đội ngũ mang trọng trách "
 Chưa hết, sự chia rẽ không chỉ tồn tại ở ngoài kia. Ngay bên trong cái boongke chật hẹp này, một đường ranh giới vô hình khác cũng được vạch ra rõ rệt: Một nửa phòng là lãnh địa của team SA (Kiến trúc sư hệ thống), nửa còn lại là chỗ cắm trại của team BA (Phân tích nghiệp vụ). Hai nhóm người ngồi quay lưng lại với nhau, cặm cụi vào màn hình, tựa như hai hòn đảo cô lập giữa một đại dương mù mịt thông tin.
 
 Tôi kéo ghế ngồi xuống, ném chiếc balo sang một bên. Cuộc chiến thực sự bây giờ mới bắt đầu.
+
+---
+
+👉 **[Đọc tiếp Phần 4: Vỏ Bọc Lính Mới Và Nút Thắt Tổ Chức](hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc.md)**
