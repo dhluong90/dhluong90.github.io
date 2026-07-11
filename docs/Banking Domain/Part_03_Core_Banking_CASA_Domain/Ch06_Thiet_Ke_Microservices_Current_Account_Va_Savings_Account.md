@@ -5,10 +5,10 @@
 ## 6.1 Tổng Quan Domain CASA & Ngữ Cảnh Nghiệp Vụ (Domain Overview & Business Context)
 
 ### 1. Bản chất của nghiệp vụ CASA trong Ngân hàng
-**CASA (Current Account & Savings Account - Tài khoản Thanh toán & Tài khoản Tiết kiệm)** là cột sống (Spinal Cord) của bất kỳ hệ thống Core Banking nào. Đây là nơi lưu giữ toàn bộ số dư tiền gửi của khách hàng cá nhân và doanh nghiệp, là điểm xuất phát và điểm kết thúc của mọi luồng tiền thanh toán (Chuyển tiền NAPAS, Thanh toán Thẻ, Giải ngân cho vay, Thu nợ...).
+"CASA (Current Account & Savings Account - Tài khoản Thanh toán & Tài khoản Tiết kiệm)" là cột sống (Spinal Cord) của bất kỳ hệ thống Core Banking nào. Đây là nơi lưu giữ toàn bộ số dư tiền gửi của khách hàng cá nhân và doanh nghiệp, là điểm xuất phát và điểm kết thúc của mọi luồng tiền thanh toán (Chuyển tiền NAPAS, Thanh toán Thẻ, Giải ngân cho vay, Thu nợ...).
 
-- **Current Account (Tài khoản Thanh toán / Dòng tiền):** Tần suất giao dịch cực lớn (hàng chục giao dịch mỗi ngày trên 1 tài khoản), không kỳ hạn, cho phép thấu chi (Overdraft), yêu cầu xử lý thời gian thực 24/7/365 với độ trễ cực thấp.
-- **Savings Account (Tài khoản Tiết kiệm):** Tần suất giao dịch thấp hơn nhưng quy tắc nghiệp vụ phức tạp về kỳ hạn (Term Deposit), lãi suất bậc thang, tất toán trước hạn (Early Withdrawal Penalty), và tự động tái tục (Rollover).
+- "Current Account (Tài khoản Thanh toán / Dòng tiền):" Tần suất giao dịch cực lớn (hàng chục giao dịch mỗi ngày trên 1 tài khoản), không kỳ hạn, cho phép thấu chi (Overdraft), yêu cầu xử lý thời gian thực 24/7/365 với độ trễ cực thấp.
+- "Savings Account (Tài khoản Tiết kiệm):" Tần suất giao dịch thấp hơn nhưng quy tắc nghiệp vụ phức tạp về kỳ hạn (Term Deposit), lãi suất bậc thang, tất toán trước hạn (Early Withdrawal Penalty), và tự động tái tục (Rollover).
 
 ```mermaid
 flowchart TD
@@ -34,8 +34,9 @@ Trước khi thiết kế Microservice, chúng ta phải chuẩn hóa 3 luồng 
 - Định nghĩa các thuộc tính nghiệp vụ: Loại tiền tệ (VND/USD), hạn mức giao dịch ngày, hạn mức thấu chi được phê duyệt, trạng thái phong tỏa (Active/Frozen).
 
 ### 2. Quy trình Hạch toán Ghi Nợ / Ghi Có Thời gian thực (Real-time Debit & Credit Booking)
-- Khi một giao dịch đến, hệ thống phải kiểm tra **Số dư khả dụng (Available Balance)** theo công thức:
+- Khi một giao dịch đến, hệ thống phải kiểm tra "Số dư khả dụng (Available Balance)" theo công thức:
   $$\text{Available Balance} = \text{Ledger Balance} + \text{Approved Overdraft Limit} - \text{Hold/Reserved Amount}$$
+
 - Nếu hợp lệ: Thực hiện giữ chỗ tiền (Hold/Reserve) hoặc hạch toán trừ ngay lập tức vào số dư.
 - Ghi vết bút toán (Account Entry) vào sổ phụ tài khoản với định danh giao dịch duy nhất.
 
@@ -50,16 +51,16 @@ Nghiệp vụ CASA có tiêu chuẩn NFR khắt khe nhất trong toàn bộ ngâ
 
 | Tiêu chí NFR | Yêu cầu Kỹ thuật / Chỉ số Mục tiêu | Giải pháp Kiến trúc Đáp ứng |
 | :--- | :--- | :--- |
-| **Tính Nhất Quán (ACID Consistency & Anti Double-Spending)** | Tuyệt đối **KHÔNG BAO GIỜ** được phép âm số dư trái phép hoặc trừ tiền 2 lần cho 1 giao dịch. | Sử dụng **Row-level Pessimistic Locking (`SELECT FOR UPDATE`)** kết hợp **Idempotency Key unique constraint** trên Database. |
-| **Độ Trễ Xử Lý (Processing Latency)** | Độ trễ cho 1 lệnh kiểm tra và trừ tiền nội bộ CASA phải **< 15ms** (p99). | Tối ưu index Database, chạy Microservice gần Datastore, tránh gọi chuỗi API mạng đồng bộ. |
-| **Khả Năng Xử Lý Tải (Throughput / Scalability)** | Đạt tối thiểu **10,000+ TPS** vào giờ cao điểm (Ngày trả lương, Tết, Flash Sale). | Sharding Database theo `Account ID` hoặc `Customer ID` (Horizontal Partitioning). |
-| **Khả Năng Kiểm Toán (Auditability & Immutability)** | Sổ bút toán (`account_entries`) chỉ được phép **INSERT (Append-only)**, tuyệt đối không cho phép `UPDATE` hay `DELETE` lịch sử giao dịch. | Thiết kế bảng Ledger immutable, mọi điều chỉnh sai sót phải thông qua bút toán đảo (Reversal Entry). |
+| "Tính Nhất Quán (ACID Consistency & Anti Double-Spending)" | Tuyệt đối "KHÔNG BAO GIỜ" được phép âm số dư trái phép hoặc trừ tiền 2 lần cho 1 giao dịch. | Sử dụng "Row-level Pessimistic Locking (`SELECT FOR UPDATE`)" kết hợp "Idempotency Key unique constraint" trên Database. |
+| "Độ Trễ Xử Lý (Processing Latency)" | Độ trễ cho 1 lệnh kiểm tra và trừ tiền nội bộ CASA phải < 15ms (p99). | Tối ưu index Database, chạy Microservice gần Datastore, tránh gọi chuỗi API mạng đồng bộ. |
+| "Khả Năng Xử Lý Tải (Throughput / Scalability)" | Đạt tối thiểu "10,000+ TPS" vào giờ cao điểm (Ngày trả lương, Tết, Flash Sale). | Sharding Database theo `Account ID` hoặc `Customer ID` (Horizontal Partitioning). |
+| "Khả Năng Kiểm Toán (Auditability & Immutability)" | Sổ bút toán (`account_entries`) chỉ được phép "INSERT (Append-only)", tuyệt đối không cho phép `UPDATE` hay `DELETE` lịch sử giao dịch. | Thiết kế bảng Ledger immutable, mọi điều chỉnh sai sót phải thông qua bút toán đảo (Reversal Entry). |
 
 ---
 
 ## 6.4 Ánh Xạ BIAN Service Domains & Thiết Kế Microservice Chi Tiết
 
-Dựa trên phân tích độ gắn kết giao dịch ACID (Transactional Cohesion) tại Chương 3, chúng ta nhóm các BIAN Service Domains liên quan thành **CASA Core Bounded Context**:
+Dựa trên phân tích độ gắn kết giao dịch ACID (Transactional Cohesion) tại Chương 3, chúng ta nhóm các BIAN Service Domains liên quan thành "CASA Core Bounded Context":
 
 ```mermaid
 classDiagram
@@ -92,8 +93,8 @@ classDiagram
 ```
 
 ### 1. Phân chia chức năng bên trong CASA Core Microservice:
-- **`Current Account SD`:** Quản lý Control Record `CurrentAccountFacility` (Trạng thái tài khoản, chủ sở hữu, cấu hình hạn mức).
-- **`Position Keeping SD`:** Quản lý số dư tức thời (`account_balances`) và thực hiện hạch toán bút toán (`account_entries`).
+- "`Current Account SD`:" Quản lý Control Record `CurrentAccountFacility` (Trạng thái tài khoản, chủ sở hữu, cấu hình hạn mức).
+- "`Position Keeping SD`:" Quản lý số dư tức thời (`account_balances`) và thực hiện hạch toán bút toán (`account_entries`).
 
 ---
 

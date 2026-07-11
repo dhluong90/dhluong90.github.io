@@ -7,8 +7,9 @@
 Một kiến trúc Microservices ngân hàng bền vững không phụ thuộc hoàn toàn vào các lời gọi REST API đồng bộ (Synchronous), bởi vì mỗi lời gọi mạng nối tiếp (HTTP Hop) đều cộng dồn độ trễ và làm tăng nguy cơ lỗi dây chuyền (Cascading Failure).
 
 BIAN định hướng phân chia giao tiếp hệ thống thành 2 mô hình rõ rệt:
-1. **Synchronous Request-Reply (REST / gRPC):** Sử dụng cho các thao tác yêu cầu kết quả tức thì như kiểm tra số dư khả dụng (Balance Check), xác thực khách hàng (Authentication), hoặc khởi tạo lệnh hạch toán tức thời.
-2. **Asynchronous Event-Driven Architecture (EDA với Kafka / RabbitMQ):** Sử dụng cho việc đồng bộ trạng thái giữa các Bounded Contexts, phát thông báo biến động số dư, gửi email/SMS, và kích hoạt các quy trình xử lý luồng sau (Post-processing workflows).
+
+1. "Synchronous Request-Reply (REST / gRPC):" Sử dụng cho các thao tác yêu cầu kết quả tức thì như kiểm tra số dư khả dụng (Balance Check), xác thực khách hàng (Authentication), hoặc khởi tạo lệnh hạch toán tức thời.
+2. "Asynchronous Event-Driven Architecture (EDA với Kafka / RabbitMQ):" Sử dụng cho việc đồng bộ trạng thái giữa các Bounded Contexts, phát thông báo biến động số dư, gửi email/SMS, và kích hoạt các quy trình xử lý luồng sau (Post-processing workflows).
 
 ```mermaid
 flowchart LR
@@ -27,7 +28,7 @@ flowchart LR
 
 ## 4.2 Đặc Tả BIAN Semantic API (OpenAPI Standard)
 
-BIAN Semantic API quy định chuẩn cấu trúc URI, HTTP Headers, Error Codes và JSON Body dựa trên **Action Terms** và **Control Record**.
+BIAN Semantic API quy định chuẩn cấu trúc URI, HTTP Headers, Error Codes và JSON Body dựa trên "Action Terms" và "Control Record".
 
 ### Nguyên tắc chuẩn hóa URI BIAN:
 ```http
@@ -123,7 +124,7 @@ components:
 
 Trong kiến trúc Hướng sự kiện (Event-Driven Architecture), nếu mỗi Microservice tự định nghĩa một cấu trúc JSON sự kiện khác nhau, toàn bộ Kafka Cluster sẽ biến thành một "bãi rác dữ liệu không thể kiểm soát".
 
-Để chuẩn hóa, ngân hàng sử dụng tiêu chuẩn vỏ bọc **CloudEvents CNCF** kết hợp với phần thân dữ liệu (**Data Payload**) tuân theo **BIAN BOM / ISO 20022**.
+Để chuẩn hóa, ngân hàng sử dụng tiêu chuẩn vỏ bọc "CloudEvents CNCF" kết hợp với phần thân dữ liệu ("Data Payload") tuân theo "BIAN BOM / ISO 20022".
 
 ### Cấu trúc một BIAN CloudEvent chuẩn (Ví dụ: Sự kiện hoàn tất lệnh thanh toán):
 
@@ -162,11 +163,12 @@ Trong kiến trúc Hướng sự kiện (Event-Driven Architecture), nếu mỗi
 ## 4.4 Các Mô Hình Thiết Kế Event Trọng Yếu Trong Ngân Hàng
 
 ### 1. Domain Events vs Integration Events
-- **Domain Event (Sự kiện Miền nội bộ):** Diễn ra bên trong một Bounded Context. Ví dụ: `BalanceReservedEvent` bên trong CASA Microservice.
-- **Integration Event (Sự kiện Tích hợp liên miền):** Phát ra Kafka Event Mesh để các Bounded Context khác tiêu thụ. Ví dụ: `CurrentAccountStatusChangedToFrozen` được phát cho toàn bộ hệ thống biết để từ chối giao dịch thẻ.
+- "Domain Event (Sự kiện Miền nội bộ):" Diễn ra bên trong một Bounded Context. Ví dụ: `BalanceReservedEvent` bên trong CASA Microservice.
+- "Integration Event (Sự kiện Tích hợp liên miền):" Phát ra Kafka Event Mesh để các Bounded Context khác tiêu thụ. Ví dụ: `CurrentAccountStatusChangedToFrozen` được phát cho toàn bộ hệ thống biết để từ chối giao dịch thẻ.
 
 ### 2. Event Carried State Transfer (ECST) vs Event Notification
-Trong ngân hàng, để giảm tải cho Database Core khi các Service khác cần xem dữ liệu, chúng ta ưu tiên mô hình **Event Carried State Transfer (ECST)**:
+Trong ngân hàng, để giảm tải cho Database Core khi các Service khác cần xem dữ liệu, chúng ta ưu tiên mô hình "Event Carried State Transfer (ECST)":
+
 - Sự kiện chứa đầy đủ dữ liệu thay đổi của thực thể (`data payload` chi tiết).
 - Các Service downstream (như Service Chăm sóc Khách hàng CRM hoặc Data Lake) nhận event và tự xây dựng bản sao dữ liệu chỉ đọc (Read Model - CQRS) của riêng mình, không cần gọi ngược lại `GET API` của Core Banking.
 
@@ -174,6 +176,6 @@ Trong ngân hàng, để giảm tải cho Database Core khi các Service khác c
 
 ## 4.5 Tóm Tắt Chương 4
 
-- Sử dụng **BIAN Semantic API (OpenAPI 3.0)** với URI tuân thủ nghiêm ngặt 7 Action Terms để chuẩn hóa hợp đồng giao tiếp REST/gRPC.
-- Luôn áp dụng **X-Idempotency-Key** trong mọi API giao dịch tài chính để chống thanh toán trùng lặp (Double Spending).
-- Sử dụng chuẩn **CloudEvents 1.0** bao bọc payload **BIAN BOM / ISO 20022** trong Apache Kafka để đảm bảo tính nhất quán và khả năng truy vết (Auditability) trên toàn hệ thống.
+- Sử dụng "BIAN Semantic API (OpenAPI 3.0)" với URI tuân thủ nghiêm ngặt 7 Action Terms để chuẩn hóa hợp đồng giao tiếp REST/gRPC.
+- Luôn áp dụng "X-Idempotency-Key" trong mọi API giao dịch tài chính để chống thanh toán trùng lặp (Double Spending).
+- Sử dụng chuẩn "CloudEvents 1.0" bao bọc payload "BIAN BOM / ISO 20022" trong Apache Kafka để đảm bảo tính nhất quán và khả năng truy vết (Auditability) trên toàn hệ thống.

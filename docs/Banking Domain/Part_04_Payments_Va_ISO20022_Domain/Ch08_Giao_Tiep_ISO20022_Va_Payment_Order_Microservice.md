@@ -4,9 +4,9 @@
 
 ## 8.1 Cuộc Cách Mạng ISO 20022 Trong Hệ Thống Thanh Toán
 
-Trong nhiều thập kỷ, thanh toán tài chính toàn cầu phụ thuộc vào chuẩn điện văn **SWIFT MT (Message Type)** – một định dạng văn bản phẳng (Flat-text) cực kỳ hạn chế về trường thông tin (ví dụ: trường tên người thụ hưởng bị cắt xén ở 35 ký tự). Điều này dẫn đến tỷ lệ điều tra thủ công cao và cản trở tự động hóa AML.
+Trong nhiều thập kỷ, thanh toán tài chính toàn cầu phụ thuộc vào chuẩn điện văn "SWIFT MT (Message Type)" – một định dạng văn bản phẳng (Flat-text) cực kỳ hạn chế về trường thông tin (ví dụ: trường tên người thụ hưởng bị cắt xén ở 35 ký tự). Điều này dẫn đến tỷ lệ điều tra thủ công cao và cản trở tự động hóa AML.
 
-**ISO 20022** ra đời như một tiêu chuẩn cấu trúc XML/JSON giàu ngữ nghĩa (Rich Data Standard), cho phép truyền tải đầy đủ chi tiết định danh, địa chỉ, mục đích chuyển tiền và hóa đơn chứng từ kèm theo.
+"ISO 20022" ra đời như một tiêu chuẩn cấu trúc XML/JSON giàu ngữ nghĩa (Rich Data Standard), cho phép truyền tải đầy đủ chi tiết định danh, địa chỉ, mục đích chuyển tiền và hóa đơn chứng từ kèm theo.
 
 ```mermaid
 graph LR
@@ -29,17 +29,17 @@ Khi thiết kế `Payment Order Microservice`, kỹ sư cần nắm vững bộ 
 
 | Mã Thông Điệp ISO 20022 | Tên chuẩn quốc tế | Vai trò trong hệ thống Microservices |
 | :--- | :--- | :--- |
-| **pain.001** *(Customer-to-Bank)* | Customer Credit Transfer Initiation | Điện văn khách hàng từ Mobile App / Corporate Internet Banking gửi lệnh chuyển tiền đến ngân hàng. |
-| **pacs.008** *(Bank-to-Bank)* | FI-to-FI Customer Credit Transfer | Điện văn chuyển khoản chính thức giữa Ngân hàng Người gửi (Debtor Agent) và Ngân hàng Thụ hưởng (Creditor Agent). |
-| **pacs.002** *(Bank-to-Bank)* | FI-to-FI Payment Status Report | Thông điệp báo cáo trạng thái thanh toán (ACSP = Accepted Settlement Completed; RJCT = Rejected). |
-| **pacs.004** *(Bank-to-Bank)* | Payment Return | Điện văn hoàn trả tiền tự động khi tài khoản đích bị đóng hoặc sai số tài khoản. |
-| **camt.054** *(Bank-to-Customer)* | Bank-to-Customer Debit/Credit Notification | Bản tin thông báo ghi nợ/ghi có gửi từ Core Banking về kênh thông báo cho khách hàng. |
+| pain.001 *(Customer-to-Bank)* | Customer Credit Transfer Initiation | Điện văn khách hàng từ Mobile App / Corporate Internet Banking gửi lệnh chuyển tiền đến ngân hàng. |
+| pacs.008 *(Bank-to-Bank)* | FI-to-FI Customer Credit Transfer | Điện văn chuyển khoản chính thức giữa Ngân hàng Người gửi (Debtor Agent) và Ngân hàng Thụ hưởng (Creditor Agent). |
+| pacs.002 *(Bank-to-Bank)* | FI-to-FI Payment Status Report | Thông điệp báo cáo trạng thái thanh toán (ACSP = Accepted Settlement Completed; RJCT = Rejected). |
+| pacs.004 *(Bank-to-Bank)* | Payment Return | Điện văn hoàn trả tiền tự động khi tài khoản đích bị đóng hoặc sai số tài khoản. |
+| camt.054 *(Bank-to-Customer)* | Bank-to-Customer Debit/Credit Notification | Bản tin thông báo ghi nợ/ghi có gửi từ Core Banking về kênh thông báo cho khách hàng. |
 
 ---
 
 ## 8.3 Ánh Xạ BIAN Semantic API Với ISO 20022 (BIAN-to-ISO Mapping)
 
-BIAN Business Object Model (BOM) được thiết kế đồng chỉnh 100% với từ điển dữ liệu ISO 20022. Dưới đây là bảng ánh xạ thực chiến từ **BIAN JSON Property** sang **ISO 20022 XML XPath (`pacs.008`)**:
+BIAN Business Object Model (BOM) được thiết kế đồng chỉnh 100% với từ điển dữ liệu ISO 20022. Dưới đây là bảng ánh xạ thực chiến từ "BIAN JSON Property" sang "ISO 20022 XML XPath (`pacs.008`)":
 
 | BIAN Semantic API JSON Field | ISO 20022 XML XPath (`pacs.008`) | Ý nghĩa nghiệp vụ |
 | :--- | :--- | :--- |
@@ -54,7 +54,7 @@ BIAN Business Object Model (BOM) được thiết kế đồng chỉnh 100% vớ
 
 ## 8.4 Kiến Trúc Message Translation Engine (Bộ Chuyển Đổi ISO 20022)
 
-Trong nội bộ hệ thống Microservices ngân hàng, việc truyền tải trực tiếp file XML ISO 20022 nặng nề sẽ làm giảm hiệu năng parsing của CPU. Do đó, ngân hàng áp dụng mô hình kiến trúc **JSON Native Inside - XML ISO Outside**:
+Trong nội bộ hệ thống Microservices ngân hàng, việc truyền tải trực tiếp file XML ISO 20022 nặng nề sẽ làm giảm hiệu năng parsing của CPU. Do đó, ngân hàng áp dụng mô hình kiến trúc "JSON Native Inside - XML ISO Outside":
 
 ```mermaid
 flowchart LR
@@ -151,6 +151,6 @@ components:
 
 ## 8.6 Tóm Tắt Chương 8
 
-- **ISO 20022** là chuẩn mực bắt buộc cho hệ thống thanh toán toàn cầu với cấu trúc ngữ nghĩa phong phú hơn hẳn SWIFT MT cũ.
-- Sử dụng mô hình **JSON Native Inside - XML ISO Outside** để vừa đảm bảo tốc độ xử lý Microservice nội bộ, vừa tương thích tuyệt đối với các cổng thanh toán quốc gia.
-- BIAN BOM cung cấp ánh xạ tự nhiên 1:1 sang các trường thông tin XPath của **pacs.008** và **pain.001**.
+- "ISO 20022" là chuẩn mực bắt buộc cho hệ thống thanh toán toàn cầu với cấu trúc ngữ nghĩa phong phú hơn hẳn SWIFT MT cũ.
+- Sử dụng mô hình "JSON Native Inside - XML ISO Outside" để vừa đảm bảo tốc độ xử lý Microservice nội bộ, vừa tương thích tuyệt đối với các cổng thanh toán quốc gia.
+- BIAN BOM cung cấp ánh xạ tự nhiên 1:1 sang các trường thông tin XPath của pacs.008 và pain.001.
