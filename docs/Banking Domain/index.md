@@ -1,8 +1,6 @@
 # THIẾT KẾ MICROSERVICES CHO NGÂN HÀNG THỰC CHIẾN VỚI BIAN
 Banking Industry Architecture Network (BIAN) Microservices Handbook for Enterprise Banking Modernization
 
-[Trang Bìa & Chuẩn Mực Thực Hành Kiến Trúc](00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md)
-
 ---
 
 ## Mục Lục Chi Tiết
