@@ -1,116 +1,74 @@
 # THIẾT KẾ MICROSERVICES CHO NGÂN HÀNG THỰC CHIẾN VỚI BIAN
-**Banking Industry Architecture Network (BIAN) Microservices Handbook for Enterprise Banking Modernization**
+Banking Industry Architecture Network (BIAN) Microservices Handbook for Enterprise Banking Modernization
 
-![BIAN Architecture Practice Book Cover](assets/cover.png)
-
-> **ẤN PHẨM KHUNG THỰC HÀNH CHUẨN MỰC (ENTERPRISE ARCHITECTURE PRACTICE STANDARD)**  
-> **Tác giả / Lead Architect Practice:** **Lương Đ. H.** *(Principal Banking Enterprise Architect)*  
-> **Đơn vị thực hành kiến trúc:** **Digital Banking Enterprise Architecture Practice**  
-> **Xem trang bìa chính thức & thông số xuất bản:** **[00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md](00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md)**
-
----
-
-## Lời Tựa & Mục Tiêu Cuốn Sách
-
-Trong làn sóng chuyển đổi số ngân hàng (Digital Banking Modernization), việc phá vỡ khối hệ thống liền khối (Monolithic Core Banking) sang kiến trúc **Microservices** là xu hướng tất yếu. Tuy nhiên, trên 70% dự án Microservices tại các ngân hàng gặp trục trặc hoặc thất bại với các nguyên nhân điển hình:
-1. **Chia cắt dịch vụ theo "cơ cấu phòng ban" (Conway's Law bẫy sai lầm)** thay vì năng lực nghiệp vụ thực thụ, dẫn đến sự phụ thuộc chéo rối rắm (Distributed Monolith).
-2. **Thiếu chuẩn hóa từ vựng nghiệp vụ (Ubiquitous Language)** giữa đội ngũ nghiệp vụ (Business/Product) và đội ngũ kỹ thuật (Engineering/Architecture).
-3. **Thiết kế ranh giới (Bounded Context) tùy tiện**, khiến dữ liệu tài chính bị dư thừa, mất tính nhất quán ACID/Eventual Consistency và gia tăng độ trễ mạng cực lớn.
-
-Cuốn sách này ra đời với mục tiêu cung cấp **bản thiết kế chuẩn mực, thực chiến từng bước (Pragmatic Step-by-Step Guide)** dựa trên tiêu chuẩn kiến trúc ngân hàng quốc tế **BIAN (Banking Industry Architecture Network)** kết hợp cùng **Domain-Driven Design (DDD)** và **Modern Cloud-Native Microservices**.
-
----
-
-## Cấu Trúc Khung Chuẩn Cho Các Chương Thực Chiến (Domain Deep-Dives)
-
-Để đảm bảo mỗi chương ứng dụng thực tế vừa sâu sắc về nghiệp vụ ngân hàng vừa hoàn chỉnh về kỹ thuật, từ **Chương 6 đến Chương 10** tuân thủ cấu trúc 4 trụ cột chuẩn:
-
-```mermaid
-flowchart TD
-    A[1. Domain Overview & Business Context<br>Ngữ cảnh & Quy trình Nghiệp vụ E2E] --> B[2. Functional & Business Requirements<br>Yêu cầu nghiệp vụ cốt lõi]
-    B --> C[3. Non-Functional Requirements NFRs<br>Hiệu năng, ACID, Latency, Audit, Security]
-    C --> D[4. Detailed Microservice Design<br>BIAN Service Domains, APIs, Events, Schemas]
-```
-
-1. **Domain Overview & Business Context:** Mô tả bản chất nghiệp vụ, hành trình khách hàng và quy trình đầu-cuối (End-to-End Business Process).
-2. **Functional Requirements:** Định nghĩa chi tiết các nghiệp vụ cốt lõi mà cụm Microservices phải giải quyết.
-3. **Non-Functional Requirements (NFRs):** Tiêu chuẩn vàng cho ngân hàng (Độ trễ xử lý dưới 50ms, tính nhất quán hạch toán tài chính tuyệt đối, khả năng truy vết Audit Trail 100%, khả năng mở rộng hàng chục nghìn TPS).
-4. **BIAN Mapping & Detail Microservice Design:** Kiến trúc vi dịch vụ ánh xạ từ BIAN Service Domain, Sequence Diagram, OpenAPI Schema và Event Payload chuẩn ISO 20022 / BIAN Semantic API.
+[Trang Bìa & Chuẩn Mực Thực Hành Kiến Trúc](00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md)
 
 ---
 
 ## Mục Lục Chi Tiết
 
 ### [Phần 1: Nền Tảng Kiến Trúc BIAN (BIAN Foundations)](Part_01_BIAN_Foundations/)
-- **[Chương 1: Tổng Quan BIAN & Kiến Trúc Ngân Hàng Hiện Đại (Service Landscape)](Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape.md)**
+- [Chương 1: Tổng Quan BIAN & Kiến Trúc Ngân Hàng Hiện Đại (Service Landscape)](Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape.md)
   - Phân tích thất bại của Microservices tự phát tại Ngân hàng.
   - Khái niệm BIAN Service Landscape (Business Area -> Business Domain -> Service Domain).
   - Nguyên tắc độc lập "MECE" (Mutually Exclusive, Collectively Exhaustive).
-- **[Chương 2: BIAN Metamodel – Control Record, Behavior Qualifier & BOM](Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel.md)**
+- [Chương 2: BIAN Metamodel – Control Record, Behavior Qualifier & BOM](Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel.md)
   - Phẫu thuật Service Domain: Asset/Control Record, Behavior Qualifiers.
   - Các loại thao tác chuẩn BIAN (Action Terms: Initiate, Execute, Request, Retrieve...).
   - Business Object Model (BOM) & cách định hình hợp đồng dữ liệu.
 
 ### [Phần 2: Phương Pháp Luận Thực Chiến Step-by-Step (Pragmatic Methodology)](Part_02_Step_By_Step_Methodology/)
-- **[Chương 3: Step-by-Step Mapping Từ BIAN Sang Microservices (DDD & Bounded Context)](Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context.md)**
+- [Chương 3: Step-by-Step Mapping Từ BIAN Sang Microservices (DDD & Bounded Context)](Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context.md)
   - Quy trình 4 bước chuẩn xác chuyển hóa Service Domain thành Microservice Boundary.
   - Phân tích độ mịn (Granularity Analysis) – Khi nào gộp, khi nào tách.
-- **[Chương 4: Thiết Kế API & Event-Driven Theo BIAN Semantic API](Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API.md)**
+- [Chương 4: Thiết Kế API & Event-Driven Theo BIAN Semantic API](Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API.md)
   - Thiết kế REST/gRPC API theo BIAN Semantic Specification.
   - Định nghĩa Event Driven Architecture (EDA) với CloudEvents & Kafka.
-- **[Chương 5: Chiến Lược Quản Trị Dữ Liệu Phân Tán (Polyglot, CQRS, Saga Pattern)](Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga.md)**
+- [Chương 5: Chiến Lược Quản Trị Dữ Liệu Phân Tán (Polyglot, CQRS, Saga Pattern)](Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga.md)
   - Database-per-Service trong Ngân hàng và thách thức ACID.
   - Saga Pattern (Choreography vs Orchestration) cho giao dịch chuyển tiền kép.
   - Outbox Pattern đảm bảo Transactional Messaging 100% không mất dữ liệu.
 
 ### [Phần 3: Core Banking – CASA Domain (Current Account & Savings Account)](Part_03_Core_Banking_CASA_Domain/)
-- **[Chương 6: Thiết Kế Microservices CASA (Current Account & Savings Account)](Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account.md)**
+- [Chương 6: Thiết Kế Microservices CASA (Current Account & Savings Account)](Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account.md)
   - Ngữ cảnh nghiệp vụ CASA, quy trình mở tài khoản & hạch toán số dư.
   - NFRs: Độ trễ cực thấp, chống Double-Spending, Lock optimistic/pessimistic.
-  - Thiết kế cụm Microservices: *Current Account SD*, *Position Keeping SD*, *Transaction Engine*.
+  - Thiết kế cụm Microservices: Current Account SD, Position Keeping SD, Transaction Engine.
 
 ### [Phần 4: Payments & ISO 20022 Domain](Part_04_Payments_Va_ISO20022_Domain/)
-- **[Chương 7: Thiết Kế Payment Engine & Payment Execution](Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution.md)**
+- [Chương 7: Thiết Kế Payment Engine & Payment Execution](Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution.md)
   - Kiến trúc Thanh toán Ngay (Real-Time Payments / NAPAS / SEPA Instant).
   - Yêu cầu nghiệp vụ & NFRs thanh toán.
-  - Thiết kế Microservices: *Payment Order SD*, *Payment Execution SD*.
-- **[Chương 8: Chuẩn Hóa Giao Tiếp ISO 20022 & Payment Gateway](Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice.md)**
+  - Thiết kế Microservices: Payment Order SD, Payment Execution SD.
+- [Chương 8: Chuẩn Hóa Giao Tiếp ISO 20022 & Payment Gateway](Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice.md)
   - Ánh xạ BIAN Semantic API với thông điệp ISO 20022 (pacs.008, pain.001, camt.054).
   - Kiến trúc chuyển đổi thông điệp (Message Translation Engine).
 
 ### [Phần 5: Lending & Customer Management Domain](Part_05_Lending_Va_Customer_Management_Domain/)
-- **[Chương 9: Thiết Kế Hệ Thống Tín Dụng (Loan Origination & Servicing)](Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing.md)**
+- [Chương 9: Thiết Kế Hệ Thống Tín Dụng (Loan Origination & Servicing)](Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing.md)
   - Hành trình tín dụng: Khởi tạo khoản vay -> Thẩm định -> Giải ngân -> Thu nợ.
-  - Thiết kế Microservices: *Consumer Loan SD*, *Credit Appraisal SD*, *Collateral Allocation SD*.
-- **[Chương 10: Quản Trị Khách Hàng Định Danh Duy Nhất (Party Management & KYC)](Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC.md)**
+  - Thiết kế Microservices: Consumer Loan SD, Credit Appraisal SD, Collateral Allocation SD.
+- [Chương 10: Quản Trị Khách Hàng Định Danh Duy Nhất (Party Management & KYC)](Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC.md)
   - Khắc phục tình trạng "Khách hàng phân mảnh" ở các Core cũ.
-  - Thiết kế Microservices: *Party Routing SD*, *Customer Profile SD*, *Customer Agreement SD*.
+  - Thiết kế Microservices: Party Routing SD, Customer Profile SD, Customer Agreement SD.
 
 ### [Phần 6: Master Banking Blueprint & Lộ Trình Hiện Đại Hóa](Part_06_Master_Banking_Blueprint/)
-- **[Chương 11: Tổng Thể Master Banking Microservices Blueprint](Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint.md)**
+- [Chương 11: Tổng Thể Master Banking Microservices Blueprint](Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint.md)
   - Sơ đồ Enterprise Blueprint Diagram đầy đủ.
   - Kiến trúc 3 tầng: Experience Layer -> Process Orchestration Layer -> Core BIAN Service Domains Layer.
-- **[Chương 12: Integration Architecture (Choreography vs Orchestration & Event Mesh)](Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration.md)**
+- [Chương 12: Integration Architecture (Choreography vs Orchestration & Event Mesh)](Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration.md)
   - Nguyên tắc giao tiếp giữa các Service Domains (Synch REST/gRPC vs Asynch Event Mesh).
-- **[Chương 13: Lộ Trình Chuyển Đổi Core Banking (Strangler Fig Pattern Với BIAN)](Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern.md)**
+- [Chương 13: Lộ Trình Chuyển Đổi Core Banking (Strangler Fig Pattern Với BIAN)](Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern.md)
   - Chiến lược bóc tách Monolithic Core Banking sang BIAN Microservices.
   - Anti-Corruption Layer (ACL) và Change Data Capture (CDC / Debezium).
 
 ### [Phần 7: Bài Tập Thực Hành, Trắc Nghiệm & Case Study Tổng Hợp](Part_07_Exercises_Quizzes_And_Case_Studies/)
-- **[Chương 14: Hệ Thống Câu Hỏi Trắc Nghiệm Ôn Tập & Đánh Giá Năng Lực Kiến Trúc BIAN Microservices](Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong.md)**
+- [Chương 14: Hệ Thống Câu Hỏi Trắc Nghiệm Ôn Tập & Đánh Giá Năng Lực Kiến Trúc BIAN Microservices](Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong.md)
   - Bộ câu hỏi trắc nghiệm chuyên sâu bao phủ toàn bộ 13 Chương.
   - Đáp án chuẩn mực & giải thích chuyên sâu nguyên lý kiến trúc (Architectural Rationale).
   - Thang tự đánh giá năng lực Kiến trúc sư Ngân hàng.
-- **[Chương 15: Bài Tập Thực Chiến Thiết Kế Kiến Trúc & Case Study Tổng Hợp](Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies.md)**
+- [Chương 15: Bài Tập Thực Chiến Thiết Kế Kiến Trúc & Case Study Tổng Hợp](Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies.md)
   - Bài tập 1: Phân rã Bounded Context & Ánh xạ BIAN cho nghiệp vụ Thẻ Tín Dụng.
   - Bài tập 2: Thiết kế Saga Orchestration cho Mở Tiết Kiệm Trực Tuyến & thu phí.
-  - Bài tập 3: Thiết kế BIAN Semantic API & Ánh xạ ISO 20022 (`pacs.008`).
+  - Bài tập 3: Thiết kế BIAN Semantic API & Ánh xạ ISO 20022 (pacs.008).
   - Bài tập 4: Lộ trình Strangler Fig hiện đại hóa Core Tiền gửi có kỳ hạn với CDC Debezium.
-
----
-
-## Hướng Dẫn Đọc Sách
-
-- **Dành cho Enterprise Architect:** Đọc kỹ **Phần 1**, **Phần 2**, **Phần 6** và **Phần Phụ Lục** để định hình kiến trúc tổng thể, nguyên tắc phân rã và chiến lược tích hợp enterprise.
-- **Dành cho Solution Architect & Lead Developer:** Tập trung vào **Phần 2 (Chương 3, 4, 5)** và các chương thực chiến từ **Chương 6 đến Chương 10** để nắm vững cách thiết kế Schema, API, Event Payload và xử lý giao dịch tài chính phân tán.
-- **Dành cho Ôn tập & Kiểm chứng Năng lực:** Sử dụng **Phần 7 (Chương 14 & Chương 15)** làm bộ câu hỏi đánh giá năng lực và bài tập thực hành kiến trúc thực chiến.

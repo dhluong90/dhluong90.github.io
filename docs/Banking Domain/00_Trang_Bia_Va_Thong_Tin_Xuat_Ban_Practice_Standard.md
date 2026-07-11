@@ -1,4 +1,4 @@
-# THIẾT KẾ MICROSERVICES CHO NGÂN HÀNG THỰC CHIẾN VỚI BIAN
+# Trang Bìa & Chuẩn Mực Thực Hành Kiến Trúc
 ## BIAN Microservices Architecture Handbook for Enterprise Banking Modernization
 
 ![BIAN Architecture Practice Book Cover](assets/cover.png)
@@ -77,28 +77,28 @@ flowchart TD
 
 ## MỤC LỤC TỔNG THỂ CỦA ẤN PHẨM
 
-* **Trang Bìa & Chuẩn Mực Kiến Trúc Practice Standard:** [00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md](00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md)
-* **Mục Lục & Hướng Dẫn Chung:** [index.md](index.md)
-* **Phần 1: Nền Tảng Kiến Trúc BIAN (BIAN Foundations)**
+* [Trang Bìa & Chuẩn Mực Kiến Trúc Practice Standard](00_Trang_Bia_Va_Thong_Tin_Xuat_Ban_Practice_Standard.md)
+* [Mục Lục & Hướng Dẫn Chung](index.md)
+* Phần 1: Nền Tảng Kiến Trúc BIAN (BIAN Foundations)
   * [Chương 1: Tổng Quan BIAN & Kiến Trúc Ngân Hàng Hiện Đại](Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape.md)
   * [Chương 2: BIAN Metamodel – Control Record, Behavior Qualifier & BOM](Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel.md)
-* **Phần 2: Phương Pháp Luận Thực Chiến Step-by-Step**
+* Phần 2: Phương Pháp Luận Thực Chiến Step-by-Step
   * [Chương 3: Step-by-Step Mapping Từ BIAN Sang Microservices](Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context.md)
   * [Chương 4: Thiết Kế API & Event-Driven Theo BIAN Semantic API](Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API.md)
   * [Chương 5: Chiến Lược Quản Trị Dữ Liệu Phân Tán (CQRS & Saga)](Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga.md)
-* **Phần 3: Core Banking – CASA Domain**
+* Phần 3: Core Banking – CASA Domain
   * [Chương 6: Thiết Kế Microservices CASA (Current Account & Savings Account)](Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account.md)
-* **Phần 4: Payments & ISO 20022 Domain**
+* Phần 4: Payments & ISO 20022 Domain
   * [Chương 7: Thiết Kế Payment Engine & Payment Execution](Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution.md)
   * [Chương 8: Chuẩn Hóa Giao Tiếp ISO 20022 & Payment Order Microservice](Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice.md)
-* **Phần 5: Lending & Customer Management Domain**
+* Phần 5: Lending & Customer Management Domain
   * [Chương 9: Thiết Kế Hệ Thống Tín Dụng (Loan Origination & Servicing)](Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing.md)
   * [Chương 10: Quản Trị Khách Hàng Định Danh Duy Nhất (Party Management & KYC)](Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC.md)
-* **Phần 6: Master Banking Blueprint & Lộ Trình Hiện Đại Hóa**
+* Phần 6: Master Banking Blueprint & Lộ Trình Hiện Đại Hóa
   * [Chương 11: Tổng Thể Master Banking Microservices Blueprint](Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint.md)
   * [Chương 12: Integration Architecture (Choreography vs Orchestration & Event Mesh)](Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration.md)
   * [Chương 13: Lộ Trình Chuyển Đổi Core Banking (Strangler Fig Pattern)](Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern.md)
-* **Phần 7: Bài Tập Thực Hành, Trắc Nghiệm & Case Study Tổng Hợp**
+* Phần 7: Bài Tập Thực Hành, Trắc Nghiệm & Case Study Tổng Hợp
   * [Chương 14: Hệ Thống Câu Hỏi Trắc Nghiệm Ôn Tập & Đánh Giá Năng Lực Kiến Trúc](Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong.md)
   * [Chương 15: Bài Tập Thực Chiến Thiết Kế Kiến Trúc & Case Study Tổng Hợp](Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies.md)
 
