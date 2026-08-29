@@ -54,7 +54,7 @@ Tôi ngạc nhiên: "Ơ, sao bác biết? Bạn bác à?"
 
 "Con nghĩ quan trọng là giữ chân được lượng khách hàng và tài xế trung thành. Hôm nay trên đường tới đây, chị tài xế taxi chở con cũng đã nhiệt tình chia sẻ..."
 
-Thế là chúng tôi cuốn vào câu chuyện lúc nào không hay. Bác thoải mái chia sẻ về các giải pháp đang được cân nhắc và thực trạng triển khai đầy ngổn ngang. Cả hai uyên thuyên cười nói rôm rả.
+Thế là chúng tôi cuốn vào câu chuyện lúc nào không hay. Bác thoải mái chia sẻ về các giải pháp đang được cân nhắc và thực trạng triển khai đầy ngổn ngang. Cả hai huyên thuyên cười nói rôm rả.
 
 Bác chép miệng: "Giờ team tao cũng vất vả lắm, toàn gánh hệ thống cũ kỹ."
 
@@ -62,7 +62,7 @@ Tôi bật cười: "Hồi trước con làm ngân hàng, chiều tối tan sở
 
 Bác ngửa cổ cười ha hả: "Thế thì công ty tao tốt hơn, nhân viên bên tao được về sớm hơn nhiều!"
 
-Đến khi thân thiết hơn, tôi mới rụt rè lảng vảng hỏi về thân thế của bác, thỏ thẻ đề phòng lỡ gặp khách hàng chóp bu mà không biết thì coi như hỏng bét. Ai ngờ, vừa khéo léo hỏi ra mới ngã ngửa: bác chính là CIO của công ty khách hàng, là vị sếp tổng trực tiếp đứng trên cả Wang và Ju. Tôi toát mồ hôi hột, cũng may mà lúc đầu đã không hống hách hỏi tên hay chém gió linh tinh, nếu không chắc bác hờn thì về sau rất khó xử.
+Đến khi thân thiết hơn, tôi mới rụt rè lân la hỏi về thân thế của bác, thỏ thẻ đề phòng lỡ gặp khách hàng chóp bu mà không biết thì coi như hỏng bét. Ai ngờ, vừa khéo léo hỏi ra mới ngã ngửa: bác chính là CIO của công ty khách hàng, là vị sếp tổng trực tiếp đứng trên cả Wang và Ju. Tôi toát mồ hôi hột, cũng may mà lúc đầu đã không hống hách hỏi tên hay chém gió linh tinh, nếu không chắc bác hờn thì về sau rất khó xử.
 
 Trò chuyện thêm vài chén, bác có việc xin phép về sớm, nở nụ cười hiền hậu hẹn gặp lại.
 
