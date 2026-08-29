@@ -106,7 +106,7 @@ Chớp lấy thời cơ, tôi lập tức cắt ngang lời và nhảy vào: "M�
 
 Wang nghe vậy liền bật cười sảng khoái, ánh mắt sáng lên, quay sang vỗ vai Ju: "Thằng này được!"
 
-Phản ứng đó vượt ngoài mong đợi của tôi. Chỉ bằng một câu nói ngắn gọn đúng trọng tâm, tôi đã tìm ra lối thoát cho bàn tiệc bế tắc và tạo được sự tin tưởng bước đầu. Hóa ra, những nhà lãnh đạo này không tìm kiếm một vị cứu tinh với những lý thuyết siêu phàm, họ chỉ cần một người có tư duy đồng hành thực chiến.
+Phản ứng đó có phần vượt ngoài mong đợi của tôi. Có vẻ như Wang đã nhận ra điều gì đấy. Hóa ra, mấy bác khách hàng này không hề tìm kiếm một vị cứu tinh với những mớ lý thuyết siêu phàm, họ đơn giản chỉ cần một người có tư duy đồng hành thực chiến.
 
 Lúc này tôi mới thực sự thở phào. Kinh nghiệm của tôi đủ để hiểu rằng khi đã "align" (đồng thuận) xong rồi thì ngày mai sẽ là một ngày dễ dàng hơn rất nhiều. Giờ thì có thể hoàn toàn thả lỏng và enjoy bữa tiệc rồi. Cái gì tới nó tới.
 
