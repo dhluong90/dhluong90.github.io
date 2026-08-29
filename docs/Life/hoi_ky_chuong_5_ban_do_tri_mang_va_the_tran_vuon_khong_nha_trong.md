@@ -136,4 +136,6 @@ Tôi dọn dẹp đồ đạc, vác balo lên vai và bước ra khỏi văn ph�
 
 ---
 
+👉 **[Đọc tiếp Phần 6: Bàn Cờ Mới Ở Boat Quay Và Cái Bắt Tay Ngầm](hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam.md)**
+
 👉 **[Quay về Mục Lục](hoi_ky_00_muc_luc.md)**
