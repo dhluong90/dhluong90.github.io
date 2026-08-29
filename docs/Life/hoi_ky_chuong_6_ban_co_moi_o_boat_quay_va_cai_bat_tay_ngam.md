@@ -76,7 +76,7 @@ Tôi cười trừ, cầm ly bước qua kéo ghế ngồi ngay cạnh Wang. M�
 
 Vẫn với phong thái ngạo nghễ quen thuộc, Ju với tay lấy chai Glenfiddich 15, rót thẳng vào ly tôi một lượng đầy không đá. Cổ tay hắn lấp lánh chiếc Rolex Submariner – dòng đồng hồ "quốc dân" mà dân chơi Singapore cực kỳ ưa chuộng, khác hẳn với dân Việt Nam chuộng mốt Datejust thanh lịch.
 
-Rót xong, hắn xoay qua nhìn cả bàn: "Uống hết đi, ly toàn nước mà!"
+Rót xong, hắn nhìn cả bàn: "Uống hết đi, ly toàn nước mà!"
 
 Cả bàn lập tức nâng ly cụng 100%.
 
