@@ -25,6 +25,7 @@ Các bạn có thể lưu lại link trang này để tiện theo dõi các chư
 - **[Phần 3: Chuyến Tàu Điện Ngầm Và Cái Boongke Cách Ly](hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly.md)** *(Đang Review)*
 - **[Phần 4: Vỏ Bọc Lính Mới Và Nút Thắt Tổ Chức](hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc.md)**
 - **[Phần 5: Bản Đồ Trí Mạng Và Thế Trận "Vườn Không Nhà Trống"](hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong.md)**
+- **[Phần 6: Bàn Cờ Mới Ở Boat Quay Và Cái Bắt Tay Ngầm](hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam.md)**
 
 
 *(Các chương mới sẽ được cập nhật liên tục tại đây...)*

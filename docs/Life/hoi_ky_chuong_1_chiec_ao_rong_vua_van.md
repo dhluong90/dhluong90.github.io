@@ -24,7 +24,7 @@ Hôm nay, trong một khoảng lặng hiếm hoi để nghỉ ngơi, tôi quyế
 
 ## Chương 1: Cuộc Chơi Định Mệnh Và Người Đàn Ông Đeo Grand Seiko
 
-Tôi còn nhớ như in buổi họp đầu tiên với vị CIO của tập đoàn ngân hàng đó. Thật ra, ban đầu tôi không hề là nhân vật chính. Dẫn dắt thương vụ quan trọng này là một bác người Ấn Độ – từng là CSO của một ngân hàng quốc tế, và hiện tại đang làm việc cho công ty chúng tôi. Người được chỉ định đứng ra bảo chứng chuyên môn trong mảng ngân hàng lúc bấy giờ cũng không phải là tôi. Trong căn phòng hôm ấy, tôi chỉ sắm vai một người phụ, mang theo nhiệm vụ trình bày về một trong những dự án mà đội ngũ chúng tôi từng hoàn thành.
+Tôi còn nhớ như in buổi họp đầu tiên với vị CIO của tập đoàn ngân hàng đó. Thật ra, ban đầu tôi không hề là nhân vật chính. Dẫn dắt thương vụ quan trọng này là một bác người Ấn Độ – từng là CA của một ngân hàng quốc tế, và hiện tại đang làm việc cho công ty chúng tôi. Người được chỉ định đứng ra bảo chứng chuyên môn trong mảng ngân hàng lúc bấy giờ cũng không phải là tôi. Trong căn phòng hôm ấy, tôi chỉ sắm vai một người phụ, mang theo nhiệm vụ trình bày về một trong những dự án mà đội ngũ chúng tôi từng hoàn thành.
 
 Đó là buổi họp hoành tráng nhất mà tôi từng được tham gia. Không gian vô cùng nghiêm túc, xung quanh bàn họp toàn những nhân vật ra quyết định của tập đoàn tài chính này trong mảng IT. Vị CIO là một nhân vật nổi tiếng ở Singapore, mang theo bản CV dày cộm bao gồm nhiều năm kinh nghiệm tại các tập đoàn tư vấn Big 4. Những người còn lại đều là các "trùm cuối" đứng đầu các mảng, tay nắm ngân sách tính bằng trăm triệu đô la. Nhìn họ, ký ức thời tôi còn làm trong ngân hàng bất chợt ùa về – vẫn là những gương mặt quản lý lạnh như tiền và cực kỳ khó đọc.
 
