@@ -1,0 +1,596 @@
+/* ==========================================================================
+   My Toys (8-bit Retro Arcade Theme) & PageFlip Interactive Book Styles
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* --------------------------------------------------------------------------
+   FULL 100% WIDTH LAYOUT OVERRIDES FOR MY TOOLS / MY TOYS
+   -------------------------------------------------------------------------- */
+.md-main__inner:has(.arcade-toys-container),
+.md-main__inner:has(.book-showcase-wrapper),
+.md-main__inner:has(.book-reader-wrapper) {
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+[data-md-component="content"]:has(.arcade-toys-container),
+[data-md-component="content"]:has(.book-showcase-wrapper),
+[data-md-component="content"]:has(.book-reader-wrapper) {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Fallback for browsers without :has selector */
+.arcade-toys-container,
+.book-showcase-wrapper,
+.book-reader-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. 8-BIT RETRO ARCADE "MY TOYS" HUB STYLES
+   -------------------------------------------------------------------------- */
+.arcade-toys-container {
+  padding: 40px 24px 80px 24px;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Press Start 2P', monospace;
+  background: #090a10;
+  border-radius: 0;
+  border: 4px solid #1e293b;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 40px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+}
+
+/* CRT Scanline Effect Overlay */
+.arcade-toys-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.arcade-hero-banner {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 36px 20px;
+  background: radial-gradient(circle at center, #1e1b4b 0%, #090a10 100%);
+  border: 4px solid #f59e0b;
+  box-shadow: 6px 6px 0px #000000, 0 0 20px rgba(245, 158, 11, 0.4);
+  position: relative;
+}
+
+.arcade-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: #22d3ee;
+  background: rgba(6, 182, 212, 0.15);
+  border: 2px solid #22d3ee;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+  letter-spacing: 0.1em;
+}
+
+.arcade-title {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 2.4rem;
+  color: #fbbf24;
+  text-shadow: 4px 4px 0px #78350f, 0 0 12px rgba(251, 191, 36, 0.8);
+  margin: 0 0 14px 0;
+  letter-spacing: 0.05em;
+}
+
+.arcade-subtitle {
+  color: #a78bfa;
+  font-size: 0.75rem;
+  margin: 0;
+  animation: arcade-blink 1.2s infinite;
+}
+
+@keyframes arcade-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.2; }
+}
+
+.arcade-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.arcade-card {
+  background: #0f172a;
+  border: 4px solid #f59e0b;
+  padding: 32px 28px;
+  box-shadow: 8px 8px 0px #000000, 0 0 25px rgba(245, 158, 11, 0.25);
+  position: relative;
+  max-width: 520px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.arcade-card-badge {
+  font-size: 0.6rem;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  padding: 4px 8px;
+  display: inline-block;
+  margin-bottom: 16px;
+  border: 1px solid #f59e0b;
+}
+
+.arcade-card-icon {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.arcade-card-title {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin: 0 0 14px 0;
+  letter-spacing: 0.05em;
+}
+
+.arcade-card-desc {
+  font-family: var(--md-text-font-family, "IBM Plex Mono", monospace);
+  font-size: 0.88rem;
+  color: #cbd5e1;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.arcade-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.pixel-tag {
+  font-size: 0.58rem;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+  padding: 4px 8px;
+}
+
+.arcade-btn {
+  display: block;
+  text-align: center;
+  background: #f59e0b;
+  color: #000000 !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 0.85rem;
+  padding: 14px 20px;
+  text-decoration: none !important;
+  box-shadow: 4px 4px 0px #78350f;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.arcade-btn:hover {
+  background: #fbbf24;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #78350f, 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+.arcade-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #78350f;
+}
+
+/* Pixel Corner Accents */
+.arcade-card-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+}
+
+.arcade-card-corner.top-left { top: -4px; left: -4px; }
+.arcade-card-corner.top-right { top: -4px; right: -4px; }
+.arcade-card-corner.bottom-left { bottom: -4px; left: -4px; }
+.arcade-card-corner.bottom-right { bottom: -4px; right: -4px; }
+
+
+/* --------------------------------------------------------------------------
+   2. 3D ROTATABLE 360 BOOK SHOWCASE STYLES
+   -------------------------------------------------------------------------- */
+.book-showcase-wrapper {
+  min-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  user-select: none;
+}
+
+.showcase-stage {
+  perspective: 1200px;
+  width: 320px;
+  height: 440px;
+  margin-bottom: 36px;
+  cursor: grab;
+}
+
+.showcase-stage:active {
+  cursor: grabbing;
+}
+
+.book-3d-object {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(-25deg) rotateX(15deg);
+  transition: transform 0.1s linear;
+}
+
+.b3d-face-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #1e293b 100%);
+  border-radius: 8px 12px 12px 8px;
+  border: 3px solid rgba(245, 158, 11, 0.4);
+  transform: translateZ(20px);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.b3d-face-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #0f172a;
+  border-radius: 12px 8px 8px 12px;
+  border: 3px solid rgba(245, 158, 11, 0.3);
+  transform: rotateY(180deg) translateZ(20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.b3d-face-spine {
+  position: absolute;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(180deg, #1e1b4b, #0f172a, #1e1b4b);
+  border: 2px solid rgba(245, 158, 11, 0.4);
+  left: -20px;
+  transform: rotateY(-90deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  color: #fbbf24;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+
+.b3d-face-right {
+  position: absolute;
+  width: 40px;
+  height: 96%;
+  top: 2%;
+  right: -20px;
+  transform: rotateY(90deg);
+  background: repeating-linear-gradient(
+    90deg,
+    #fffbf0 0px,
+    #f3eedd 2px,
+    #e2dac6 4px
+  );
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  border-radius: 2px;
+}
+
+.showcase-action-group {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.open-reader-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000000 !important;
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.open-reader-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 15px 35px rgba(245, 158, 11, 0.6);
+}
+
+.auto-rotate-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auto-rotate-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   3. SLEEK SLIM PAGEFLIP 3D BOOK STYLES
+   -------------------------------------------------------------------------- */
+.book-reader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 60px 0;
+  user-select: none;
+}
+
+.book-hud-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 880px;
+  height: 44px;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #ffffff;
+  padding: 0 14px;
+  border-radius: 9999px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.hud-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hud-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  line-height: 1.2;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.hud-btn:hover {
+  background: #f59e0b;
+  color: #000000;
+  border-color: #f59e0b;
+}
+
+select.hud-btn {
+  padding-right: 20px;
+  max-width: 170px;
+  outline: none;
+  background-color: #1e293b;
+}
+
+.hud-page-indicator {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.flipbook-container {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background: #0f172a;
+}
+
+.page {
+  padding: 0;
+  background-color: #fcfbf7;
+  color: #1e293b;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+}
+
+.page-content {
+  width: 100%;
+  height: 100%;
+  padding: 32px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(circle at center, #ffffff 0%, #fbf9f2 100%);
+  position: relative;
+}
+
+.page-cover {
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 60%, #1e293b 100%) !important;
+  color: #ffffff !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 44px 28px !important;
+  border: 4px solid rgba(245, 158, 11, 0.4);
+  box-sizing: border-box;
+}
+
+.page-cover-back {
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cover-gold-title {
+  color: #fbbf24;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.cover-subtitle {
+  color: #cbd5e1;
+  font-size: 0.82rem;
+}
+
+.cover-emblem {
+  font-size: 3.5rem;
+  margin: 24px 0;
+  filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.5));
+}
+
+.cover-author {
+  color: #94a3b8;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 14px;
+  width: 100%;
+}
+
+.page-header-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #d97706;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.page-chapter-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0 0 12px 0;
+}
+
+.page-text-body {
+  font-size: 0.8rem;
+  line-height: 1.68;
+  color: #334155;
+  flex-grow: 1;
+}
+
+.page-text-body p {
+  margin-bottom: 10px;
+}
+
+.page-text-body blockquote {
+  border-left: 3px solid #f59e0b;
+  background: #fef3c7;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-style: italic;
+  font-size: 0.76rem;
+  color: #78350f;
+  border-radius: 0 6px 6px 0;
+}
+
+.page-footer-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-align: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 6px;
+  margin-top: 10px;
+}
+
+/* Responsive Rules */
+@media (max-width: 768px) {
+  .arcade-title {
+    font-size: 1.6rem;
+  }
+  .book-hud-toolbar {
+    height: auto;
+    padding: 8px 10px;
+    border-radius: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .page-content {
+    padding: 24px 20px;
+  }
+  .cover-gold-title {
+    font-size: 1.4rem;
+  }
+  .page-chapter-title {
+    font-size: 1.05rem;
+  }
+  .showcase-stage {
+    width: 260px;
+    height: 380px;
+  }
+}

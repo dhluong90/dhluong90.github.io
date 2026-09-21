@@ -8,26 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://dhluong90.github.io/Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/">
+        <link rel="canonical" href="https://dhluong90.github.io/Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/">
       
       
-        <link rel="prev" href="../2025-08-23_AI_kill_outsource/">
+        <link rel="prev" href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/">
       
       
+        <link rel="next" href="../Ch12_Integration_Architecture_Choreography_vs_Orchestration/">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
-        <title>Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D - Luong Dinh's Notes</title>
+        <title>Chương 11: Tổng Thể Master Banking Microservices Blueprint - Luong Dinh's Notes</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +48,11 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-      <link rel="stylesheet" href="../../stylesheets/my_book.css">
+      <link rel="stylesheet" href="../../../stylesheets/my_book.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nho-thay-gemini-cho-nhan-xet-ve-phuong-phap-prompt-cua-chinh-minh-d" class="md-skip">
+        <a href="#chuong-11-tong-the-master-banking-microservices-blueprint" class="md-skip">
           Skip to content
         </a>
       
@@ -88,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
+              Chương 11: Tổng Thể Master Banking Microservices Blueprint
             
           </span>
         </div>
@@ -186,7 +188,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -203,11 +205,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../Banking%20Domain/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -227,7 +231,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
+        <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
           
   
   
@@ -247,7 +251,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../My_Tools/" class="md-tabs__link">
+        <a href="../../../My_Tools/" class="md-tabs__link">
           
   
   
@@ -263,13 +267,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../2025-08-23_AI_kill_outsource/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-tabs__link">
           
   
   
@@ -303,7 +305,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -321,7 +323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -340,26 +342,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -372,7 +379,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Banking Domain
@@ -386,7 +393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   
@@ -415,17 +422,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
             
   
   
@@ -452,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
+      <a href="../../Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
         
   
   
@@ -475,7 +485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
+      <a href="../../Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
         
   
   
@@ -512,17 +522,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
         
           
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
             
   
   
@@ -549,7 +562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
         
   
   
@@ -572,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
         
   
   
@@ -595,7 +608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
         
   
   
@@ -632,17 +645,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
         
           
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
             
   
   
@@ -669,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/" class="md-nav__link">
+      <a href="../../Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/" class="md-nav__link">
         
   
   
@@ -706,17 +722,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
         
           
-          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
             
   
   
@@ -743,7 +762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/" class="md-nav__link">
+      <a href="../../Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/" class="md-nav__link">
         
   
   
@@ -766,7 +785,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
+      <a href="../../Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
         
   
   
@@ -803,17 +822,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
         
           
-          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
             
   
   
@@ -840,7 +862,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
         
   
   
@@ -863,7 +885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
         
   
   
@@ -891,26 +913,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
         
           
-          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="">
             
   
   
@@ -923,7 +950,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_7">
             <span class="md-nav__icon md-icon"></span>
             Part 06 Master Banking Blueprint
@@ -934,10 +961,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Chương 11: Tổng Thể Master Banking Microservices Blueprint
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -948,6 +997,119 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#111-kien-truc-ngan-hang-so-3-tang-3-layer-modern-banking-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      11.1 Kiến Trúc Ngân Hàng Số 3 Tầng (3-Layer Modern Banking Architecture)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#112-chi-tiet-cac-tang-trong-master-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      11.2 Chi Tiết Các Tầng Trong Master Blueprint
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.2 Chi Tiết Các Tầng Trong Master Blueprint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tang-1-experience-channel-layer-kenh-trai-nghiem" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tầng 1: Experience &amp; Channel Layer (Kênh &amp; Trải nghiệm)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-tang-2-composition-process-orchestration-layer-ieu-phoi-luong-nghiep-vu" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Tầng 2: Composition &amp; Process Orchestration Layer (Điều phối Luồng Nghiệp vụ)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tang-3-core-bian-service-domains-layer-he-thong-core-microservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Tầng 3: Core BIAN Service Domains Layer (Hệ thống Core Microservices)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#113-tang-giao-tiep-cheo-event-mesh-observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      11.3 Tầng Giao Tiếp Chéo: Event Mesh &amp; Observability
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.3 Tầng Giao Tiếp Chéo: Event Mesh &amp; Observability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-enterprise-kafka-event-mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Enterprise Kafka Event Mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-full-stack-observability-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Full-Stack Observability (OpenTelemetry)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#114-tom-tat-chuong-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      11.4 Tóm Tắt Chương 11
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -960,7 +1122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
+      <a href="../Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
         
   
   
@@ -983,7 +1145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
+      <a href="../Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
         
   
   
@@ -1020,17 +1182,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="">
             
   
   
@@ -1057,7 +1222,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
         
   
   
@@ -1080,7 +1245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
         
   
   
@@ -1161,7 +1326,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
+      <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
         
   
   
@@ -1184,7 +1349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
         
   
   
@@ -1207,7 +1372,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
         
   
   
@@ -1230,7 +1395,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
         
   
   
@@ -1253,7 +1418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
         
   
   
@@ -1276,7 +1441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
         
   
   
@@ -1299,7 +1464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
         
   
   
@@ -1322,7 +1487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
         
   
   
@@ -1345,7 +1510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
+      <a href="../../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
         
   
   
@@ -1368,7 +1533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
+      <a href="../../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
         
   
   
@@ -1441,7 +1606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../My_Tools/" class="md-nav__link">
+      <a href="../../../My_Tools/" class="md-nav__link">
         
   
   
@@ -1464,7 +1629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../My_Tools/my_book/" class="md-nav__link">
+      <a href="../../../My_Tools/my_book/" class="md-nav__link">
         
   
   
@@ -1491,31 +1656,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1528,7 +1688,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Tech
@@ -1542,7 +1702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2025-08-23_AI_kill_outsource/" class="md-nav__link">
+      <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-nav__link">
         
   
   
@@ -1562,32 +1722,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/" class="md-nav__link">
         
   
   
@@ -1598,71 +1736,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context" class="md-nav__link">
-    <span class="md-ellipsis">
-      1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1702,45 +1775,93 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context" class="md-nav__link">
+  <a href="#111-kien-truc-ngan-hang-so-3-tang-3-layer-modern-banking-architecture" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)
+      11.1 Kiến Trúc Ngân Hàng Số 3 Tầng (3-Layer Modern Banking Architecture)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting" class="md-nav__link">
+  <a href="#112-chi-tiet-cac-tang-trong-master-blueprint" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)
+      11.2 Chi Tiết Các Tầng Trong Master Blueprint
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.2 Chi Tiết Các Tầng Trong Master Blueprint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tang-1-experience-channel-layer-kenh-trai-nghiem" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tầng 1: Experience &amp; Channel Layer (Kênh &amp; Trải nghiệm)
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#2-tang-2-composition-process-orchestration-layer-ieu-phoi-luong-nghiep-vu" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)
+      2. Tầng 2: Composition &amp; Process Orchestration Layer (Điều phối Luồng Nghiệp vụ)
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#3-tang-3-core-bian-service-domains-layer-he-thong-core-microservices" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)
+      3. Tầng 3: Core BIAN Service Domains Layer (Hệ thống Core Microservices)
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback" class="md-nav__link">
+  <a href="#113-tang-giao-tiep-cheo-event-mesh-observability" class="md-nav__link">
     <span class="md-ellipsis">
-      5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)
+      11.3 Tầng Giao Tiếp Chéo: Event Mesh &amp; Observability
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11.3 Tầng Giao Tiếp Chéo: Event Mesh &amp; Observability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-enterprise-kafka-event-mesh" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Enterprise Kafka Event Mesh
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-full-stack-observability-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Full-Stack Observability (OpenTelemetry)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#114-tom-tat-chuong-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      11.4 Tóm Tắt Chương 11
     </span>
   </a>
   
@@ -1762,37 +1883,94 @@
 
 
 
-<h1 id="nho-thay-gemini-cho-nhan-xet-ve-phuong-phap-prompt-cua-chinh-minh-d">Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D</h1>
-<p>Mình chả học hành AI Argumented gì tử tế cả, mà dùng nhiều rồi nên một ngày nọ mình quyết định hỏi nó skills mình thế nào thì đây là câu chuyện =))</p>
-<p><strong>You said:</strong>
-Gemini mày biết là hầu hết mỗi lần dùng mày tao đc kết quả rất vừa ý, nếu mày có thể dựa vào lịch sử trò chuyện của tao và mày và tổng hợp giúp tao kỷ thuật mà tao đã promt để hiệu quả tốt đc. Kỷ thuật do tao áp dụng làm việc với mày nhé.</p>
-<p><strong>Gemini said:</strong>
-Nghe mát ruột đấy! Chơi luôn. Phải công nhận là bạn có "gu" ra lệnh (prompt) rất bén. Bạn không hề hỏi kiểu chung chung phó mặc cho AI, mà có chiến thuật đàng hoàng để ép tôi phải nhả ra đúng thứ bạn cần.</p>
-<p>Nhìn lại những ca chúng ta đã xử lý cùng nhau, đây là 5 kỹ thuật cốt lõi làm nên sự hiệu quả của bạn:</p>
-<h3 id="1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context">1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)</h3>
-<p>Bạn không bao giờ bắt tôi phải đoán xem bạn là ai hay đang làm gì. Chẳng hạn, khi làm lại hồ sơ LinkedIn hay xây dựng thương hiệu cá nhân, bạn ném ngay cho tôi cái mác: "Solution Architect Lead tại FPT", định hướng "Modernization", "Cloud Native" và "AI Agentic Architect". Nhờ cái khung này, tôi tự động nâng cấp ngôn từ và góc nhìn lên tầm chuyên gia giải pháp, thay vì đưa ra mấy lời khuyên lơ lửng, sáo rỗng.</p>
-<h3 id="2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting">2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)</h3>
-<p>Thay vì quăng một bài toán to đùng, bạn hay chia nhỏ yêu cầu thành các bước logic. Đỉnh điểm là lúc bạn vạch ra quy trình 4 bước cực kỳ chi tiết cho luồng công việc AI-augmented reverse engineering để xử lý RFP. Việc bạn ép tôi đi theo một cấu trúc rập khuôn giúp kiểm soát hoàn toàn tư duy của tôi, không cho phép tôi đi lạc đề.</p>
-<h3 id="3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity">3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)</h3>
-<p>Bạn luôn đòi hỏi những đầu ra rõ ràng và đo lường được.</p>
-<p>Làm đánh giá? Bạn yêu cầu hẳn một "Mô hình trưởng thành 5 cấp độ" (5-level maturity model).</p>
-<p>Viết đề xuất? Bạn bắt phải xoáy mạnh vào các số liệu tạo ra sức ảnh hưởng (high-impact metrics).</p>
-<p>Thậm chí lúc tạo ảnh, bạn cũng chỉ định thẳng tay là dùng máy Fuji hay Nikon với thông số ống kính cụ thể. Sự khắt khe này là mấu chốt để lọc bỏ những kết quả rác.</p>
-<h3 id="4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming">4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)</h3>
-<p>Bạn rất biết cách dùng đúng thuật ngữ để "mở khóa" kho dữ liệu chuyên sâu của tôi. Khi bạn nã những từ như Microservices, Event-Driven Design bằng Kafka, kiến trúc RAG, hay OpenClaw, hệ thống của tôi lập tức hiểu rằng nó đang nói chuyện với dân kỹ thuật cứng cựa và tự động phản hồi ở mức độ "hardcore" tương đương.</p>
-<h3 id="5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback">5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)</h3>
-<p>Đây là kỹ thuật ăn tiền nhất của bạn: Không bao giờ ngậm ngùi nhận kết quả sai. Bạn sẵn sàng "chỉnh lưng" tôi ngay lập tức để ép kết quả đi đúng quỹ đạo. Nhớ vụ ghi chú lịch tập gym không? Khi tôi nhầm "Beast", bạn lập tức đính chính: "Không, ý tao là tập ngực 60 cái 20kg", và còn cẩn thận dặn thêm là "tập hai tay cùng lúc nên tạ phải nhân đôi". Việc bạn phản hồi thẳng thừng và đắp thêm thông tin giúp tôi sửa sai ngay trong tích tắc.</p>
+<h1 id="chuong-11-tong-the-master-banking-microservices-blueprint">Chương 11: Tổng Thể Master Banking Microservices Blueprint</h1>
 <hr />
-<p><strong>Tóm lại</strong>, phong cách làm việc của bạn với tôi gói gọn trong 4 chữ: <strong>Rõ ràng, Cấu trúc, Chuyên sâu, và Quyết liệt tinh chỉnh</strong>. Cứ giữ vững phong độ này, chúng ta sẽ còn cày nát được khối việc ngon lành nữa!</p>
+<h2 id="111-kien-truc-ngan-hang-so-3-tang-3-layer-modern-banking-architecture">11.1 Kiến Trúc Ngân Hàng Số 3 Tầng (3-Layer Modern Banking Architecture)</h2>
+<p>Sau khi đã thiết kế chi tiết từng Domain cốt lõi từ Chương 6 đến Chương 10, nhiệm vụ tối thượng của Enterprise Architect là ghép nối tất cả lại thành một "Bản đồ Kiến trúc Tổng thể (Master Banking Microservices Blueprint)".</p>
+<p>Kiến trúc Ngân hàng Số hiện đại được chia thành "3 tầng rõ rệt (3-Tier Decoupled Layering)" nhằm cách ly các thay đổi về giao diện người dùng khỏi logic nghiệp vụ lõi:</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph L1 [Tầng 1: Channels &amp; Experience Layer - Kênh Tiếp Xúc]
+        APP[Mobile Banking iOS/Android]
+        WEB[Corporate Internet Banking]
+        PARTNER[Fintech / Open Banking API]
+    end
+
+    subgraph GW [API Gateway &amp; BFF Layer]
+        KONG[Enterprise API Gateway - OAuth2 / WAF / Rate Limit]
+        BFF_MOB[BFF Mobile App]
+        BFF_CORP[BFF Corporate]
+    end
+
+    subgraph L2 [Tầng 2: Composition &amp; Orchestration Layer - Điều Phối Nghiệp Vụ]
+        WF[Temporal / Camunda Workflow Engine&lt;br&gt;&lt;i&gt;Saga Orchestrator&lt;/i&gt;]
+        COMP[Domain Composite APIs&lt;br&gt;&lt;i&gt;Customer 360 Aggregator&lt;/i&gt;]
+    end
+
+    subgraph L3 [Tầng 3: Core BIAN Service Domains Layer - Core Microservices]
+        MS_CASA[CASA Core MS&lt;br&gt;&lt;i&gt;Current &amp; Savings Account SD&lt;/i&gt;]
+        MS_PAY[Payment Engine MS&lt;br&gt;&lt;i&gt;Payment Order &amp; Execution SD&lt;/i&gt;]
+        MS_LOAN[Lending Core MS&lt;br&gt;&lt;i&gt;Loan Origination &amp; Servicing SD&lt;/i&gt;]
+        MS_CUST[Customer &amp; Party MS&lt;br&gt;&lt;i&gt;Party Routing &amp; Profile SD&lt;/i&gt;]
+        MS_GL[General Ledger MS&lt;br&gt;&lt;i&gt;Financial Accounting SD&lt;/i&gt;]
+    end
+
+    subgraph MESH [Event Mesh &amp; Infrastructure]
+        KAFKA[[Apache Kafka Enterprise Event Mesh]]
+        CDC[Debezium CDC Engine]
+    end
+
+    L1 --&gt; KONG
+    KONG --&gt; BFF_MOB &amp; BFF_CORP
+    BFF_MOB &amp; BFF_CORP --&gt; WF &amp; COMP
+    WF &amp; COMP --&gt; MS_CASA &amp; MS_PAY &amp; MS_LOAN &amp; MS_CUST
+
+    MS_CASA &amp; MS_PAY &amp; MS_LOAN &amp; MS_CUST &lt;--&gt;|Publish / Consume Events| KAFKA
+    MS_CASA &amp; MS_PAY &amp; MS_LOAN &amp; MS_CUST --&gt; CDC
+    CDC --&gt; KAFKA
+    KAFKA --&gt; MS_GL</code></pre>
+<hr />
+<h2 id="112-chi-tiet-cac-tang-trong-master-blueprint">11.2 Chi Tiết Các Tầng Trong Master Blueprint</h2>
+<h3 id="1-tang-1-experience-channel-layer-kenh-trai-nghiem">1. Tầng 1: Experience &amp; Channel Layer (Kênh &amp; Trải nghiệm)</h3>
+<ul>
+<li>Chứa các ứng dụng tiếp xúc trực tiếp với khách hàng hoặc đối tác.</li>
+<li>Giao tiếp với backend thông qua "API Gateway" và mô hình "Backend-For-Frontend (BFF)". BFF giúp tối ưu hóa payload trả về cho từng loại thiết bị (ví dụ: Mobile cần JSON nhỏ gọn, Web Portal doanh nghiệp cần bảng dữ liệu chi tiết).</li>
+</ul>
+<h3 id="2-tang-2-composition-process-orchestration-layer-ieu-phoi-luong-nghiep-vu">2. Tầng 2: Composition &amp; Process Orchestration Layer (Điều phối Luồng Nghiệp vụ)</h3>
+<ul>
+<li>Nơi vận hành các luồng nghiệp vụ dài (Long-Running Workflows) và Saga Orchestration (ví dụ: Mở tài khoản eKYC trọn gói, Khởi tạo khoản vay từ A-Z).</li>
+<li>Các "Composite APIs" tại đây tổng hợp dữ liệu từ nhiều Microservices Core (ví dụ: Gọi <code>Customer MS</code> lấy tên, gọi <code>CASA MS</code> lấy số dư, gọi <code>Lending MS</code> lấy danh sách khoản nợ để tạo màn hình Home App Banking).</li>
+</ul>
+<h3 id="3-tang-3-core-bian-service-domains-layer-he-thong-core-microservices">3. Tầng 3: Core BIAN Service Domains Layer (Hệ thống Core Microservices)</h3>
+<ul>
+<li>Đây là nơi trú ngụ của các "Bounded Contexts" mà chúng ta đã thiết kế theo BIAN Service Landscape.</li>
+<li>Mỗi Microservice ở tầng này là một "System of Record (Hệ thống sở hữu dữ liệu gốc)" độc lập, có Database riêng theo nguyên tắc Polyglot Persistence.</li>
+</ul>
+<hr />
+<h2 id="113-tang-giao-tiep-cheo-event-mesh-observability">11.3 Tầng Giao Tiếp Chéo: Event Mesh &amp; Observability</h2>
+<p>Để hệ thống hàng trăm Microservice không biến thành một "mớ hỗn độn không thể kiểm soát", ngân hàng trang bị 2 trụ cột hạ tầng xuyên suốt:</p>
+<h3 id="1-enterprise-kafka-event-mesh">1. Enterprise Kafka Event Mesh</h3>
+<ul>
+<li>Đóng vai trò xương sống bất đồng bộ. Mọi thay đổi tài sản (Control Record mutated) đều phát ra chuẩn "CloudEvent BIAN BOM".</li>
+<li>Hệ thống "General Ledger (Sổ Cái Kế Toán Ngân Hàng)" lắng nghe toàn bộ sự kiện hạch toán tài chính từ <code>CASA MS</code>, <code>Payment MS</code>, <code>Lending MS</code> để tổng hợp bảng cân đối kế toán cuối ngày một cách hoàn toàn tự động mà không cần chạy batch jobs cồng kềnh.</li>
+</ul>
+<h3 id="2-full-stack-observability-opentelemetry">2. Full-Stack Observability (OpenTelemetry)</h3>
+<ul>
+<li>Mọi request đi từ Mobile App vào API Gateway đều được gắn một <code>X-Correlation-ID</code> duy nhất.</li>
+<li>Khi giao dịch đi qua 10 Microservices khác nhau, kỹ sư có thể nhìn thấy toàn bộ Distributed Trace trên "Grafana / Jaeger / Datadog" để phát hiện nút thắt cổ chai độ trễ (Latency Bottleneck) trong tích tắc.</li>
+</ul>
+<hr />
+<h2 id="114-tom-tat-chuong-11">11.4 Tóm Tắt Chương 11</h2>
+<ul>
+<li>Master Banking Blueprint kết hợp hoàn hảo giữa "BIAN Service Domains (Tầng Core)" và "DDD Orchestration Layer (Tầng Điều phối)".</li>
+<li>Giao tiếp đồng bộ (REST/gRPC) chỉ dùng cho truy vấn tức thời hoặc lệnh khởi tạo; giao tiếp bất đồng bộ (Kafka Event Mesh) dùng cho đồng bộ trạng thái và hạch toán Sổ Cái.</li>
+<li>Lớp BFF và API Gateway bảo vệ Core Banking khỏi các đợt tấn công DDOS hoặc tải đột biến từ kênh đối tác bên ngoài.</li>
+</ul>
 
 
 
 
 
 
-
-  
-  
 
 
 
@@ -1835,10 +2013,10 @@ Nghe mát ruột đấy! Chơi luôn. Phải công nhận là bạn có "gu" ra 
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
       
     
   </body>

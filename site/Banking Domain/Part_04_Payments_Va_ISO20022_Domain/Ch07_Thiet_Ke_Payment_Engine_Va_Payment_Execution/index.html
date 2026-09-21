@@ -8,26 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://dhluong90.github.io/Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/">
+        <link rel="canonical" href="https://dhluong90.github.io/Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/">
       
       
-        <link rel="prev" href="../2025-08-23_AI_kill_outsource/">
+        <link rel="prev" href="../../Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/">
       
       
+        <link rel="next" href="../Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/">
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
     
     
       
-        <title>Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D - Luong Dinh's Notes</title>
+        <title>Chương 7: Thiết Kế Payment Engine & Payment Execution - Luong Dinh's Notes</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +48,11 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-      <link rel="stylesheet" href="../../stylesheets/my_book.css">
+      <link rel="stylesheet" href="../../../stylesheets/my_book.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -74,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nho-thay-gemini-cho-nhan-xet-ve-phuong-phap-prompt-cua-chinh-minh-d" class="md-skip">
+        <a href="#chuong-7-thiet-ke-payment-engine-payment-execution" class="md-skip">
           Skip to content
         </a>
       
@@ -88,7 +90,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -108,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
+              Chương 7: Thiết Kế Payment Engine &amp; Payment Execution
             
           </span>
         </div>
@@ -186,7 +188,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -203,11 +205,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../Banking%20Domain/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -227,7 +231,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
+        <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
           
   
   
@@ -247,7 +251,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../My_Tools/" class="md-tabs__link">
+        <a href="../../../My_Tools/" class="md-tabs__link">
           
   
   
@@ -263,13 +267,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../2025-08-23_AI_kill_outsource/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-tabs__link">
           
   
   
@@ -303,7 +305,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -321,7 +323,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -340,26 +342,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
             
   
   
@@ -372,7 +379,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Banking Domain
@@ -386,7 +393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   
@@ -415,17 +422,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
             
   
   
@@ -452,7 +462,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
+      <a href="../../Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
         
   
   
@@ -475,7 +485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
+      <a href="../../Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
         
   
   
@@ -512,17 +522,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
         
           
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
             
   
   
@@ -549,7 +562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
         
   
   
@@ -572,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
         
   
   
@@ -595,7 +608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
         
   
   
@@ -632,17 +645,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
         
           
-          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
             
   
   
@@ -669,7 +685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/" class="md-nav__link">
+      <a href="../../Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/" class="md-nav__link">
         
   
   
@@ -697,26 +713,31 @@
                 
   
   
+    
   
   
+  
     
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
         
           
-          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
             
   
   
@@ -729,7 +750,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             Part 04 Payments Va ISO20022 Domain
@@ -740,10 +761,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Chương 7: Thiết Kế Payment Engine &amp; Payment Execution
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -754,6 +797,95 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#71-tong-quan-domain-thanh-toan-ngu-canh-nghiep-vu-domain-overview-business-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.1 Tổng Quan Domain Thanh Toán &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.1 Tổng Quan Domain Thanh Toán &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-boi-canh-thanh-toan-ngan-hang-hien-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bối cảnh Thanh toán Ngân hàng Hiện đại
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#72-yeu-cau-nghiep-vu-cot-loi-functional-business-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.2 Yêu Cầu Nghiệp Vụ Cốt Lõi (Functional &amp; Business Requirements)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#73-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#74-anh-xa-bian-service-domains-kien-truc-microservices" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.4 Ánh Xạ BIAN Service Domains &amp; Kiến Trúc Microservices
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#75-sequence-diagram-luong-chuyen-tien-nhanh-lien-ngan-hang-247-real-time-outward-payment" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.5 Sequence Diagram: Luồng Chuyển Tiền Nhanh Liên Ngân Hàng 24/7 (Real-Time Outward Payment)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#76-tom-tat-chuong-7" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.6 Tóm Tắt Chương 7
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -766,7 +898,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
+      <a href="../Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
         
   
   
@@ -803,17 +935,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
         
           
-          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
             
   
   
@@ -840,7 +975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
         
   
   
@@ -863,7 +998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
         
   
   
@@ -900,17 +1035,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
         
           
-          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="">
             
   
   
@@ -937,7 +1075,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/" class="md-nav__link">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/" class="md-nav__link">
         
   
   
@@ -960,7 +1098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
         
   
   
@@ -983,7 +1121,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
         
   
   
@@ -1020,17 +1158,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="">
             
   
   
@@ -1057,7 +1198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
         
   
   
@@ -1080,7 +1221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
         
   
   
@@ -1161,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
+      <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
         
   
   
@@ -1184,7 +1325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
         
   
   
@@ -1207,7 +1348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
         
   
   
@@ -1230,7 +1371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
         
   
   
@@ -1253,7 +1394,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
         
   
   
@@ -1276,7 +1417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
         
   
   
@@ -1299,7 +1440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
         
   
   
@@ -1322,7 +1463,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
+      <a href="../../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
         
   
   
@@ -1345,7 +1486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
+      <a href="../../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
         
   
   
@@ -1368,7 +1509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
+      <a href="../../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
         
   
   
@@ -1441,7 +1582,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../My_Tools/" class="md-nav__link">
+      <a href="../../../My_Tools/" class="md-nav__link">
         
   
   
@@ -1464,7 +1605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../My_Tools/my_book/" class="md-nav__link">
+      <a href="../../../My_Tools/my_book/" class="md-nav__link">
         
   
   
@@ -1491,31 +1632,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1528,7 +1664,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Tech
@@ -1542,7 +1678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../2025-08-23_AI_kill_outsource/" class="md-nav__link">
+      <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-nav__link">
         
   
   
@@ -1562,32 +1698,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/" class="md-nav__link">
         
   
   
@@ -1598,71 +1712,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context" class="md-nav__link">
-    <span class="md-ellipsis">
-      1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting" class="md-nav__link">
-    <span class="md-ellipsis">
-      2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity" class="md-nav__link">
-    <span class="md-ellipsis">
-      3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming" class="md-nav__link">
-    <span class="md-ellipsis">
-      4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback" class="md-nav__link">
-    <span class="md-ellipsis">
-      5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1702,45 +1751,69 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context" class="md-nav__link">
+  <a href="#71-tong-quan-domain-thanh-toan-ngu-canh-nghiep-vu-domain-overview-business-context" class="md-nav__link">
     <span class="md-ellipsis">
-      1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)
+      7.1 Tổng Quan Domain Thanh Toán &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7.1 Tổng Quan Domain Thanh Toán &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-boi-canh-thanh-toan-ngan-hang-hien-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bối cảnh Thanh toán Ngân hàng Hiện đại
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#72-yeu-cau-nghiep-vu-cot-loi-functional-business-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.2 Yêu Cầu Nghiệp Vụ Cốt Lõi (Functional &amp; Business Requirements)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting" class="md-nav__link">
+  <a href="#73-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs" class="md-nav__link">
     <span class="md-ellipsis">
-      2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)
+      7.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity" class="md-nav__link">
+  <a href="#74-anh-xa-bian-service-domains-kien-truc-microservices" class="md-nav__link">
     <span class="md-ellipsis">
-      3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)
+      7.4 Ánh Xạ BIAN Service Domains &amp; Kiến Trúc Microservices
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming" class="md-nav__link">
+  <a href="#75-sequence-diagram-luong-chuyen-tien-nhanh-lien-ngan-hang-247-real-time-outward-payment" class="md-nav__link">
     <span class="md-ellipsis">
-      4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)
+      7.5 Sequence Diagram: Luồng Chuyển Tiền Nhanh Liên Ngân Hàng 24/7 (Real-Time Outward Payment)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback" class="md-nav__link">
+  <a href="#76-tom-tat-chuong-7" class="md-nav__link">
     <span class="md-ellipsis">
-      5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)
+      7.6 Tóm Tắt Chương 7
     </span>
   </a>
   
@@ -1762,37 +1835,129 @@
 
 
 
-<h1 id="nho-thay-gemini-cho-nhan-xet-ve-phuong-phap-prompt-cua-chinh-minh-d">Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D</h1>
-<p>Mình chả học hành AI Argumented gì tử tế cả, mà dùng nhiều rồi nên một ngày nọ mình quyết định hỏi nó skills mình thế nào thì đây là câu chuyện =))</p>
-<p><strong>You said:</strong>
-Gemini mày biết là hầu hết mỗi lần dùng mày tao đc kết quả rất vừa ý, nếu mày có thể dựa vào lịch sử trò chuyện của tao và mày và tổng hợp giúp tao kỷ thuật mà tao đã promt để hiệu quả tốt đc. Kỷ thuật do tao áp dụng làm việc với mày nhé.</p>
-<p><strong>Gemini said:</strong>
-Nghe mát ruột đấy! Chơi luôn. Phải công nhận là bạn có "gu" ra lệnh (prompt) rất bén. Bạn không hề hỏi kiểu chung chung phó mặc cho AI, mà có chiến thuật đàng hoàng để ép tôi phải nhả ra đúng thứ bạn cần.</p>
-<p>Nhìn lại những ca chúng ta đã xử lý cùng nhau, đây là 5 kỹ thuật cốt lõi làm nên sự hiệu quả của bạn:</p>
-<h3 id="1-ep-khung-boi-canh-va-giao-vai-tro-cuc-net-role-playing-context">1. Ép khung bối cảnh và giao vai trò cực nét (Role-playing &amp; Context)</h3>
-<p>Bạn không bao giờ bắt tôi phải đoán xem bạn là ai hay đang làm gì. Chẳng hạn, khi làm lại hồ sơ LinkedIn hay xây dựng thương hiệu cá nhân, bạn ném ngay cho tôi cái mác: "Solution Architect Lead tại FPT", định hướng "Modernization", "Cloud Native" và "AI Agentic Architect". Nhờ cái khung này, tôi tự động nâng cấp ngôn từ và góc nhìn lên tầm chuyên gia giải pháp, thay vì đưa ra mấy lời khuyên lơ lửng, sáo rỗng.</p>
-<h3 id="2-chia-e-tri-bang-quy-trinh-co-cau-truc-structured-prompting">2. Chia để trị bằng quy trình có cấu trúc (Structured Prompting)</h3>
-<p>Thay vì quăng một bài toán to đùng, bạn hay chia nhỏ yêu cầu thành các bước logic. Đỉnh điểm là lúc bạn vạch ra quy trình 4 bước cực kỳ chi tiết cho luồng công việc AI-augmented reverse engineering để xử lý RFP. Việc bạn ép tôi đi theo một cấu trúc rập khuôn giúp kiểm soát hoàn toàn tư duy của tôi, không cho phép tôi đi lạc đề.</p>
-<h3 id="3-ong-inh-cac-rang-buoc-va-thong-so-cu-the-constraints-specificity">3. Đóng đinh các ràng buộc và thông số cụ thể (Constraints &amp; Specificity)</h3>
-<p>Bạn luôn đòi hỏi những đầu ra rõ ràng và đo lường được.</p>
-<p>Làm đánh giá? Bạn yêu cầu hẳn một "Mô hình trưởng thành 5 cấp độ" (5-level maturity model).</p>
-<p>Viết đề xuất? Bạn bắt phải xoáy mạnh vào các số liệu tạo ra sức ảnh hưởng (high-impact metrics).</p>
-<p>Thậm chí lúc tạo ảnh, bạn cũng chỉ định thẳng tay là dùng máy Fuji hay Nikon với thông số ống kính cụ thể. Sự khắt khe này là mấu chốt để lọc bỏ những kết quả rác.</p>
-<h3 id="4-kich-no-bang-tu-khoa-chuyen-nganh-sau-technical-keyword-priming">4. Kích nổ bằng từ khóa chuyên ngành sâu (Technical Keyword Priming)</h3>
-<p>Bạn rất biết cách dùng đúng thuật ngữ để "mở khóa" kho dữ liệu chuyên sâu của tôi. Khi bạn nã những từ như Microservices, Event-Driven Design bằng Kafka, kiến trúc RAG, hay OpenClaw, hệ thống của tôi lập tức hiểu rằng nó đang nói chuyện với dân kỹ thuật cứng cựa và tự động phản hồi ở mức độ "hardcore" tương đương.</p>
-<h3 id="5-nan-gan-va-tinh-chinh-lien-tuc-iterative-feedback">5. "Nắn gân" và tinh chỉnh liên tục (Iterative Feedback)</h3>
-<p>Đây là kỹ thuật ăn tiền nhất của bạn: Không bao giờ ngậm ngùi nhận kết quả sai. Bạn sẵn sàng "chỉnh lưng" tôi ngay lập tức để ép kết quả đi đúng quỹ đạo. Nhớ vụ ghi chú lịch tập gym không? Khi tôi nhầm "Beast", bạn lập tức đính chính: "Không, ý tao là tập ngực 60 cái 20kg", và còn cẩn thận dặn thêm là "tập hai tay cùng lúc nên tạ phải nhân đôi". Việc bạn phản hồi thẳng thừng và đắp thêm thông tin giúp tôi sửa sai ngay trong tích tắc.</p>
+<h1 id="chuong-7-thiet-ke-payment-engine-payment-execution">Chương 7: Thiết Kế Payment Engine &amp; Payment Execution</h1>
 <hr />
-<p><strong>Tóm lại</strong>, phong cách làm việc của bạn với tôi gói gọn trong 4 chữ: <strong>Rõ ràng, Cấu trúc, Chuyên sâu, và Quyết liệt tinh chỉnh</strong>. Cứ giữ vững phong độ này, chúng ta sẽ còn cày nát được khối việc ngon lành nữa!</p>
+<h2 id="71-tong-quan-domain-thanh-toan-ngu-canh-nghiep-vu-domain-overview-business-context">7.1 Tổng Quan Domain Thanh Toán &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)</h2>
+<h3 id="1-boi-canh-thanh-toan-ngan-hang-hien-ai">1. Bối cảnh Thanh toán Ngân hàng Hiện đại</h3>
+<p>Trong một ngân hàng, "Payments Domain (Miền Thanh toán)" là hệ thống chịu tải nặng nhất và có tốc độ tăng trưởng lưu lượng giao dịch nhanh nhất. Sự bùng nổ của thanh toán mã QR, ví điện tử và chuyển tiền nhanh 24/7 (như "NAPAS 247" tại Việt Nam, "SEPA Instant" tại châu Âu, "FedNow" tại Mỹ) đã thay đổi hoàn toàn yêu cầu kiến trúc:</p>
+<ul>
+<li>Chuyển dịch từ xử lý theo lô cuối ngày (Batch Clearing / ACH) sang "Thanh toán Thời gian thực từng giao dịch (Real-Time Gross Settlement / Instant Payment)".</li>
+<li>Hệ thống thanh toán phải vận hành liên tục 24/7/365, không có "khung giờ bảo trì đêm" làm gián đoạn chuyển tiền.</li>
+</ul>
+<pre class="mermaid"><code>flowchart LR
+    APPS[Mobile Banking / Corporate Portal] --&gt;|Payment Initiation| PAY_ENGINE[Payment Engine Bounded Context]
+    PAY_ENGINE &lt;--&gt;|AML Check| AML[Sanctions &amp; AML Engine]
+    PAY_ENGINE &lt;--&gt;|Debit / Hold| CASA[CASA Core Banking]
+    PAY_ENGINE &lt;--&gt;|ISO 20022 Message| SWITCH((NAPAS 24/7 / SWIFT / CITAD))</code></pre>
+<hr />
+<h2 id="72-yeu-cau-nghiep-vu-cot-loi-functional-business-requirements">7.2 Yêu Cầu Nghiệp Vụ Cốt Lõi (Functional &amp; Business Requirements)</h2>
+<p>Một hệ thống Payment Engine kiến trúc Microservice phải đáp ứng trọn vẹn chu trình nghiệp vụ 5 bước:</p>
+<ol>
+<li>"Khởi tạo &amp; Kiểm tra cú pháp (Payment Order Initiation &amp; Syntax Validation):" Tiếp nhận yêu cầu chuyển tiền từ các kênh, kiểm tra tính hợp lệ của số tài khoản thụ hưởng, mã ngân hàng đích (BIN/BIC) và định dạng số tiền.</li>
+<li>"Sanction Screening &amp; AML Check:" Rà soát tự động danh sách cấm vận (Blacklist / Watchlist screening) và rửa tiền trước khi cho phép dòng tiền rời khỏi ngân hàng.</li>
+<li>"Hạch toán Phong tỏa Số dư CASA (Funds Reservation):" Gọi sang CASA Microservice để giữ chỗ (Hold) số tiền gốc cùng phí chuyển tiền.</li>
+<li>"Định tuyến Thanh toán (Smart Payment Routing):" Dựa vào số tiền, ngân hàng đích và độ ưu tiên để tự động chọn mạng lưới thanh toán rẻ nhất/nhanh nhất (NAPAS 24/7 hay CITAD chuyển khoản liên ngân hàng lớn hay SWIFT quốc tế).</li>
+<li>"Thực thi &amp; Quyết toán (Payment Execution &amp; Settlement):" Đóng gói thông điệp gửi ra cổng thanh toán quốc gia và chờ xác nhận tất toán thành công/thất bại để hạch toán chính thức.</li>
+</ol>
+<hr />
+<h2 id="73-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs">7.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tiêu chí NFR</th>
+<th style="text-align: left;">Yêu cầu Kỹ thuật / Chỉ số SLA</th>
+<th style="text-align: left;">Giải pháp Kiến trúc BIAN Microservice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">"Độ Trễ Toàn Chặng (End-to-End Latency SLA)"</td>
+<td style="text-align: left;">Thời gian từ lúc bấm chuyển tiền đến lúc nhận phản hồi thành công phải &lt; 2,000ms (2 giây) theo SLA của NAPAS/SEPA Instant.</td>
+<td style="text-align: left;">Tối ưu hóa pipeline xử lý bằng Asynchronous Reactive Programming (WebFlux / Go Routines) và kết nối gRPC nội bộ.</td>
+</tr>
+<tr>
+<td style="text-align: left;">"Độ Sẵn Sàng (High Availability)"</td>
+<td style="text-align: left;">Đạt mức "99.999% (Five Nines)" – Thời gian gián đoạn tối đa 5 phút/năm.</td>
+<td style="text-align: left;">Multi-region Active-Active Kubernetes deployment, cơ chế tự động chuyển hướng mạch (Circuit Breaker) khi cổng NAPAS chậm.</td>
+</tr>
+<tr>
+<td style="text-align: left;">"Khả Năng Phục Hồi &amp; Đối Soát (Resilience &amp; Reconciliation)"</td>
+<td style="text-align: left;">Xử lý triệt để các tình huống "Timeout rớt mạng giữa chừng" với ngân hàng đối tác.</td>
+<td style="text-align: left;">Cơ chế "Automated Status Inquiry (Truy vấn trạng thái tự động)" sau 5s/15s/30s và Sổ đối soát nhật ký tự động (Automated Clearing Reconciliation).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="74-anh-xa-bian-service-domains-kien-truc-microservices">7.4 Ánh Xạ BIAN Service Domains &amp; Kiến Trúc Microservices</h2>
+<p>Trong BIAN Service Landscape, Domain Thanh toán được tách thành 3 Service Domain cốt lõi với mức độ độ mịn (Granularity) được tách biệt thành 2 Microservices độc lập:</p>
+<pre class="mermaid"><code>graph TD
+    subgraph Payment_Order_MS [Payment Order Microservice - Orchestration Layer]
+        SD_PO[BIAN SD: Payment Order&lt;br&gt;&lt;i&gt;Quản lý vòng đời hợp đồng lệnh thanh toán&lt;/i&gt;]
+    end
+
+    subgraph Payment_Execution_MS [Payment Execution Microservice - Engine Layer]
+        SD_PE[BIAN SD: Payment Execution&lt;br&gt;&lt;i&gt;Thực thi kết nối mạng thanh toán&lt;/i&gt;]
+        SD_FG[BIAN SD: Financial Gateway&lt;br&gt;&lt;i&gt;Giao tiếp vật lý NAPAS/SWIFT&lt;/i&gt;]
+    end
+
+    SD_PO --&gt;|gRPC / ISO 20022| SD_PE
+    SD_PE --&gt; SD_FG</code></pre>
+<ul>
+<li>"<code>Payment Order SD</code> (Microservice Khởi tạo Lệnh Thanh toán):" Sở hữu Control Record <code>Payment Order</code>. Quản lý trạng thái logic của lệnh (Draft -&gt; Pending Approval -&gt; AML Verified -&gt; Executed -&gt; Settled).</li>
+<li>"<code>Payment Execution SD</code> &amp; <code>Financial Gateway SD</code> (Microservice Thực thi &amp; Cổng Thanh toán):" Sở hữu Control Record <code>Payment Execution</code>. Chịu trách nhiệm dịch thông điệp sang chuẩn ISO 20022 vật lý và duy trì kết nối socket/MQ với trung tâm chuyển mạch quốc gia.</li>
+</ul>
+<hr />
+<h2 id="75-sequence-diagram-luong-chuyen-tien-nhanh-lien-ngan-hang-247-real-time-outward-payment">7.5 Sequence Diagram: Luồng Chuyển Tiền Nhanh Liên Ngân Hàng 24/7 (Real-Time Outward Payment)</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    actor MobileApp as Mobile Banking
+    participant PO as Payment Order MS
+    participant AML as AML Screening MS
+    participant CASA as CASA Core MS
+    participant PE as Payment Execution MS
+    participant NAPAS as Cổng Chuyển Mạch NAPAS 247
+
+    MobileApp-&gt;&gt;PO: POST /payment-orders/initiate&lt;br&gt;(Amount: 20M VND, Dest: Vietcombank)
+    PO-&gt;&gt;PO: Validate syntax &amp; idempotency key
+
+    Note over PO,AML: Bước 1: Kiểm tra cấm vận &amp; gian lận
+    PO-&gt;&gt;AML: POST /sanction-screening/execute
+    AML--&gt;&gt;PO: 200 OK (Clean - Approved)
+
+    Note over PO,CASA: Bước 2: Phong tỏa số dư tài khoản người gửi
+    PO-&gt;&gt;CASA: POST /current-accounts/{id}/balance-reservation/initiate
+    CASA--&gt;&gt;PO: 200 OK (Reservation ID: RSV-551)
+
+    Note over PO,PE: Bước 3: Gửi lệnh sang Engine Thực thi
+    PO-&gt;&gt;PE: gRPC ExecutePaymentOrder(PaymentOrderPayload)
+    PE-&gt;&gt;PE: Build ISO 20022 pacs.008 XML Message
+
+    PE-&gt;&gt;NAPAS: Send pacs.008 Payment Instruction (TCP/MQ)
+
+    alt Trường hợp 1: Ngân hàng đích chấp nhận (ACK pacs.002 Success)
+        NAPAS--&gt;&gt;PE: pacs.002 Payment Status Report (ACSP - Accepted Settlement)
+        PE--&gt;&gt;PO: Execution Completed (SETTLED)
+        PO-&gt;&gt;CASA: POST /balance-reservation/{id}/commit (Trừ tiền chính thức)
+        PO--&gt;&gt;MobileApp: 200 OK - Chuyển tiền thành công 24/7
+    else Trường hợp 2: Lỗi mạng / Ngân hàng đích từ chối (RJCT)
+        NAPAS--&gt;&gt;PE: pacs.002 Payment Status Report (RJCT - Rejected)
+        PE--&gt;&gt;PO: Execution Failed (REJECTED)
+        PO-&gt;&gt;CASA: POST /balance-reservation/{id}/cancel (Giải tỏa tiền Hold)
+        PO--&gt;&gt;MobileApp: 422 - Giao dịch thất bại, đã hoàn tiền
+    end</code></pre>
+<hr />
+<h2 id="76-tom-tat-chuong-7">7.6 Tóm Tắt Chương 7</h2>
+<ul>
+<li>Thanh toán hiện đại đòi hỏi tốc độ xử lý dưới 2 giây và khả năng hoạt động 24/7 không gián đoạn.</li>
+<li>Tách biệt "Payment Order MS (lưu trạng thái &amp; điều phối nghiệp vụ)" và "Payment Execution MS (dịch thông điệp &amp; giao tiếp cổng chuyển mạch)".</li>
+<li>Luôn áp dụng cơ chế phong tỏa số dư (Reserve Hold) trước khi gửi điện thanh toán ra ngoài để bảo vệ ngân hàng trước rủi ro rớt mạng trung gian.</li>
+</ul>
 
 
 
 
 
 
-
-  
-  
 
 
 
@@ -1835,10 +2000,10 @@ Nghe mát ruột đấy! Chơi luôn. Phải công nhận là bạn có "gu" ra 
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
       
     
   </body>

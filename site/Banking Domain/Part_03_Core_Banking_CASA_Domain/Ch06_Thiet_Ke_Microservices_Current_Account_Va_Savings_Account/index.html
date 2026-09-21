@@ -1,0 +1,2259 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://dhluong90.github.io/Banking%20Domain/Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/">
+      
+      
+        <link rel="prev" href="../../Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/">
+      
+      
+        <link rel="next" href="../../Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Chương 6: Thiết Kế Microservices CASA (Current Account & Savings Account) - Luong Dinh's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:300,300i,400,400i,700,700i%7CIBM+Plex+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Mono";--md-code-font:"IBM Plex Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/my_book.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chuong-6-thiet-ke-microservices-casa-current-account-savings-account" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Luong Dinh's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chương 6: Thiết Kế Microservices CASA (Current Account &amp; Savings Account)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  About Me
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+  Banking Domain
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
+          
+  
+  
+  Life
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../My_Tools/" class="md-tabs__link">
+          
+  
+  
+  My Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-tabs__link">
+          
+  
+  
+  Tech
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Luong Dinh's Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About Me
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Banking Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Banking Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    THIẾT KẾ MICROSERVICES CHO NGÂN HÀNG THỰC CHIẾN VỚI BIAN
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 01 BIAN Foundations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Part 01 BIAN Foundations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 1: Tổng Quan BIAN &amp; Kiến Trúc Ngân Hàng Hiện Đại (Service Landscape)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 2: BIAN Metamodel – Control Record, Behavior Qualifier &amp; BOM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 02 Step By Step Methodology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Part 02 Step By Step Methodology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 3: Step-by-Step Mapping Từ BIAN Sang Microservices (DDD &amp; Bounded Context)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 4: Thiết Kế API &amp; Event-Driven Theo BIAN Semantic API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 5: Chiến Lược Quản Trị Dữ Liệu Phân Tán (Polyglot, CQRS, Saga Pattern)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 03 Core Banking CASA Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Part 03 Core Banking CASA Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Chương 6: Thiết Kế Microservices CASA (Current Account &amp; Savings Account)
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 6: Thiết Kế Microservices CASA (Current Account &amp; Savings Account)
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#61-tong-quan-domain-casa-ngu-canh-nghiep-vu-domain-overview-business-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.1 Tổng Quan Domain CASA &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1 Tổng Quan Domain CASA &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ban-chat-cua-nghiep-vu-casa-trong-ngan-hang" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bản chất của nghiệp vụ CASA trong Ngân hàng
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62-yeu-cau-nghiep-vu-cot-loi-quy-trinh-hoat-ong-business-requirements-end-to-end-processes" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.2 Yêu Cầu Nghiệp Vụ Cốt Lõi &amp; Quy Trình Hoạt Động (Business Requirements &amp; End-to-End Processes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.2 Yêu Cầu Nghiệp Vụ Cốt Lõi &amp; Quy Trình Hoạt Động (Business Requirements &amp; End-to-End Processes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-quy-trinh-mo-tai-khoan-cau-hinh-han-muc-account-origination-facility-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Quy trình Mở Tài khoản &amp; Cấu hình Hạn mức (Account Origination &amp; Facility Setup)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-quy-trinh-hach-toan-ghi-no-ghi-co-thoi-gian-thuc-real-time-debit-credit-booking" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Quy trình Hạch toán Ghi Nợ / Ghi Có Thời gian thực (Real-time Debit &amp; Credit Booking)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-quy-trinh-phong-toa-giai-toa-so-du-balance-hold-reservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Quy trình Phong tỏa &amp; Giải tỏa Số dư (Balance Hold / Reservation)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64-anh-xa-bian-service-domains-thiet-ke-microservice-chi-tiet" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.4 Ánh Xạ BIAN Service Domains &amp; Thiết Kế Microservice Chi Tiết
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 Ánh Xạ BIAN Service Domains &amp; Thiết Kế Microservice Chi Tiết">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-phan-chia-chuc-nang-ben-trong-casa-core-microservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Phân chia chức năng bên trong CASA Core Microservice:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65-sequence-diagram-hach-toan-ghi-no-thoi-gian-thuc-real-time-debit-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.5 Sequence Diagram: Hạch Toán Ghi Nợ Thời Gian Thực (Real-Time Debit Execution)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-ac-ta-api-event-schema-chuan-bian-cho-casa" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.6 Đặc Tả API &amp; Event Schema Chuẩn BIAN Cho CASA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 Đặc Tả API &amp; Event Schema Chuẩn BIAN Cho CASA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-spec-post-apiv1current-accountfacilitiescridwithdrawalsexecute" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. API Spec: POST /api/v1/current-account/facilities/{crId}/withdrawals/execute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-event-payload-orgbiancurrentaccountv12accountbalanceupdated" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Event Payload: org.bian.currentaccount.v12.AccountBalanceUpdated
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67-tom-tat-chuong-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.7 Tóm Tắt Chương 6
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 04 Payments Va ISO20022 Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Part 04 Payments Va ISO20022 Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 7: Thiết Kế Payment Engine &amp; Payment Execution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 8: Chuẩn Hóa Giao Tiếp ISO 20022 &amp; Payment Order Microservice
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 05 Lending Va Customer Management Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            Part 05 Lending Va Customer Management Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 9: Thiết Kế Hệ Thống Tín Dụng (Loan Origination &amp; Servicing)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 10: Quản Trị Khách Hàng Định Danh Duy Nhất (Party Management &amp; KYC)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 06 Master Banking Blueprint
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            Part 06 Master Banking Blueprint
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 11: Tổng Thể Master Banking Microservices Blueprint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 12: Integration Architecture (Choreography vs Orchestration &amp; Event Mesh)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 13: Lộ Trình Chuyển Đổi Core Banking (Strangler Fig Pattern Với BIAN)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 07 Exercises Quizzes And Case Studies
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Part 07 Exercises Quizzes And Case Studies
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 14: Hệ Thống Câu Hỏi Trắc Nghiệm Ôn Tập &amp; Đánh Giá Năng Lực Kiến Trúc BIAN Microservices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 15: Bài Tập Thực Chiến Thiết Kế Kiến Trúc &amp; Case Study Tổng Hợp
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Life
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Life
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    3 Bài học đáng nhớ trong chuyến công tác giải cứu dự án.
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Series Hồi Ký: Những năm tháng tuổi trẻ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 1): Chiếc Áo Rộng Vừa Vặn & Cuộc Chơi Định Mệnh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 2): Đêm Khủng Hoảng, Lời Khuyên Ở Spa Và Trạng Thái Siêu Tập Trung
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 3): Chuyến Tàu Điện Ngầm Và Cái Boongke Cách Ly
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 4): Vỏ Bọc Lính Mới Và Nút Thắt Tổ Chức
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 5): Bản Đồ Trí Mạng Và Thế Trận "Vườn Không Nhà Trống"
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 6): Bàn Cờ Mới Ở Boat Quay Và Cái Bắt Tay Ngầm
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tâm Sự Solution Architect: Khi Cái Tâm Gánh Vác Va Phải Ranh Giới Công Sở
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thư Gửi Ba: Những Mảnh Ghép Không Thể Thay Thế
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    My Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            My Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../My_Tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    My Toys
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../My_Tools/my_book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    My Journey - 3D Book Experience
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tech
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Tech
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Tech/2025-08-23_AI_kill_outsource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    2025 08 23 AI kill outsource
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Tech/2026-04-07_nho_thay_gemini_nhan_xet_prompt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#61-tong-quan-domain-casa-ngu-canh-nghiep-vu-domain-overview-business-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.1 Tổng Quan Domain CASA &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.1 Tổng Quan Domain CASA &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-ban-chat-cua-nghiep-vu-casa-trong-ngan-hang" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Bản chất của nghiệp vụ CASA trong Ngân hàng
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62-yeu-cau-nghiep-vu-cot-loi-quy-trinh-hoat-ong-business-requirements-end-to-end-processes" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.2 Yêu Cầu Nghiệp Vụ Cốt Lõi &amp; Quy Trình Hoạt Động (Business Requirements &amp; End-to-End Processes)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.2 Yêu Cầu Nghiệp Vụ Cốt Lõi &amp; Quy Trình Hoạt Động (Business Requirements &amp; End-to-End Processes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-quy-trinh-mo-tai-khoan-cau-hinh-han-muc-account-origination-facility-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Quy trình Mở Tài khoản &amp; Cấu hình Hạn mức (Account Origination &amp; Facility Setup)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-quy-trinh-hach-toan-ghi-no-ghi-co-thoi-gian-thuc-real-time-debit-credit-booking" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Quy trình Hạch toán Ghi Nợ / Ghi Có Thời gian thực (Real-time Debit &amp; Credit Booking)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-quy-trinh-phong-toa-giai-toa-so-du-balance-hold-reservation" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Quy trình Phong tỏa &amp; Giải tỏa Số dư (Balance Hold / Reservation)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64-anh-xa-bian-service-domains-thiet-ke-microservice-chi-tiet" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.4 Ánh Xạ BIAN Service Domains &amp; Thiết Kế Microservice Chi Tiết
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.4 Ánh Xạ BIAN Service Domains &amp; Thiết Kế Microservice Chi Tiết">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-phan-chia-chuc-nang-ben-trong-casa-core-microservice" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Phân chia chức năng bên trong CASA Core Microservice:
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65-sequence-diagram-hach-toan-ghi-no-thoi-gian-thuc-real-time-debit-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.5 Sequence Diagram: Hạch Toán Ghi Nợ Thời Gian Thực (Real-Time Debit Execution)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-ac-ta-api-event-schema-chuan-bian-cho-casa" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.6 Đặc Tả API &amp; Event Schema Chuẩn BIAN Cho CASA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6.6 Đặc Tả API &amp; Event Schema Chuẩn BIAN Cho CASA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-api-spec-post-apiv1current-accountfacilitiescridwithdrawalsexecute" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. API Spec: POST /api/v1/current-account/facilities/{crId}/withdrawals/execute
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-event-payload-orgbiancurrentaccountv12accountbalanceupdated" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Event Payload: org.bian.currentaccount.v12.AccountBalanceUpdated
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67-tom-tat-chuong-6" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.7 Tóm Tắt Chương 6
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="chuong-6-thiet-ke-microservices-casa-current-account-savings-account">Chương 6: Thiết Kế Microservices CASA (Current Account &amp; Savings Account)</h1>
+<hr />
+<h2 id="61-tong-quan-domain-casa-ngu-canh-nghiep-vu-domain-overview-business-context">6.1 Tổng Quan Domain CASA &amp; Ngữ Cảnh Nghiệp Vụ (Domain Overview &amp; Business Context)</h2>
+<h3 id="1-ban-chat-cua-nghiep-vu-casa-trong-ngan-hang">1. Bản chất của nghiệp vụ CASA trong Ngân hàng</h3>
+<p>"CASA (Current Account &amp; Savings Account - Tài khoản Thanh toán &amp; Tài khoản Tiết kiệm)" là cột sống (Spinal Cord) của bất kỳ hệ thống Core Banking nào. Đây là nơi lưu giữ toàn bộ số dư tiền gửi của khách hàng cá nhân và doanh nghiệp, là điểm xuất phát và điểm kết thúc của mọi luồng tiền thanh toán (Chuyển tiền NAPAS, Thanh toán Thẻ, Giải ngân cho vay, Thu nợ...).</p>
+<ul>
+<li>"Current Account (Tài khoản Thanh toán / Dòng tiền):" Tần suất giao dịch cực lớn (hàng chục giao dịch mỗi ngày trên 1 tài khoản), không kỳ hạn, cho phép thấu chi (Overdraft), yêu cầu xử lý thời gian thực 24/7/365 với độ trễ cực thấp.</li>
+<li>"Savings Account (Tài khoản Tiết kiệm):" Tần suất giao dịch thấp hơn nhưng quy tắc nghiệp vụ phức tạp về kỳ hạn (Term Deposit), lãi suất bậc thang, tất toán trước hạn (Early Withdrawal Penalty), và tự động tái tục (Rollover).</li>
+</ul>
+<pre class="mermaid"><code>flowchart TD
+    SUB_CLIENT[Omnichannel / Digital App] --&gt;|Giao dịch 24/7| CASA_CORE[CASA Core Banking Domain]
+
+    subgraph CASA_CORE [CASA Core Domain]
+        CA[Current Account&lt;br&gt;&lt;i&gt;Thanh toán tức thời, Thấu chi&lt;/i&gt;]
+        SA[Savings Account&lt;br&gt;&lt;i&gt;Có kỳ hạn, Tích lũy, Tính lãi&lt;/i&gt;]
+        PK[Position Keeping&lt;br&gt;&lt;i&gt;Sổ số dư tức thời, Hold/Un-hold&lt;/i&gt;]
+    end
+
+    CASA_CORE --&gt;|Hạch toán cuối ngày| GL[General Ledger - Sổ Cái Ngân Hàng]</code></pre>
+<hr />
+<h2 id="62-yeu-cau-nghiep-vu-cot-loi-quy-trinh-hoat-ong-business-requirements-end-to-end-processes">6.2 Yêu Cầu Nghiệp Vụ Cốt Lõi &amp; Quy Trình Hoạt Động (Business Requirements &amp; End-to-End Processes)</h2>
+<p>Trước khi thiết kế Microservice, chúng ta phải chuẩn hóa 3 luồng nghiệp vụ E2E quan trọng nhất của CASA:</p>
+<h3 id="1-quy-trinh-mo-tai-khoan-cau-hinh-han-muc-account-origination-facility-setup">1. Quy trình Mở Tài khoản &amp; Cấu hình Hạn mức (Account Origination &amp; Facility Setup)</h3>
+<ul>
+<li>Khởi tạo hợp đồng tài khoản (Facility Agreement) gắn với một khách hàng duy nhất (<code>Party ID</code>).</li>
+<li>Định nghĩa các thuộc tính nghiệp vụ: Loại tiền tệ (VND/USD), hạn mức giao dịch ngày, hạn mức thấu chi được phê duyệt, trạng thái phong tỏa (Active/Frozen).</li>
+</ul>
+<h3 id="2-quy-trinh-hach-toan-ghi-no-ghi-co-thoi-gian-thuc-real-time-debit-credit-booking">2. Quy trình Hạch toán Ghi Nợ / Ghi Có Thời gian thực (Real-time Debit &amp; Credit Booking)</h3>
+<ul>
+<li>
+<p>Khi một giao dịch đến, hệ thống phải kiểm tra "Số dư khả dụng (Available Balance)" theo công thức:
+  $$\text{Available Balance} = \text{Ledger Balance} + \text{Approved Overdraft Limit} - \text{Hold/Reserved Amount}$$</p>
+</li>
+<li>
+<p>Nếu hợp lệ: Thực hiện giữ chỗ tiền (Hold/Reserve) hoặc hạch toán trừ ngay lập tức vào số dư.</p>
+</li>
+<li>Ghi vết bút toán (Account Entry) vào sổ phụ tài khoản với định danh giao dịch duy nhất.</li>
+</ul>
+<h3 id="3-quy-trinh-phong-toa-giai-toa-so-du-balance-hold-reservation">3. Quy trình Phong tỏa &amp; Giải tỏa Số dư (Balance Hold / Reservation)</h3>
+<ul>
+<li>Phục vụ các giao dịch chuyển tiền liên ngân hàng hoặc thanh toán thẻ POS: Tiền bị phong tỏa tạm thời (Hold) trước khi có xác nhận tất toán (Clearing/Settlement).</li>
+</ul>
+<hr />
+<h2 id="63-yeu-cau-phi-chuc-nang-cot-loi-non-functional-requirements-nfrs">6.3 Yêu Cầu Phi Chức Năng Cốt Lõi (Non-Functional Requirements - NFRs)</h2>
+<p>Nghiệp vụ CASA có tiêu chuẩn NFR khắt khe nhất trong toàn bộ ngân hàng:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tiêu chí NFR</th>
+<th style="text-align: left;">Yêu cầu Kỹ thuật / Chỉ số Mục tiêu</th>
+<th style="text-align: left;">Giải pháp Kiến trúc Đáp ứng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">"Tính Nhất Quán (ACID Consistency &amp; Anti Double-Spending)"</td>
+<td style="text-align: left;">Tuyệt đối "KHÔNG BAO GIỜ" được phép âm số dư trái phép hoặc trừ tiền 2 lần cho 1 giao dịch.</td>
+<td style="text-align: left;">Sử dụng "Row-level Pessimistic Locking (<code>SELECT FOR UPDATE</code>)" kết hợp "Idempotency Key unique constraint" trên Database.</td>
+</tr>
+<tr>
+<td style="text-align: left;">"Độ Trễ Xử Lý (Processing Latency)"</td>
+<td style="text-align: left;">Độ trễ cho 1 lệnh kiểm tra và trừ tiền nội bộ CASA phải &lt; 15ms (p99).</td>
+<td style="text-align: left;">Tối ưu index Database, chạy Microservice gần Datastore, tránh gọi chuỗi API mạng đồng bộ.</td>
+</tr>
+<tr>
+<td style="text-align: left;">"Khả Năng Xử Lý Tải (Throughput / Scalability)"</td>
+<td style="text-align: left;">Đạt tối thiểu "10,000+ TPS" vào giờ cao điểm (Ngày trả lương, Tết, Flash Sale).</td>
+<td style="text-align: left;">Sharding Database theo <code>Account ID</code> hoặc <code>Customer ID</code> (Horizontal Partitioning).</td>
+</tr>
+<tr>
+<td style="text-align: left;">"Khả Năng Kiểm Toán (Auditability &amp; Immutability)"</td>
+<td style="text-align: left;">Sổ bút toán (<code>account_entries</code>) chỉ được phép "INSERT (Append-only)", tuyệt đối không cho phép <code>UPDATE</code> hay <code>DELETE</code> lịch sử giao dịch.</td>
+<td style="text-align: left;">Thiết kế bảng Ledger immutable, mọi điều chỉnh sai sót phải thông qua bút toán đảo (Reversal Entry).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="64-anh-xa-bian-service-domains-thiet-ke-microservice-chi-tiet">6.4 Ánh Xạ BIAN Service Domains &amp; Thiết Kế Microservice Chi Tiết</h2>
+<p>Dựa trên phân tích độ gắn kết giao dịch ACID (Transactional Cohesion) tại Chương 3, chúng ta nhóm các BIAN Service Domains liên quan thành "CASA Core Bounded Context":</p>
+<pre class="mermaid"><code>classDiagram
+    class CurrentAccountSD {
+        +String crId
+        +String accountNumber
+        +String currency
+        +String accountStatus
+        +InitiateFacility()
+        +UpdateFacilityStatus()
+    }
+    class PositionKeepingSD {
+        +String accountId
+        +Decimal ledgerBalance
+        +Decimal availableBalance
+        +Decimal holdBalance
+        +ReserveBalance()
+        +CommitBooking()
+    }
+    class AccountEntry {
+        +String entryId
+        +String crId
+        +Decimal amount
+        +String entryType
+        +Timestamp bookingTime
+    }
+
+    CurrentAccountSD "1" *-- "1" PositionKeepingSD : manages balance
+    PositionKeepingSD "1" *-- "0..*" AccountEntry : immutable ledger</code></pre>
+<h3 id="1-phan-chia-chuc-nang-ben-trong-casa-core-microservice">1. Phân chia chức năng bên trong CASA Core Microservice:</h3>
+<ul>
+<li>"<code>Current Account SD</code>:" Quản lý Control Record <code>CurrentAccountFacility</code> (Trạng thái tài khoản, chủ sở hữu, cấu hình hạn mức).</li>
+<li>"<code>Position Keeping SD</code>:" Quản lý số dư tức thời (<code>account_balances</code>) và thực hiện hạch toán bút toán (<code>account_entries</code>).</li>
+</ul>
+<hr />
+<h2 id="65-sequence-diagram-hach-toan-ghi-no-thoi-gian-thuc-real-time-debit-execution">6.5 Sequence Diagram: Hạch Toán Ghi Nợ Thời Gian Thực (Real-Time Debit Execution)</h2>
+<p>Dưới đây là biểu đồ tuần tự chi tiết xử lý một lệnh trừ tiền (Debit) đảm bảo 100% ACID và chống Double-Spending:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    actor PaymentEngine as Payment Engine MS
+    participant API as CASA API Controller
+    participant PK_SVC as Position Keeping Service
+    participant DB as CASA AlloyDB / PostgreSQL
+    participant KAFKA as Kafka Event Mesh
+
+    PaymentEngine-&gt;&gt;API: POST /current-accounts/{crId}/deposits-withdrawals/execute&lt;br&gt;(Headers: X-Idempotency-Key: UUID)
+
+    API-&gt;&gt;PK_SVC: ExecuteDebit(crId, amount=5M VND, idempotencyKey)
+
+    Note over PK_SVC,DB: BEGIN ACID DATABASE TRANSACTION
+
+    PK_SVC-&gt;&gt;DB: INSERT INTO processed_idempotency_keys (key) VALUES (UUID)
+    alt Idempotency Key Đã Tồn Tại (Duplicate Request)
+        DB--&gt;&gt;PK_SVC: Unique Constraint Violation (Error 409)
+        PK_SVC--&gt;&gt;PaymentEngine: 409 Conflict - Transaction Already Processed
+    end
+
+    PK_SVC-&gt;&gt;DB: SELECT available_balance FROM account_balances&lt;br&gt;WHERE account_id = 'CA-889' FOR UPDATE (Row Lock)
+    DB--&gt;&gt;PK_SVC: available_balance = 120,000,000 VND
+
+    alt Số dư khả dụng &lt; Số tiền trừ
+        PK_SVC-&gt;&gt;DB: ROLLBACK TRANSACTION
+        PK_SVC--&gt;&gt;PaymentEngine: 422 Unprocessable - Insufficient Funds
+    end
+
+    PK_SVC-&gt;&gt;DB: UPDATE account_balances&lt;br&gt;SET available_balance = available_balance - 5000000,&lt;br&gt;ledger_balance = ledger_balance - 5000000&lt;br&gt;WHERE account_id = 'CA-889'
+
+    PK_SVC-&gt;&gt;DB: INSERT INTO account_entries (id, account_id, amount, dr_cr, status)&lt;br&gt;VALUES ('ENT-001', 'CA-889', 5000000, 'DEBIT', 'CLEARED')
+
+    PK_SVC-&gt;&gt;DB: INSERT INTO outbox_events (event_type, payload)&lt;br&gt;VALUES ('AccountDebitedEvent', JSON_DATA)
+
+    Note over PK_SVC,DB: COMMIT ACID DATABASE TRANSACTION (Latency &lt; 8ms)
+
+    PK_SVC--&gt;&gt;API: Debit Execution Successful
+    API--&gt;&gt;PaymentEngine: 200 OK (New Balance: 115,000,000 VND)
+
+    Note over DB,KAFKA: Debezium CDC phát Outbox Event lên Kafka
+    DB-&gt;&gt;KAFKA: Publish CloudEvent: org.bian.currentaccount.v12.AccountDebited</code></pre>
+<hr />
+<h2 id="66-ac-ta-api-event-schema-chuan-bian-cho-casa">6.6 Đặc Tả API &amp; Event Schema Chuẩn BIAN Cho CASA</h2>
+<h3 id="1-api-spec-post-apiv1current-accountfacilitiescridwithdrawalsexecute">1. API Spec: <code>POST /api/v1/current-account/facilities/{crId}/withdrawals/execute</code></h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://json-schema.org/draft-07/schema#&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BIAN Current Account Withdrawal Execution Request&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;amount&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;currency&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;transactionReference&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bookingType&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;amount&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">5000000.00</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;currency&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^[A-Z]{3}$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VND&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;transactionReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PAY-REF-88219&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;bookingType&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;IMMEDIATE_DEBIT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;RESERVE_HOLD&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;example&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;IMMEDIATE_DEBIT&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="2-event-payload-orgbiancurrentaccountv12accountbalanceupdated">2. Event Payload: <code>org.bian.currentaccount.v12.AccountBalanceUpdated</code></h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;specversion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;evt-casa-99120&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;//banking.enterprise/casa/current-account-service&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;org.bian.currentaccount.v12.AccountBalanceUpdated&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-07-10T10:35:00Z&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;controlRecordId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CA-889&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;accountNumber&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;190012345678&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;entryReference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ENT-001&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;transactionAmount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">-5000000.00</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;currency&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VND&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;balancesAfterBooking&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;ledgerBalance&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">115000000.00</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;availableBalance&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">115000000.00</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;holdBalance&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.00</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;valueDateTime&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-07-10T10:35:00Z&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="67-tom-tat-chuong-6">6.7 Tóm Tắt Chương 6</h2>
+<ul>
+<li>Bối cảnh CASA yêu cầu sự chuẩn xác tuyệt đối về số dư, xử lý với tần suất cực cao và độ trễ dưới 15ms.</li>
+<li>Nhóm <code>Current Account SD</code> và <code>Position Keeping SD</code> vào chung một Bounded Context để tận dụng giao dịch ACID cơ sở dữ liệu cho các lệnh hạch toán.</li>
+<li>Luôn sử dụng cơ chế khóa dòng pessimistic (<code>SELECT FOR UPDATE</code>) kết hợp bảng Idempotency và Sổ phụ <code>account_entries</code> chỉ ghi (Immutable Append-Only Ledger).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+    
+  </body>
+</html>
