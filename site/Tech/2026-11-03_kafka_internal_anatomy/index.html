@@ -1,0 +1,2223 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mổ xẻ kiến trúc nội tại của Apache Kafka Broker: SocketServer, Purgatory Timing Wheel, LogManager, ReplicaManager, Zero-Copy DMA và KRaft Quorum Controller.">
+      
+      
+      
+        <link rel="canonical" href="https://dhluong90.github.io/Tech/2026-11-03_kafka_internal_anatomy/">
+      
+      
+        <link rel="prev" href="../2026-10-01_claude_code_plugins_directory/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Bản Phác Thảo Giải Phẫu Kafka: Mổ Xẻ 7 Cơ Quan Nội Tạng Của Một Broker - Luong Dinh's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:300,300i,400,400i,700,700i%7CIBM+Plex+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"IBM Plex Mono";--md-code-font:"IBM Plex Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/my_book.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ban-phac-thao-giai-phau-kafka-mo-xe-7-co-quan-noi-tang-cua-mot-broker" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-header__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Luong Dinh's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bản Phác Thảo Giải Phẫu Kafka: Mổ Xẻ 7 Cơ Quan Nội Tạng Của Một Broker
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  About Me
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Banking%20Domain/" class="md-tabs__link">
+          
+  
+  
+  Banking Domain
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-tabs__link">
+          
+  
+  
+  Life
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../My_Tools/" class="md-tabs__link">
+          
+  
+  
+  My Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../2025-08-23_AI_kill_outsource/" class="md-tabs__link">
+          
+  
+  
+  Tech
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Luong Dinh&#39;s Notes" class="md-nav__button md-logo" aria-label="Luong Dinh's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Luong Dinh's Notes
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About Me
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Banking Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Banking Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    THIẾT KẾ MICROSERVICES CHO NGÂN HÀNG THỰC CHIẾN VỚI BIAN
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 01 BIAN Foundations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Part 01 BIAN Foundations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch01_Tong_Quan_BIAN_Va_Service_Landscape/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 1: Tổng Quan BIAN &amp; Kiến Trúc Ngân Hàng Hiện Đại (Service Landscape)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_01_BIAN_Foundations/Ch02_Cac_Thanh_Phan_Kien_Truc_BIAN_Metamodel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 2: BIAN Metamodel – Control Record, Behavior Qualifier &amp; BOM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 02 Step By Step Methodology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Part 02 Step By Step Methodology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch03_Tu_BIAN_Service_Domain_Den_Microservice_Bounded_Context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 3: Step-by-Step Mapping Từ BIAN Sang Microservices (DDD &amp; Bounded Context)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch04_Thiet_Ke_API_Va_Event_Driven_Theo_BIAN_Semantic_API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 4: Thiết Kế API &amp; Event-Driven Theo BIAN Semantic API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_02_Step_By_Step_Methodology/Ch05_Chien_Luoc_Du_Lieu_Polyglot_Va_CQRS_Saga/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 5: Chiến Lược Quản Trị Dữ Liệu Phân Tán (Polyglot, CQRS, Saga Pattern)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 03 Core Banking CASA Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Part 03 Core Banking CASA Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_03_Core_Banking_CASA_Domain/Ch06_Thiet_Ke_Microservices_Current_Account_Va_Savings_Account/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 6: Thiết Kế Microservices CASA (Current Account &amp; Savings Account)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 04 Payments Va ISO20022 Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Part 04 Payments Va ISO20022 Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch07_Thiet_Ke_Payment_Engine_Va_Payment_Execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 7: Thiết Kế Payment Engine &amp; Payment Execution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_04_Payments_Va_ISO20022_Domain/Ch08_Giao_Tiep_ISO20022_Va_Payment_Order_Microservice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 8: Chuẩn Hóa Giao Tiếp ISO 20022 &amp; Payment Order Microservice
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 05 Lending Va Customer Management Domain
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            Part 05 Lending Va Customer Management Domain
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch09_Thiet_Ke_He_Thong_Vay_Loan_Origination_Va_Servicing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 9: Thiết Kế Hệ Thống Tín Dụng (Loan Origination &amp; Servicing)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_05_Lending_Va_Customer_Management_Domain/Ch10_Party_Management_Customer_Profile_Va_KYC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 10: Quản Trị Khách Hàng Định Danh Duy Nhất (Party Management &amp; KYC)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 06 Master Banking Blueprint
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            Part 06 Master Banking Blueprint
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch11_Tong_The_Banking_Microservices_Blueprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 11: Tổng Thể Master Banking Microservices Blueprint
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch12_Integration_Architecture_Choreography_vs_Orchestration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 12: Integration Architecture (Choreography vs Orchestration &amp; Event Mesh)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_06_Master_Banking_Blueprint/Ch13_Lo_Trinh_Chuyen_Doi_Core_Banking_Strangler_Fig_Pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 13: Lộ Trình Chuyển Đổi Core Banking (Strangler Fig Pattern Với BIAN)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Part 07 Exercises Quizzes And Case Studies
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Part 07 Exercises Quizzes And Case Studies
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch14_He_Thong_Cau_Hoi_Trac_Nghiem_On_Tap_13_Chuong/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 14: Hệ Thống Câu Hỏi Trắc Nghiệm Ôn Tập &amp; Đánh Giá Năng Lực Kiến Trúc BIAN Microservices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Banking%20Domain/Part_07_Exercises_Quizzes_And_Case_Studies/Ch15_Bai_Tap_Thuc_Chien_Thiet_Ke_Kien_Truc_Va_Case_Studies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chương 15: Bài Tập Thực Chiến Thiết Kế Kiến Trúc &amp; Case Study Tổng Hợp
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Life
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Life
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/chuyen_con_tac_Da_Nang/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    3 Bài học đáng nhớ trong chuyến công tác giải cứu dự án.
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_00_muc_luc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Series Hồi Ký: Những năm tháng tuổi trẻ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_1_chiec_ao_rong_vua_van/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 1): Chiếc Áo Rộng Vừa Vặn & Cuộc Chơi Định Mệnh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_2_dem_trang_tin_nhan_nghi_viec_va_co_gai_o_tiem_spa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 2): Đêm Khủng Hoảng, Lời Khuyên Ở Spa Và Trạng Thái Siêu Tập Trung
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_3_chuyen_tau_dien_ngam_va_cai_boongke_cach_ly/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 3): Chuyến Tàu Điện Ngầm Và Cái Boongke Cách Ly
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_4_vo_boc_linh_moi_va_nut_that_to_chuc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 4): Vỏ Bọc Lính Mới Và Nút Thắt Tổ Chức
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_5_ban_do_tri_mang_va_the_tran_vuon_khong_nha_trong/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 5): Bản Đồ Trí Mạng Và Thế Trận "Vườn Không Nhà Trống"
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/hoi_ky_chuong_6_ban_co_moi_o_boat_quay_va_cai_bat_tay_ngam/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hồi Ký (Phần 6): Bàn Cờ Mới Ở Boat Quay Và Cái Bắt Tay Ngầm
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/khi_cai-cai_tam_ganh_vac_va_vap_ganh_gioi_cong_so/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tâm Sự Solution Architect: Khi Cái Tâm Gánh Vác Va Phải Ranh Giới Công Sở
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Life/thu_gui_ba_nhung_manh_ghep_khong_the_thay_the/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Thư Gửi Ba: Những Mảnh Ghép Không Thể Thay Thế
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    My Tools
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            My Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../My_Tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    My Toys
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../My_Tools/my_book/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    My Journey - 3D Book Experience
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tech
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Tech
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2025-08-23_AI_kill_outsource/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    2025 08 23 AI kill outsource
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-04-07_nho_thay_gemini_nhan_xet_prompt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Nhờ thầy Gemini cho nhận xét về phương pháp prompt của chính mình :D
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2026-10-01_claude_code_plugins_directory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Claude Code Plugins Directory: Cấu Trúc Và Hướng Dẫn Chi Tiết
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Bản Phác Thảo Giải Phẫu Kafka: Mổ Xẻ 7 Cơ Quan Nội Tạng Của Một Broker
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bản Phác Thảo Giải Phẫu Kafka: Mổ Xẻ 7 Cơ Quan Nội Tạng Của Một Broker
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tam-ban-o-giai-phau-broker-internal-anatomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tấm Bản Đồ Giải Phẫu (Broker Internal Anatomy)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-boc-tach-7-co-quan-noi-tang-cua-kafka-broker" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Bóc Tách 7 Cơ Quan Nội Tạng Của Kafka Broker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-vong-oi-i-xuyen-7-bo-phan-cua-2-request-kinh-ien" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Vòng Đời Đi Xuyên 7 Bộ Phận Của 2 Request Kinh Điển
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Vòng Đời Đi Xuyên 7 Bộ Phận Của 2 Request Kinh Điển">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kich-ban-a-produce-request-voi-acksall-ghi-an-toan-tuyet-oi" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kịch bản A: Produce Request với acks=all (Ghi an toàn tuyệt đối)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kich-ban-b-fetch-request-uong-bay-than-toc-zero-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kịch bản B: Fetch Request &amp; Đường Bay Thần Tốc "Zero-Copy"
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ba-ranh-gioi-bat-bien-architectural-invariants-khong-the-xam-pham" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Ba Ranh Giới Bất Biến (Architectural Invariants) Không Thể Xâm Phạm
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Ba Ranh Giới Bất Biến (Architectural Invariants) Không Thể Xâm Phạm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invariant-1-vach-ngan-high-watermark-offset-hw" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 1: Vạch Ngăn High Watermark (Offset &lt; HW)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invariant-2-ghi-tuan-tu-append-only-thay-vi-random-io" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 2: Ghi Tuần Tự (Append-Only) Thay Vì Random I/O
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invariant-3-idempotency-khong-can-database-producerstatemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 3: Idempotency Không Cần Database (ProducerStateManager)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-loi-ket-cua-kien-truc-su" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Lời Kết Của Kiến Trúc Sư
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tam-ban-o-giai-phau-broker-internal-anatomy" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Tấm Bản Đồ Giải Phẫu (Broker Internal Anatomy)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-boc-tach-7-co-quan-noi-tang-cua-kafka-broker" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Bóc Tách 7 Cơ Quan Nội Tạng Của Kafka Broker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-vong-oi-i-xuyen-7-bo-phan-cua-2-request-kinh-ien" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Vòng Đời Đi Xuyên 7 Bộ Phận Của 2 Request Kinh Điển
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Vòng Đời Đi Xuyên 7 Bộ Phận Của 2 Request Kinh Điển">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kich-ban-a-produce-request-voi-acksall-ghi-an-toan-tuyet-oi" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kịch bản A: Produce Request với acks=all (Ghi an toàn tuyệt đối)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kich-ban-b-fetch-request-uong-bay-than-toc-zero-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Kịch bản B: Fetch Request &amp; Đường Bay Thần Tốc "Zero-Copy"
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ba-ranh-gioi-bat-bien-architectural-invariants-khong-the-xam-pham" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Ba Ranh Giới Bất Biến (Architectural Invariants) Không Thể Xâm Phạm
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Ba Ranh Giới Bất Biến (Architectural Invariants) Không Thể Xâm Phạm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invariant-1-vach-ngan-high-watermark-offset-hw" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 1: Vạch Ngăn High Watermark (Offset &lt; HW)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invariant-2-ghi-tuan-tu-append-only-thay-vi-random-io" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 2: Ghi Tuần Tự (Append-Only) Thay Vì Random I/O
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invariant-3-idempotency-khong-can-database-producerstatemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Invariant 3: Idempotency Không Cần Database (ProducerStateManager)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-loi-ket-cua-kien-truc-su" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Lời Kết Của Kiến Trúc Sư
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ban-phac-thao-giai-phau-kafka-mo-xe-7-co-quan-noi-tang-cua-mot-broker">Bản Phác Thảo Giải Phẫu Kafka: Mổ Xẻ 7 Cơ Quan Nội Tạng Của Một Broker</h1>
+<p>Khi tìm hiểu về Apache Kafka, hầu hết tài liệu đều dừng lại ở tầng khái niệm bề nổi: <em>Producers gửi tin vào Topics, chia thành các Partitions, rồi Consumers đọc ra</em>. Nhưng với một Solution / Enterprise Architect, cách tiếp cận đó không trả lời được các câu hỏi bản chất:</p>
+<blockquote>
+<p><em>Tại sao Kafka gánh được hàng triệu message/giây mà JVM Heap chỉ cần 4GB?</em><br />
+<em>Làm thế nào Broker giữ hàng trăm nghìn kết nối chờ <code>acks=all</code> mà không làm sập Thread Pool?</em><br />
+<em>Mã nguồn bên trong một Broker gồm những linh kiện nào và phối hợp nhịp nhàng ra sao?</em></p>
+</blockquote>
+<p>Trang giải phẫu này mổ xẻ trực tiếp mã nguồn nội tại của <strong>Apache Kafka Broker (<code>kafka.server</code>)</strong> thành đúng <strong>7 cơ quan nội tạng cốt lõi</strong> và luồng luân chuyển dữ liệu thực tế.</p>
+<hr />
+<h2 id="1-tam-ban-o-giai-phau-broker-internal-anatomy">1. Tấm Bản Đồ Giải Phẫu (Broker Internal Anatomy)</h2>
+<p>Một Broker không phải là một khối đen nguyên khối (monolith), mà là một dây chuyền phân tầng tách biệt hoàn toàn giữa <strong>Tầng Mạng (Network)</strong>, <strong>Tầng Xử lý (Compute)</strong>, <strong>Tầng Chờ Bất đồng bộ (Purgatory)</strong> và <strong>Tầng Lưu trữ (Storage Engine)</strong>:</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph ClientLayer["Clients (Producers &amp; Consumers)"]
+        CL["TCP Connection (Kafka Binary Protocol)"]
+    end
+
+    subgraph BrokerCore["KAFKA BROKER INTERNALS"]
+        subgraph Layer1["1. Network Layer (SocketServer)"]
+            AC["Acceptor Thread (1 per port)"]
+            PT["Processor Threads Pool (num.network.threads)"]
+            AC --&gt;|"assign socket"| PT
+        end
+
+        subgraph Layer2["2. Decoupling Queue"]
+            RC[("RequestChannel\n(ArrayBlockingQueue)")]
+            PT --&gt;|"enqueue Request"| RC
+        end
+
+        subgraph Layer3["3. Compute Pool"]
+            KH["KafkaRequestHandler Pool\n(num.io.threads)"]
+            API["KafkaApis Router\n(Switch by ApiKey)"]
+            RC --&gt;|"dequeue"| KH
+            KH --&gt; API
+        end
+
+        subgraph Layer4["4. Asynchronous Wait"]
+            PG["DelayedOperationPurgatory\n(Hierarchical Timing Wheels)"]
+            DP["DelayedProduce\n(Chờ ISR sync)"]
+            DF["DelayedFetch\n(Chờ có data mới)"]
+            PG --- DP
+            PG --- DF
+        end
+
+        subgraph Layer5["5. Storage Engine"]
+            RM["ReplicaManager\n(LEO, High Watermark, ISR)"]
+            LM["LogManager\n(UnifiedLog Lifecycle)"]
+            SEG["LogSegment\n(.log, .index, .timeindex)"]
+            RM --&gt; LM --&gt; SEG
+        end
+
+        subgraph Layer6["6. Control &amp; Coordination"]
+            KRAFT["KRaft QuorumController\n(Raft Consensus, @metadata)"]
+            GC["GroupCoordinator\n(__consumer_offsets, Rebalance)"]
+            TC["TransactionCoordinator\n(__transaction_state, 2PC)"]
+        end
+
+        API --&gt;|"acks=all (wait ISR)"| PG
+        API --&gt;|"write/read"| RM
+        API --&gt;|"metadata/rebalance"| Layer6
+        RM -.-&gt;|"wake up watcher"| PG
+    end
+
+    subgraph KernelLayer["7. OS Kernel &amp; Hardware Layer"]
+        PC["OS Page Cache (Kernel Memory)"]
+        NIC["Network Interface Card (NIC Buffer)"]
+        DISK["Physical Storage (NVMe / SSD)"]
+
+        SEG --&gt;|"Append-only write"| PC
+        PC --&gt;|"pdflush background"| DISK
+        PC ==&gt;|"sendfile(2) DMA Direct Transfer"| NIC
+    end
+
+    CL &lt;==&gt;|"NIO Socket"| Layer1
+    NIC ==&gt;|"TCP Stream Egress"| CL
+
+    classDef highlight fill:#fff3e0,stroke:#ff6d00,stroke-width:2px;
+    classDef kernel fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef core fill:#ede7f6,stroke:#512da8,stroke-width:2px;
+    class Layer1,Layer3,Layer4 highlight;
+    class KernelLayer kernel;
+    class Layer5,Layer6 core;</code></pre>
+<hr />
+<h2 id="2-boc-tach-7-co-quan-noi-tang-cua-kafka-broker">2. Bóc Tách 7 Cơ Quan Nội Tạng Của Kafka Broker</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">STT</th>
+<th style="text-align: left;">Cơ quan / Component</th>
+<th style="text-align: left;">Mã nguồn đại diện</th>
+<th style="text-align: left;">Cấu trúc dữ liệu &amp; Thuật toán</th>
+<th style="text-align: left;">Trách nhiệm cốt tử &amp; Bất biến (Invariants)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>1</strong></td>
+<td style="text-align: left;"><strong><code>SocketServer</code></strong></td>
+<td style="text-align: left;"><code>kafka.network.SocketServer</code></td>
+<td style="text-align: left;">Java NIO <code>Selector</code>, Reactor Pattern</td>
+<td style="text-align: left;"><strong>Tiếp nhận mạng phi phong tỏa</strong>: 1 <code>Acceptor Thread</code> chỉ nhận kết nối rồi ném cho pool <code>Processor Threads</code>. Processor đọc byte từ socket, parse header nhị phân rồi đẩy vào hàng đợi.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: left;"><strong><code>RequestChannel</code></strong></td>
+<td style="text-align: left;"><code>kafka.network.RequestChannel</code></td>
+<td style="text-align: left;"><code>ArrayBlockingQueue&lt;Request&gt;</code></td>
+<td style="text-align: left;"><strong>Vùng đệm ngắt kết nối (Decoupling)</strong>: Tách rời tốc độ nhận tin của Card mạng với tốc độ xử lý đĩa của CPU. Chống tràn bộ nhớ bằng cơ chế backpressure từ chối nhận nếu queue đầy.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: left;"><strong><code>RequestHandlerPool</code></strong></td>
+<td style="text-align: left;"><code>kafka.server.KafkaRequestHandlerPool</code></td>
+<td style="text-align: left;">Worker Thread Pool (<code>num.io.threads</code>)</td>
+<td style="text-align: left;"><strong>Bộ não thực thi nghiệp vụ</strong>: Rút request từ queue, đối chiếu với <code>KafkaApis</code> (hơn 70 API keys: Produce, Fetch, Metadata, OffsetCommit...) để gọi xuống Storage Engine.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: left;"><strong><code>DelayedPurgatory</code></strong></td>
+<td style="text-align: left;"><code>kafka.server.DelayedOperationPurgatory</code></td>
+<td style="text-align: left;"><strong>Hierarchical Timing Wheels</strong> + Watcher Lists</td>
+<td style="text-align: left;"><strong>Xử lý tác vụ trễ bất đồng bộ <code>O(1)</code></strong>: Giữ các request cần chờ (như <code>acks=all</code> chờ Follower sync, hoặc <code>poll()</code> chờ có tin mới) mà <strong>không block IO thread</strong>.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: left;"><strong><code>LogManager &amp; UnifiedLog</code></strong></td>
+<td style="text-align: left;"><code>kafka.log.LogManager</code>, <code>UnifiedLog</code></td>
+<td style="text-align: left;">Append-Only File + <code>mmap</code> Sparse Index</td>
+<td style="text-align: left;"><strong>Động cơ lưu trữ bất biến</strong>: Quản lý các file Log Segment trên đĩa (<code>.log</code>, <code>.index</code>, <code>.timeindex</code>). Ghi tuần tự tuyệt đối (Sequential Write). Dọn rác bằng cách xóa nguyên file segment (<code>O(1)</code>).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: left;"><strong><code>ReplicaManager</code></strong></td>
+<td style="text-align: left;"><code>kafka.server.ReplicaManager</code></td>
+<td style="text-align: left;">In-memory Offset Trackers</td>
+<td style="text-align: left;"><strong>Bảo vệ tính toàn vẹn dữ liệu</strong>: Quản trị hai con trỏ sinh tử: <strong>LEO (Log End Offset)</strong> và <strong>HW (High Watermark)</strong>. Duy trì danh sách ISR (In-Sync Replicas).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: left;"><strong><code>Control &amp; Coordinators</code></strong></td>
+<td style="text-align: left;"><code>KRaftController</code>, <code>GroupCoordinator</code></td>
+<td style="text-align: left;">Event-driven State Machine, Raft Quorum</td>
+<td style="text-align: left;"><strong>Đầu não chỉ huy &amp; Cân bằng nhóm</strong>: Quản trị metadata cụm qua topic nội bộ <code>@metadata</code> (thay thế ZooKeeper); điều phối Consumer Rebalance qua topic <code>__consumer_offsets</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-vong-oi-i-xuyen-7-bo-phan-cua-2-request-kinh-ien">3. Vòng Đời Đi Xuyên 7 Bộ Phận Của 2 Request Kinh Điển</h2>
+<h3 id="kich-ban-a-produce-request-voi-acksall-ghi-an-toan-tuyet-oi">Kịch bản A: Produce Request với <code>acks=all</code> (Ghi an toàn tuyệt đối)</h3>
+<div class="highlight"><pre><span></span><code>[Producer] ──(1) TCP Raw Bytes──&gt; [SocketServer: Processor]
+                                           │ (2) Đóng gói Request
+                                           ▼
+                                   [RequestChannel]
+                                           │ (3) Dequeue
+                                           ▼
+                                [RequestHandler: IO Thread]
+                                           │
+             ┌─────────────────────────────┴─────────────────────────────┐
+             │ (4) Ghi vào Leader Partition                              │ (5) Chưa đủ ISR sync!
+             ▼                                                           ▼
+    [ReplicaManager / Log]                                  [DelayedOperationPurgatory]
+     ├── Ghi vào OS Page Cache (.log)                        ├── Tạo Watcher gắn với Partition
+     └── Cập nhật LEO = LEO + 1                              └── Giải phóng IO Thread ngay lập tức!
+             │                                                           ▲
+             │ (6) Follower gửi FetchRequest kéo dữ liệu                  │ (7) Watcher kích hoạt!
+             └───────────────────────────────────────────────────────────┘
+                                           │
+                                           ▼ (8) Đủ ISR xác nhận &amp;rarr; Vạch HW dâng lên
+                                   [DelayedProduce hoàn tất]
+                                           │
+                                           ▼ (9) Đẩy response trả về Client: OK!
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tại sao Purgatory là tuyệt tác kiến trúc?</p>
+<p>Nếu không có Purgatory, 8 worker thread của <code>num.io.threads</code> sẽ bị <strong>block đứng chờ</strong> 2 Follower sao chép xong. Chỉ cần 8 request đồng thời là toàn bộ Broker tê liệt. Với Purgatory (Timing Wheels), worker thread ghi vào Page Cache xong (mất ~5 micro-giây) là ném vào Purgatory rồi <strong>lập tức quay sang phục vụ request khác</strong>. Độ phức tạp thêm/xóa/check timeout đạt <strong><code>O(1)</code></strong>.</p>
+</div>
+<hr />
+<h3 id="kich-ban-b-fetch-request-uong-bay-than-toc-zero-copy">Kịch bản B: Fetch Request &amp; Đường Bay Thần Tốc "Zero-Copy"</h3>
+<p>Khi Consumer gửi yêu cầu đọc dữ liệu (<code>FETCH</code>), Kafka hoàn toàn <strong>đứng tránh sang một bên</strong> để phần cứng tự xử lý:</p>
+<div class="highlight"><pre><span></span><code>[Consumer] ──(1) Gửi FetchRequest (Offset: 1000)──&gt; [IO Thread]
+                                                         │
+                                                         ▼ (2) Tra cứu Sparse Index (.index)
+                                                   Tìm thấy Physical Position = 4096 (mmap O(log N))
+                                                         │
+                                                         ▼ (3) Gọi Linux System Call
+                                                sendfile(socket_fd, file_fd, offset=4096, size=64KB)
+</code></pre></div>
+<p>Lúc này, đường truyền vật lý diễn ra hoàn toàn ở tầng Kernel:</p>
+<div class="highlight"><pre><span></span><code>[Đĩa cứng NVMe] ──(DMA Transfer)──&gt; [OS Page Cache (Kernel Memory)]
+                                                    │
+                                                    │ (DMA Copy qua Linux sendfile)
+                                                    ▼ (HOÀN TOÀN BYPASS JVM HEAP!)
+                                           [Socket Buffer / NIC (Card mạng)]
+                                                    │
+                                                    └──(TCP Stream)──&gt; [Consumer Client]
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">3 Con số Invariant làm nên tốc độ triệu TPS</p>
+<ol>
+<li><strong>0 lần CPU Copy</strong>: Dữ liệu không bao giờ bị CPU nạp vào thanh ghi hay copy vào JVM User Space.</li>
+<li><strong>2 lần Context Switch</strong>: Thay vì 4 lần như I/O truyền thống (User &harr; Kernel &harr; User &harr; Kernel), <code>sendfile(2)</code> chỉ tốn đúng 2 lần switch.</li>
+<li><strong>Zero Garbage Collection</strong>: Không có bất kỳ Java Object byte array nào được cấp phát trên JVM Heap cho message payload, loại bỏ hoàn toàn thảm họa Stop-The-World của Java GC!</li>
+</ol>
+</div>
+<hr />
+<h2 id="4-ba-ranh-gioi-bat-bien-architectural-invariants-khong-the-xam-pham">4. Ba Ranh Giới Bất Biến (Architectural Invariants) Không Thể Xâm Phạm</h2>
+<p>Mọi lập trình viên vận hành Kafka đều phải khắc cốt ghi tâm 3 bất biến thiết kế này:</p>
+<h3 id="invariant-1-vach-ngan-high-watermark-offset-hw">Invariant 1: Vạch Ngăn High Watermark (<code>Offset &lt; HW</code>)</h3>
+<blockquote>
+<p><strong>"Dữ liệu đã nằm trên đĩa của Leader chưa chắc đã là dữ liệu an toàn."</strong></p>
+</blockquote>
+<ul>
+<li><strong>LEO (Log End Offset)</strong> là vị trí mới nhất Leader vừa append xong.</li>
+<li><strong>HW (High Watermark)</strong> là vị trí mà node chậm nhất trong danh sách ISR đã bắt kịp.</li>
+<li><strong>Bất biến</strong>: Consumer <strong>tuyệt đối không bao giờ được phép đọc vượt qua HW</strong>. Nếu cho phép đọc tới LEO, khi Leader bị sập nguồn đột ngột, Follower mới lên làm Leader chưa kịp có đoạn dữ liệu đó &rarr; Client sẽ bị lỗi <strong>Phantom Read / Data Drift</strong>.</li>
+</ul>
+<h3 id="invariant-2-ghi-tuan-tu-append-only-thay-vi-random-io">Invariant 2: Ghi Tuần Tự (Append-Only) Thay Vì Random I/O</h3>
+<p>Kafka không dùng cấu trúc B-Tree hay LSM-Tree như các cơ sở dữ liệu truyền thống. 
+* Ghi dữ liệu: Luôn luôn là thao tác ghi nối tiếp vào cuối file segment (<code>O(1)</code>). Tốc độ ghi tuần tự của ổ cứng từ tính (HDD) có thể đạt <strong>100 - 150 MB/s</strong>, còn NVMe đạt <strong>hàng GB/s</strong>, tiệm cận trực tiếp tốc độ ghi vào RAM.
+* Dọn dẹp dữ liệu: Khi hết hạn (Retention) hoặc nén log (Compaction), Kafka không tìm từng record để xóa. Nó <strong>xóa đứt cả một file segment 1GB cũ</strong> trên Linux File System với độ phức tạp <code>O(1)</code>.</p>
+<h3 id="invariant-3-idempotency-khong-can-database-producerstatemanager">Invariant 3: Idempotency Không Cần Database (<code>ProducerStateManager</code>)</h3>
+<p>Để đảm bảo Producer retry mà không sinh ra tin nhắn trùng lặp (Exactly-Once Semantics), Kafka không tạo bảng deduplication trong database:
+* Mỗi Producer được cấp 1 <code>ProducerId (PID)</code>. Mỗi message batch mang 1 số thứ tự tăng dần <code>SequenceNumber</code>.
+* Trong <code>UnifiedLog</code>, component <strong><code>ProducerStateManager</code></strong> giữ trong RAM một bảng trượt gồm <strong>5 Sequence Number gần nhất</strong> của từng PID.
+* Khi có message gửi tới:
+  * Nếu <code>Seq == LastSeq + 1</code>: Chấp nhận, tăng <code>LastSeq</code>.
+  * Nếu <code>Seq &lt;= LastSeq</code>: Duplicate detected &rarr; Bỏ qua việc ghi đĩa, trả về ACK thành công ngay lập tức!
+  * Bộ nhớ tiêu tốn cho việc chống trùng lặp: Chỉ vài kilobyte RAM cho mỗi Producer, tốc độ kiểm tra <code>O(1)</code>.</p>
+<hr />
+<h2 id="5-loi-ket-cua-kien-truc-su">5. Lời Kết Của Kiến Trúc Sư</h2>
+<p>Khi bóc tách 7 cơ quan nội tạng bên trong Kafka, ta nhận ra triết lý thiết kế tối thượng của nó:</p>
+<blockquote>
+<p><strong>"Kafka không cố gắng làm mọi thứ trong phần mềm ứng dụng. Sức mạnh của Kafka đến từ sự thấu hiểu sâu sắc cách hoạt động của Hệ Điều Hành, Hệ Thống Tệp, Bộ Đệm Kernel và Phần Cứng Mạng để tối đa hóa hiệu năng dòng chảy dữ liệu."</strong></p>
+</blockquote>
+<ul>
+<li>Một khi hiểu được vai trò của <strong><code>SocketServer</code></strong> và <strong><code>RequestChannel</code></strong>, ta sẽ biết cách tinh chỉnh <code>num.network.threads</code> và <code>num.io.threads</code> tương ứng với số CPU cores.</li>
+<li>Một khi hiểu được bản chất của <strong><code>Purgatory</code></strong>, ta sẽ tự tin cấu hình <code>acks=all</code> và <code>min.insync.replicas</code> mà không sợ làm nghẽn hệ thống.</li>
+<li>Và một khi hiểu được cơ chế <strong><code>Zero-Copy</code></strong>, ta sẽ không bao giờ lãng phí hàng trăm gigabyte RAM để cấp cho JVM Heap vô ích.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.instant", "navigation.tracking", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+    
+  </body>
+</html>
