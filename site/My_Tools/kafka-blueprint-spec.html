@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARCHIVE / 042 - APACHE KAFKA DISTRIBUTED ENGINE</title>
+  <title>ARCHIVE / 042 - KAFKA MECHA ANATOMY // CAD SPEC SHEET</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -59,7 +59,6 @@
       color: #fff;
     }
 
-    /* Subtle grid background */
     .blueprint-grid {
       background-size: 40px 40px;
       background-image: 
@@ -70,117 +69,120 @@
 </head>
 <body class="blueprint-grid w-screen h-screen overflow-hidden select-none relative flex flex-col justify-between p-4">
 
-  <!-- 3D Canvas Layer (Takes full viewport in background) -->
+  <!-- 3D Canvas Layer -->
   <canvas id="blueprint-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0"></canvas>
 
   <!-- TOP BAR: Left Spec + Center Orthographic + Right Internal Section -->
   <div class="relative z-10 grid grid-cols-12 gap-3 pointer-events-none">
     
-    <!-- Top Left: ARCHIVE SPEC (001) -->
+    <!-- Top Left: ARCHIVE SPEC (001) - Deep Anatomical Dissection -->
     <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
-      <div class="flex justify-between items-start mb-2">
-        <div class="spec-header">ARCHIVE / 042 // SPEC</div>
-        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">STABLE</span>
+      <div class="flex justify-between items-start mb-1.5">
+        <div class="spec-header">ARCHIVE / 042 // DISSECTION</div>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-orange-100 text-orange-900 font-bold border border-orange-300">BIO-MECHA CAD</span>
       </div>
-      <div class="text-base font-black tracking-tight leading-none mb-1 text-neutral-900">
-        APACHE KAFKA
+      <div class="text-base font-black tracking-tight leading-none mb-0.5 text-neutral-900">
+        MECHANICAL KAFKA
       </div>
-      <div class="text-[10px] text-neutral-500 uppercase tracking-wider mb-2 pb-1 border-b border-neutral-200">
-        DISTRIBUTED STREAMING ARCHITECTURE
-      </div>
-
-      <div class="grid grid-cols-2 gap-y-1 text-[10px] text-neutral-600">
-        <div>CONSENSUS</div>
-        <div class="font-bold text-neutral-900">: KRAFT QUORUM</div>
-        <div>TOPOLOGY</div>
-        <div class="font-bold text-neutral-900">: 3 BROKERS / 3 ISR</div>
-        <div>I/O ENGINE</div>
-        <div class="font-bold text-neutral-900">: OS ZERO-COPY</div>
-        <div>DURABILITY</div>
-        <div class="font-bold text-neutral-900">: APPEND-ONLY LOG</div>
+      <div class="text-[9px] text-neutral-500 uppercase tracking-wider mb-2 pb-1 border-b border-neutral-200">
+        ANATOMY OF DISTRIBUTED LOG & ZERO-COPY
       </div>
 
-      <div class="mt-2 pt-2 border-t border-neutral-200 flex items-center justify-between">
-        <div class="flex items-center gap-1.5 text-[10px] font-bold text-orange-600">
-          <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
-          <span>HIGH-THROUGHPUT CRUISE</span>
+      <div class="grid grid-cols-2 gap-y-1 text-[9px] text-neutral-600 leading-tight">
+        <div>STORAGE ORGAN</div>
+        <div class="font-bold text-neutral-900">: SPIRAL SEPTA (.log)</div>
+        <div>SPARSE INDEX</div>
+        <div class="font-bold text-neutral-900">: MMAP O(log N) BYTE</div>
+        <div>PROPULSION</div>
+        <div class="font-bold text-neutral-900">: ZERO-COPY TURBINE</div>
+        <div>CONTROL GYRO</div>
+        <div class="font-bold text-neutral-900">: KRAFT RAFT QUORUM</div>
+        <div>INVARIANTS</div>
+        <div class="font-bold text-orange-700">: HW &le; LEO (COMMITTED)</div>
+        <div>PURGATORY</div>
+        <div class="font-bold text-neutral-900">: DELAYED FETCH/PROD</div>
+      </div>
+
+      <div class="mt-2 pt-1.5 border-t border-neutral-200 flex items-center justify-between text-[9px]">
+        <div class="flex items-center gap-1.5 font-bold text-orange-600">
+          <span class="w-2 h-2 rounded-full bg-orange-600 animate-ping"></span>
+          <span>DMA SENDFILE ENGAGED</span>
         </div>
-        <span class="text-[9px] text-neutral-400">LATENCY &lt; 2.4 MS</span>
+        <span class="text-neutral-400">HEAP BYPASS: 100%</span>
       </div>
     </div>
 
     <!-- Top Center-Left: ORTHOGRAPHIC PROFILE 2D (002) -->
     <div class="col-span-3 spec-card p-3 rounded pointer-events-auto flex flex-col justify-between">
       <div class="flex justify-between items-center mb-1">
-        <div class="spec-header">ORTHOGRAPHIC PROFILE // TOPOLOGY</div>
-        <span class="text-[9px] text-neutral-400">2D SCHEMATIC</span>
+        <div class="spec-header">ORTHOGRAPHIC PROFILE // DATA CAD</div>
+        <span class="text-[9px] text-neutral-400">CROSS-SECTION</span>
       </div>
       <canvas id="ortho-canvas" width="300" height="75" class="w-full h-[75px] block"></canvas>
       <div class="flex justify-between text-[9px] text-neutral-500 pt-1 border-t border-neutral-200">
-        <span>PRODUCERS &gt;&gt;</span>
-        <span class="text-orange-600 font-bold">LEADER (P0, P1)</span>
-        <span>&gt;&gt; CONSUMERS</span>
+        <span>TENTACLES (INGRESS) &gt;&gt;</span>
+        <span class="text-orange-600 font-bold">SEPTA 07-00</span>
+        <span>&gt;&gt; WATER-JET EGRESS</span>
       </div>
     </div>
 
-    <!-- Top Spacer for clean view of 3D Model -->
+    <!-- Spacer for 3D Viewport -->
     <div class="col-span-3"></div>
 
-    <!-- Top Right: INTERNAL SECTION (003) -->
+    <!-- Top Right: INTERNAL SECTION RADAR (003) -->
     <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
       <div class="flex justify-between items-center mb-1">
-        <div class="spec-header">INTERNAL SECTION // BROKER ANATOMY</div>
-        <span class="text-[9px] text-neutral-400">MODULAR</span>
+        <div class="spec-header">INTERNAL ANATOMY // 5 COMPONENT CORE</div>
+        <span class="text-[9px] text-neutral-400">RADIAL DISSECTION</span>
       </div>
       <div class="grid grid-cols-2 gap-2 mt-1">
-        <!-- Radial Section Diagram -->
         <canvas id="section-radar" width="90" height="90" class="w-[85px] h-[85px] mx-auto block"></canvas>
-        <div class="flex flex-col justify-center text-[10px] space-y-1">
-          <div class="text-neutral-500"><span class="text-orange-600 font-bold">01</span> Network Acceptor</div>
-          <div class="text-neutral-500"><span class="text-orange-600 font-bold">02</span> Request Purgatory</div>
-          <div class="font-bold text-neutral-900"><span class="text-orange-600">03</span> OS Page Cache</div>
-          <div class="text-neutral-500"><span class="text-orange-600 font-bold">04</span> Commit Log (000.log)</div>
-          <div class="text-neutral-500"><span class="text-orange-600 font-bold">05</span> Zero-Copy sendfile()</div>
+        <div class="flex flex-col justify-center text-[9px] space-y-1">
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">01</span> Ingress Tentacles</div>
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">02</span> Purgatory Valves</div>
+          <div class="font-bold text-orange-600">03 DMA Zero-Copy Turbine</div>
+          <div class="text-neutral-700 font-bold"><span class="text-orange-600">04</span> Spiral Shell Septa</div>
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">05</span> High-Watermark Piston</div>
         </div>
       </div>
-      <div class="mt-1 pt-1 border-t border-neutral-200 flex justify-between text-[9px] text-neutral-500">
-        <span>KERNEL MEMORY: 32 GB</span>
-        <span class="text-neutral-800 font-bold">JVM HEAP: 4 GB (LEAN)</span>
+      <div class="mt-1 pt-1 border-t border-neutral-200 flex justify-between text-[8px] text-neutral-500">
+        <span>OS PAGE CACHE: DIRECT DMA</span>
+        <span class="text-neutral-800 font-bold">ZERO USER-SPACE COPY</span>
       </div>
     </div>
 
   </div>
 
-  <!-- MID-RIGHT FLOATING CONTROLS: Camera Views & Display Modes -->
+  <!-- MID-RIGHT FLOATING CONTROLS: Sci-Fi Camera Views & Mecha Modes -->
   <div class="absolute right-4 top-40 z-20 w-64 space-y-3 pointer-events-auto">
     <!-- Camera Views Card -->
     <div class="spec-card p-3 rounded space-y-2">
-      <div class="spec-header">CAMERA VIEWS // PERSPECTIVE</div>
+      <div class="spec-header">CAMERA CAD VIEWS // FOCUS</div>
       <div class="grid grid-cols-2 gap-1.5">
-        <button id="cam-hero" class="btn-blueprint py-1.5 px-2 rounded active">HERO CLUSTER</button>
-        <button id="cam-leader" class="btn-blueprint py-1.5 px-2 rounded">01 LEADER</button>
-        <button id="cam-partitions" class="btn-blueprint py-1.5 px-2 rounded">02 PARTITIONS</button>
-        <button id="cam-kraft" class="btn-blueprint py-1.5 px-2 rounded">03 KRAFT CORE</button>
-        <button id="cam-zerocopy" class="btn-blueprint py-1.5 px-2 rounded col-span-2 text-orange-700 bg-orange-100 border-orange-300">
-          ⚡ ZERO-COPY RAY TRACE
+        <button id="cam-hero" class="btn-blueprint py-1.5 px-2 rounded active">HERO ENGINE</button>
+        <button id="cam-turbine" class="btn-blueprint py-1.5 px-2 rounded">01 DMA TURBINE</button>
+        <button id="cam-septa" class="btn-blueprint py-1.5 px-2 rounded">02 SPIRAL SEPTA</button>
+        <button id="cam-tentacles" class="btn-blueprint py-1.5 px-2 rounded">03 TENTACLES</button>
+        <button id="cam-kraft" class="btn-blueprint py-1.5 px-2 rounded col-span-2 text-orange-700 bg-orange-100 border-orange-300">
+          ⚡ 04 KRAFT GYRO CONSENSUS
         </button>
       </div>
     </div>
 
     <!-- Display Modes Card -->
     <div class="spec-card p-3 rounded space-y-2">
-      <div class="spec-header">DISPLAY MODES // CAD CONTROLS</div>
+      <div class="spec-header">MECHA DISSECTION // DISPLAY</div>
       <div class="grid grid-cols-2 gap-1.5">
-        <button id="btn-labels" class="btn-blueprint py-1.5 px-2 rounded active">LABELS</button>
+        <button id="btn-labels" class="btn-blueprint py-1.5 px-2 rounded active">ANATOMY LABELS</button>
         <button id="btn-xray" class="btn-blueprint py-1.5 px-2 rounded">X-RAY HULL</button>
-        <button id="btn-exploded" class="btn-blueprint py-1.5 px-2 rounded col-span-2">EXPLODED BROKER</button>
+        <button id="btn-exploded" class="btn-blueprint py-1.5 px-2 rounded col-span-2">EXPLODE SEPTA SHELL</button>
       </div>
       <div class="pt-2 border-t border-neutral-200 flex gap-1.5">
         <button id="btn-nuke" class="w-full py-1.5 rounded bg-red-600 text-white font-bold text-[10px] hover:bg-red-700 transition">
           💥 FAILOVER (KILL L1)
         </button>
         <button id="btn-burst" class="w-full py-1.5 rounded bg-orange-600 text-white font-bold text-[10px] hover:bg-orange-700 transition">
-          🚀 BURST 10K MSG
+          🚀 JET CRUISE (10K MSG)
         </button>
       </div>
     </div>
@@ -192,18 +194,18 @@
     <!-- Bottom Left: TELEMETRY (005) -->
     <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
       <div class="flex justify-between items-center mb-1">
-        <div class="spec-header">INGRESS TELEMETRY</div>
-        <span class="text-[9px] text-neutral-400">REAL-TIME</span>
+        <div class="spec-header">ANATOMICAL TELEMETRY</div>
+        <span class="text-[9px] text-neutral-400">PROPULSION</span>
       </div>
-      <div class="grid grid-cols-2 gap-y-1.5 text-[10px] pt-1">
-        <div class="text-neutral-500">THROUGHPUT</div>
-        <div id="stat-tps" class="font-bold text-neutral-900 text-right">184.2 MB/s</div>
-        <div class="text-neutral-500">ISR INTEGRITY</div>
-        <div id="stat-isr" class="font-bold text-emerald-700 text-right">3/3 (100%)</div>
-        <div class="text-neutral-500">PAGE CACHE HIT</div>
-        <div class="font-bold text-orange-600 text-right">99.4%</div>
-        <div class="text-neutral-500">CONSUMER LAG</div>
-        <div id="stat-lag" class="font-bold text-neutral-900 text-right">0 MSG</div>
+      <div class="grid grid-cols-2 gap-y-1.5 text-[9px] pt-1">
+        <div class="text-neutral-500">TURBINE SPEED</div>
+        <div id="stat-tps" class="font-bold text-neutral-900 text-right">1,504 RPM (184 MB/s)</div>
+        <div class="text-neutral-500">HIGH WATERMARK</div>
+        <div class="font-bold text-orange-600 text-right">HW: 104,850 LEO: 104,850</div>
+        <div class="text-neutral-500">ISR STATUS</div>
+        <div id="stat-isr" class="font-bold text-emerald-700 text-right">3/3 IN-SYNC REPLICAS</div>
+        <div class="text-neutral-500">PURGATORY OPS</div>
+        <div id="stat-lag" class="font-bold text-neutral-900 text-right">0 QUEUED (0 MS DELAY)</div>
       </div>
     </div>
 
@@ -212,59 +214,61 @@
       <div class="flex justify-between items-center mb-1">
         <div class="spec-header">ENVIRONMENTAL DATA & OPERATION TIMELINE</div>
         <div class="flex items-center gap-2 text-[9px] text-neutral-500">
-          <span>LATENCY: 1.8 MS</span>
-          <span>COMMIT RATE: 4.8K/S</span>
+          <span>DMA BUFFER: 64 KB</span>
+          <span>LATENCY: 1.2 MS</span>
         </div>
       </div>
-      <!-- Waveform canvas -->
-      <canvas id="timeline-canvas" width="500" height="50" class="w-full h-[50px] block"></canvas>
-      <div class="flex justify-between items-center pt-1.5 border-t border-neutral-200 text-[10px]">
+      <canvas id="timeline-canvas" width="500" height="48" class="w-full h-[48px] block"></canvas>
+      <div class="flex justify-between items-center pt-1 border-t border-neutral-200 text-[9px]">
         <div class="flex items-center gap-2">
           <button id="btn-timeline-pause" class="w-5 h-5 rounded bg-neutral-200 text-neutral-800 flex items-center justify-center font-bold text-[9px]">⏸</button>
-          <span class="text-neutral-500 font-bold">PHASE 01 - STEADY-STATE INGESTION</span>
+          <span class="text-neutral-600 font-bold">PHASE 01 // APPEND-ONLY ZERO-COPY INGESTION</span>
         </div>
-        <span class="text-orange-600 font-bold">SPEED: 1.0X</span>
+        <span class="text-orange-600 font-bold">RATE: 1.0X</span>
       </div>
     </div>
 
-    <!-- Bottom Right: STRUCTURAL OVERVIEW - SPIRAL LOG SEGMENTS (007) -->
+    <!-- Bottom Right: STRUCTURAL OVERVIEW - SPIRAL SHELL SEPTA (007) -->
     <div class="col-span-4 spec-card p-3 rounded pointer-events-auto">
       <div class="flex justify-between items-center mb-1">
-        <div class="spec-header">STRUCTURAL OVERVIEW // COMMIT LOG SEGMENTS</div>
-        <span class="text-[9px] text-neutral-400">PARTITION 0</span>
+        <div class="spec-header">STRUCTURAL OVERVIEW // SPIRAL SHELL SEPTA</div>
+        <span class="text-[9px] text-neutral-400">SEGMENTS .LOG / .INDEX</span>
       </div>
       <div class="flex justify-between items-center pt-1 text-[9px]">
         <div class="text-center">
-          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S01</div>
+          <div class="w-7 h-7 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-0.5">S07</div>
           <span class="text-[8px] text-neutral-400">00000.log</span>
         </div>
         <div class="text-center">
-          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S02</div>
+          <div class="w-7 h-7 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-0.5">S05</div>
           <span class="text-[8px] text-neutral-400">01048.log</span>
         </div>
         <div class="text-center">
-          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S03</div>
+          <div class="w-7 h-7 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-0.5">S03</div>
           <span class="text-[8px] text-neutral-400">02096.log</span>
         </div>
         <div class="text-center">
-          <div class="w-8 h-8 rounded-full border-2 border-orange-500 bg-orange-50 flex items-center justify-center font-bold text-orange-600 mx-auto mb-1">ACTIVE</div>
+          <div class="w-7 h-7 rounded-full border-2 border-orange-500 bg-orange-50 flex items-center justify-center font-bold text-orange-600 mx-auto mb-0.5">ACTIVE</div>
           <span class="text-[8px] text-orange-600 font-bold">03144.log</span>
         </div>
         <div class="text-center">
-          <div class="w-8 h-8 rounded-full border border-dashed border-neutral-300 flex items-center justify-center font-bold text-neutral-400 mx-auto mb-1">.idx</div>
-          <span class="text-[8px] text-neutral-400">index</span>
+          <div class="w-7 h-7 rounded-full border border-dashed border-neutral-400 flex items-center justify-center font-bold text-neutral-600 mx-auto mb-0.5">.idx</div>
+          <span class="text-[8px] text-neutral-400">mmap pos</span>
+        </div>
+        <div class="text-center">
+          <div class="w-7 h-7 rounded-full border border-dashed border-neutral-400 flex items-center justify-center font-bold text-neutral-600 mx-auto mb-0.5">.tidx</div>
+          <span class="text-[8px] text-neutral-400">time index</span>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- INTERACTIVE JAVASCRIPT: 3D ENGINE & SCHEMATICS -->
+  <!-- 3D BIOMECHANICAL NAUTILUS ENGINE -->
   <script>
     const canvas = document.getElementById('blueprint-canvas');
     const ctx = canvas.getContext('2d');
 
-    // Canvas sizing
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -272,16 +276,16 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // Camera settings (White Industrial CAD style)
+    // Camera settings (White CAD Studio)
     let camera = {
-      rotX: 0.35,
-      rotY: -0.55,
-      targetRotX: 0.35,
-      targetRotY: -0.55,
+      rotX: 0.28,
+      rotY: -0.65,
+      targetRotX: 0.28,
+      targetRotY: -0.65,
       zoom: 1.15,
       targetZoom: 1.15,
       panX: -20,
-      panY: 30
+      panY: 20
     };
 
     let isDragging = false;
@@ -299,7 +303,7 @@
         const dx = e.clientX - prevMouse.x;
         const dy = e.clientY - prevMouse.y;
         camera.targetRotY += dx * 0.005;
-        camera.targetRotX = Math.max(-0.2, Math.min(1.2, camera.targetRotX + dy * 0.005));
+        camera.targetRotX = Math.max(-0.3, Math.min(1.2, camera.targetRotX + dy * 0.005));
         prevMouse = { x: e.clientX, y: e.clientY };
       }
     });
@@ -333,87 +337,25 @@
       };
     }
 
-    // CAD Display State
     let displayState = {
       labels: true,
       xray: false,
       exploded: false,
-      zeroCopyRay: false,
       broker1Alive: true,
       tps: 184.2,
-      lag: 0,
-      particles: []
+      turbineAngle: 0
     };
 
-    // Nodes in 3D Space (Industrial Porcelain White & Orange accents)
-    const nodes = {
-      producer: { x: -390, y: 0, z: 0, label: 'INGRESS / PRODUCER' },
-      kraft: { x: 0, y: -100, z: 0, label: 'KRAFT QUORUM' },
-      broker1: { x: -130, y: 30, z: -80, label: 'BROKER-01 [LEADER]', leader: true },
-      broker2: { x: 130, y: 30, z: -80, label: 'BROKER-02 [FOLLOWER]', leader: false },
-      broker3: { x: 0, y: 60, z: 130, label: 'BROKER-03 [FOLLOWER]', leader: false },
-      consumer: { x: 390, y: 0, z: 0, label: 'EGRESS / CONSUMER GROUP' }
-    };
-
-    // Segmented Particle (Like the mechanical articulated tentacles of the nautilus)
-    class MechanicalDataPacket {
-      constructor(from, to, color = '#ff5500', speed = 0.012) {
-        this.from = from;
-        this.to = to;
-        this.progress = Math.random();
-        this.speed = speed + Math.random() * 0.004;
-        this.color = color;
-        this.arcHeight = -35 - Math.random() * 25;
-      }
-
-      update() {
-        this.progress += this.speed;
-        if (this.progress > 1) this.progress = 0;
-      }
-
-      getPos(offset = 0) {
-        const p = Math.max(0, Math.min(1, this.progress - offset));
-        const x = (1 - p) * (1 - p) * this.from.x + 2 * (1 - p) * p * ((this.from.x + this.to.x) / 2) + p * p * this.to.x;
-        const y = (1 - p) * (1 - p) * this.from.y + 2 * (1 - p) * p * ((this.from.y + this.to.y) / 2 + this.arcHeight) + p * p * this.to.y;
-        const z = (1 - p) * (1 - p) * this.from.z + 2 * (1 - p) * p * ((this.from.z + this.to.z) / 2) + p * p * this.to.z;
-        return { x, y, z };
-      }
-    }
-
-    function initParticles() {
-      displayState.particles = [];
-      const leader = displayState.broker1Alive ? nodes.broker1 : nodes.broker2;
-
-      // Ingress packets
-      for (let i = 0; i < 28; i++) {
-        displayState.particles.push(new MechanicalDataPacket(nodes.producer, leader, '#ff5500', 0.011));
-      }
-      // ISR sync packets
-      for (let i = 0; i < 18; i++) {
-        displayState.particles.push(new MechanicalDataPacket(leader, nodes.broker3, '#262626', 0.016));
-      }
-      if (displayState.broker1Alive) {
-        for (let i = 0; i < 18; i++) {
-          displayState.particles.push(new MechanicalDataPacket(nodes.broker1, nodes.broker2, '#262626', 0.016));
-        }
-      }
-      // Egress consumer packets
-      for (let i = 0; i < 24; i++) {
-        displayState.particles.push(new MechanicalDataPacket(leader, nodes.consumer, '#ff5500', 0.014));
-      }
-    }
-    initParticles();
-
-    // Draw Floor Grid (Clean CAD isometric style)
+    // Draw Subtle Blueprint Floor
     function drawCadFloor() {
-      const size = 520;
-      const step = 65;
+      const size = 500;
+      const step = 60;
       ctx.lineWidth = 1;
 
       for (let x = -size; x <= size; x += step) {
-        const p1 = project3D(x, 110, -size);
-        const p2 = project3D(x, 110, size);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        const p1 = project3D(x, 140, -size);
+        const p2 = project3D(x, 140, size);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)';
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
@@ -421,167 +363,196 @@
       }
 
       for (let z = -size; z <= size; z += step) {
-        const p1 = project3D(-size, 110, z);
-        const p2 = project3D(size, 110, z);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        const p1 = project3D(-size, 140, z);
+        const p2 = project3D(size, 140, z);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.04)';
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
       }
 
-      // Center crosshair
-      const center = project3D(0, 110, 0);
-      ctx.strokeStyle = '#ff5500';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(center.x - 12, center.y);
-      ctx.lineTo(center.x + 12, center.y);
-      ctx.moveTo(center.x, center.y - 12);
-      ctx.lineTo(center.x, center.y + 12);
-      ctx.stroke();
+      // Measurement reference rings
+      [120, 240, 360].forEach(r => {
+        ctx.strokeStyle = 'rgba(255, 85, 0, 0.12)';
+        ctx.beginPath();
+        for (let a = 0; a <= Math.PI * 2; a += 0.25) {
+          const pt = project3D(Math.cos(a) * r, 140, Math.sin(a) * r);
+          if (a === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      });
     }
 
-    // Draw Mechanical Tower Broker (Matte Porcelain White & Orange Rings)
-    function drawMechanicalBroker(x, y, z, isAlive, isLeader, label, isExploded = false) {
-      const width = 42;
-      const height = 95;
+    // DRAW MECHANICAL NAUTILUS ENGINE (The Scifi Metaphor for Kafka Broker)
+    function drawMechanicalNautilus(time) {
+      const cx = 50;
+      const cy = -10;
+      const cz = 0;
 
-      if (!isAlive) {
-        // Red failure outline
-        const pt = project3D(x, y, z);
-        ctx.strokeStyle = '#dc2626';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(pt.x - 30 * pt.scale, pt.y - 40 * pt.scale, 60 * pt.scale, 80 * pt.scale);
-        ctx.fillStyle = 'rgba(220, 38, 38, 0.08)';
-        ctx.fillRect(pt.x - 30 * pt.scale, pt.y - 40 * pt.scale, 60 * pt.scale, 80 * pt.scale);
+      // 1. SPIRAL SHELL SEPTA (Commit Log Segments: S07 down to S00)
+      const numSepta = 8;
+      const explodeOffset = displayState.exploded ? 22 : 0;
 
-        if (displayState.labels) {
-          ctx.fillStyle = '#dc2626';
-          ctx.font = 'bold 10px "Space Mono", monospace';
-          ctx.textAlign = 'center';
-          ctx.fillText('⚡ L1 FAILURE // RE-ELECTED', pt.x, pt.y - 50 * pt.scale);
-        }
-        return;
-      }
+      for (let i = 0; i < numSepta; i++) {
+        const angle = (i / numSepta) * Math.PI * 1.5;
+        const radius = (120 - i * 11);
+        const sx = cx + Math.cos(angle) * radius + (displayState.exploded ? (numSepta - i) * 12 : 0);
+        const sy = cy - Math.sin(angle) * (radius * 0.75);
+        const sz = cz + (i - numSepta / 2) * (14 + explodeOffset);
 
-      if (isExploded) {
-        // Exploded View: Segmented modules like Nautilus septa
-        const l1 = project3D(x, y - 90, z);
-        const l2 = project3D(x, y, z);
-        const l3 = project3D(x, y + 90, z);
+        const pt = project3D(sx, sy, sz);
+        const w = (42 - i * 3) * pt.scale;
+        const h = (85 - i * 7) * pt.scale;
 
-        // Module 1: Network Ingress
-        ctx.fillStyle = '#faf9f5';
+        // Mechanical Septa Plate: Matte Chalk White with Black Chamfer
+        ctx.fillStyle = displayState.xray ? 'rgba(255,255,255,0.45)' : (i === 0 ? '#ff5500' : '#fdfdfd');
         ctx.strokeStyle = '#171717';
-        ctx.lineWidth = 1.5;
-        ctx.fillRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 32 * l1.scale);
-        ctx.strokeRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 32 * l1.scale);
-        // Orange top cap
-        ctx.fillStyle = '#ff5500';
-        ctx.fillRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 4 * l1.scale);
+        ctx.lineWidth = 1.8;
 
-        // Module 2: OS Page Cache (Middle)
-        ctx.fillStyle = displayState.xray ? 'rgba(255, 85, 0, 0.15)' : '#ffffff';
-        ctx.strokeStyle = '#ff5500';
-        ctx.lineWidth = 2;
-        ctx.fillRect(l2.x - 52 * l2.scale, l2.y - 20 * l2.scale, 104 * l2.scale, 40 * l2.scale);
-        ctx.strokeRect(l2.x - 52 * l2.scale, l2.y - 20 * l2.scale, 104 * l2.scale, 40 * l2.scale);
-
-        // Module 3: Commit Log Discs (Bottom)
-        ctx.fillStyle = '#171717';
-        ctx.fillRect(l3.x - 45 * l3.scale, l3.y - 18 * l3.scale, 90 * l3.scale, 36 * l3.scale);
-
-        // Laser Ray: Zero-Copy bypassing JVM
-        ctx.strokeStyle = '#ff5500';
-        ctx.lineWidth = 3;
-        ctx.setLineDash([6, 3]);
+        // Curved Septa Shell Profile
         ctx.beginPath();
-        ctx.moveTo(l2.x + 52 * l2.scale, l2.y);
-        ctx.lineTo(l1.x + 45 * l1.scale, l1.y);
+        ctx.ellipse(pt.x, pt.y, w, h, angle * 0.5, 0, Math.PI * 2);
+        ctx.fill();
         ctx.stroke();
-        ctx.setLineDash([]);
 
-        if (displayState.labels) {
+        // Inner Segment Grooves (Commit Offset Index Lines)
+        ctx.strokeStyle = i === 0 ? '#ffffff' : '#e5e5e5';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, w * 0.65, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Septa Number Labels (07, 05, 03... just like inspiration image)
+        if (displayState.labels && (i === 1 || i === 3 || i === 5)) {
           ctx.fillStyle = '#171717';
           ctx.font = 'bold 9px "Space Mono", monospace';
           ctx.textAlign = 'center';
-          ctx.fillText('01 INGRESS // PURGATORY', l1.x, l1.y + 3);
-          ctx.fillStyle = '#ff5500';
-          ctx.fillText('02 OS PAGE CACHE (ZERO-COPY)', l2.x, l2.y + 3);
-          ctx.fillStyle = '#ffffff';
-          ctx.fillText('03 COMMIT LOG (000.log)', l3.x, l3.y + 3);
+          ctx.fillText(`0${8 - i}`, pt.x, pt.y + 3);
         }
-        return;
       }
 
-      // Normal Mode: Segmented Shell Towers
-      const segments = 4;
-      const segH = height / segments;
+      // 2. CENTRAL ZERO-COPY DMA TURBINE (Propulsion Core / Power Unit 03)
+      const turbinePt = project3D(cx + 10, cy + 10, cz);
+      const tr = 34 * turbinePt.scale;
 
-      for (let i = 0; i < segments; i++) {
-        const curY = y - height / 2 + i * segH;
-        const pt = project3D(x, curY, z);
-        const w = (width - i * 2) * pt.scale;
-        const h = (segH - 2.5) * pt.scale;
-
-        // Mechanical body: Matte off-white with dark outline
-        ctx.fillStyle = displayState.xray ? 'rgba(255,255,255,0.4)' : '#fdfdfd';
-        ctx.strokeStyle = '#171717';
-        ctx.lineWidth = 1.5;
-
-        ctx.fillRect(pt.x - w, pt.y, w * 2, h);
-        ctx.strokeRect(pt.x - w, pt.y, w * 2, h);
-
-        // Orange accent stripes (Mechanical Nautilus aesthetic)
-        if (isLeader && i === 0) {
-          ctx.fillStyle = '#ff5500';
-          ctx.fillRect(pt.x - w, pt.y, w * 2, 4 * pt.scale);
-        }
-
-        // Inner partition slot
-        ctx.fillStyle = isLeader ? '#ff5500' : '#737373';
-        ctx.font = `${Math.max(8, Math.floor(9 * pt.scale))}px "Space Mono", monospace`;
-        ctx.textAlign = 'center';
-        ctx.fillText(`PART-0${i}`, pt.x, pt.y + h / 2 + 3);
-      }
-
-      if (displayState.labels) {
-        const topPt = project3D(x, y - height / 2 - 14, z);
-        ctx.fillStyle = isLeader ? '#ff5500' : '#171717';
-        ctx.font = 'bold 10px "Space Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(label, topPt.x, topPt.y);
-      }
-    }
-
-    // Draw KRaft Controller Quorum (Mechanical Core)
-    function drawMechanicalKRaft(time) {
-      const k = nodes.kraft;
-      const pt = project3D(k.x, k.y, k.z);
-
-      const r = 26 * pt.scale;
+      // Outer Turbine Ring
       ctx.fillStyle = '#171717';
       ctx.strokeStyle = '#ff5500';
-      ctx.lineWidth = 2;
-
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.arc(turbinePt.x, turbinePt.y, tr, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // Inner orange core
+      // Spinning Turbine Rotor Fins (Zero-Copy Sendfile Accelerator)
+      displayState.turbineAngle += 0.05;
+      const fins = 8;
+      ctx.strokeStyle = '#ff5500';
+      ctx.lineWidth = 2;
+      for (let f = 0; f < fins; f++) {
+        const fa = displayState.turbineAngle + (f / fins) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(turbinePt.x, turbinePt.y);
+        ctx.lineTo(turbinePt.x + Math.cos(fa) * (tr - 3), turbinePt.y + Math.sin(fa) * (tr - 3));
+        ctx.stroke();
+      }
+
+      // Center Turbine Hub
       ctx.fillStyle = '#ff5500';
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, r * 0.45, 0, Math.PI * 2);
+      ctx.arc(turbinePt.x, turbinePt.y, tr * 0.35, 0, Math.PI * 2);
       ctx.fill();
 
-      // Rotating dashed ring
-      ctx.strokeStyle = 'rgba(255, 85, 0, 0.4)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
+      if (displayState.labels) {
+        ctx.fillStyle = '#ff5500';
+        ctx.font = 'bold 9px "Space Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('03 ZERO-COPY TURBINE', turbinePt.x, turbinePt.y - tr - 8);
+        ctx.fillStyle = '#737373';
+        ctx.fillText('OS SENDFILE(2) DMA', turbinePt.x, turbinePt.y + tr + 12);
+      }
+
+      // 3. ARTICULATED INGRESS TENTACLES (Network Threads & Request Conduits)
+      const tentacleRoots = [
+        { y: -25, z: -40 },
+        { y: -10, z: -20 },
+        { y: 5, z: 0 },
+        { y: 20, z: 20 },
+        { y: 35, z: 40 }
+      ];
+
+      tentacleRoots.forEach((root, tIdx) => {
+        const segCount = 7;
+        let prevPt = project3D(cx - 70, cy + root.y, cz + root.z);
+
+        ctx.strokeStyle = '#171717';
+        ctx.lineWidth = 2;
+
+        for (let s = 1; s <= segCount; s++) {
+          // Dynamic wave flexing like cephalopod tentacles
+          const wave = Math.sin(time * 0.003 + s * 0.4 + tIdx) * 12;
+          const tx = cx - 70 - s * 38;
+          const ty = cy + root.y + wave + (s * 3);
+          const tz = cz + root.z + (s * 4);
+
+          const curPt = project3D(tx, ty, tz);
+
+          // Draw Segmented mechanical vertebrae
+          ctx.beginPath();
+          ctx.moveTo(prevPt.x, prevPt.y);
+          ctx.lineTo(curPt.x, curPt.y);
+          ctx.stroke();
+
+          // Alternating Black & White Segment Beads with Orange LED Joint
+          ctx.fillStyle = s % 2 === 0 ? '#171717' : '#fdfdfd';
+          ctx.strokeStyle = s === 3 ? '#ff5500' : '#171717';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.arc(curPt.x, curPt.y, (5.5 - s * 0.5) * curPt.scale, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+
+          // Flowing data packets running down tentacles
+          const flowP = ((time * 0.0018 + tIdx * 0.2) % 1);
+          if (Math.abs(flowP - (s / segCount)) < 0.1) {
+            ctx.fillStyle = '#ff5500';
+            ctx.beginPath();
+            ctx.arc(curPt.x, curPt.y, 4 * curPt.scale, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          prevPt = curPt;
+        }
+      });
+
+      if (displayState.labels) {
+        const tipPt = project3D(cx - 300, cy, cz);
+        ctx.fillStyle = '#171717';
+        ctx.font = 'bold 9px "Space Mono", monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('01 INGRESS TENTACLES // NETWORK THREADS', tipPt.x, tipPt.y - 10);
+      }
+
+      // 4. KRAFT METADATA GYROSCOPE CORE (Floating Command Sphere)
+      const gyroPt = project3D(cx + 170, cy - 90, cz);
+      const gr = 24 * gyroPt.scale;
+
+      ctx.strokeStyle = '#ff5500';
+      ctx.lineWidth = 2;
+      ctx.fillStyle = '#171717';
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, r * 1.5, 0, Math.PI * 2);
+      ctx.arc(gyroPt.x, gyroPt.y, gr, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Gyro Gimbal Rings
+      ctx.strokeStyle = 'rgba(255, 85, 0, 0.4)';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.ellipse(gyroPt.x, gyroPt.y, gr * 1.5, gr * 0.6, time * 0.002, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
 
@@ -589,42 +560,45 @@
         ctx.fillStyle = '#171717';
         ctx.font = 'bold 9px "Space Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('KRAFT CORE', pt.x, pt.y - r - 6);
-        ctx.fillStyle = '#737373';
-        ctx.fillText('METADATA CONSENSUS', pt.x, pt.y + r + 14);
+        ctx.fillText('KRAFT GYROSCOPE', gyroPt.x, gyroPt.y - gr - 6);
+        ctx.fillStyle = '#ff5500';
+        ctx.fillText('ACTIVE CONTROLLER', gyroPt.x, gyroPt.y + gr + 12);
       }
-    }
 
-    // Draw Endpoints: Producers & Consumers (Cylindrical Ingress/Egress Pods)
-    function drawEndpointPod(node, title, subtitle, isEgress = false) {
-      const pt = project3D(node.x, node.y, node.z);
-      const w = 45 * pt.scale;
-      const h = 55 * pt.scale;
+      // 5. WATER-JET EGRESS THRUSTERS (High-Throughput Consumer Streaming)
+      const jetPt = project3D(cx + 190, cy + 30, cz);
+      const jw = 32 * jetPt.scale;
+      const jh = 24 * jetPt.scale;
 
       ctx.fillStyle = '#171717';
-      ctx.strokeStyle = '#d4d2cb';
-      ctx.lineWidth = 1.5;
-      ctx.fillRect(pt.x - w / 2, pt.y - h / 2, w, h);
-      ctx.strokeRect(pt.x - w / 2, pt.y - h / 2, w, h);
+      ctx.strokeStyle = '#ff5500';
+      ctx.lineWidth = 1.8;
+      ctx.strokeRect(jetPt.x - jw / 2, jetPt.y - jh / 2, jw, jh);
+      ctx.fillRect(jetPt.x - jw / 2, jetPt.y - jh / 2, jw, jh);
 
-      // Top status LED
+      // Orange Exhaust Nozzle
       ctx.fillStyle = '#ff5500';
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y - h / 2 - 4, 3 * pt.scale, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(jetPt.x + jw / 2 - 4 * jetPt.scale, jetPt.y - jh / 2, 4 * jetPt.scale, jh);
+
+      // Jet stream particles shooting out to consumers
+      for (let p = 0; p < 8; p++) {
+        const px = jetPt.x + jw / 2 + ((time * 0.2 + p * 25) % 140) * jetPt.scale;
+        const py = jetPt.y + (Math.sin(p * 2 + time * 0.01) * 6) * jetPt.scale;
+        ctx.fillStyle = '#ff5500';
+        ctx.beginPath();
+        ctx.arc(px, py, 2.5 * jetPt.scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       if (displayState.labels) {
         ctx.fillStyle = '#171717';
         ctx.font = 'bold 9px "Space Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(title, pt.x, pt.y - h / 2 - 12);
-        ctx.fillStyle = '#737373';
-        ctx.font = '8px "Space Mono", monospace';
-        ctx.fillText(subtitle, pt.x, pt.y + h / 2 + 12);
+        ctx.textAlign = 'left';
+        ctx.fillText('05 WATER-JET EGRESS // CONSUMER ZERO-COPY', jetPt.x + jw / 2 + 15, jetPt.y + 4);
       }
     }
 
-    // 2D Orthographic Schematic Canvas
+    // 2D Orthographic Profile Schematic
     const orthoCanvas = document.getElementById('ortho-canvas');
     const orthoCtx = orthoCanvas.getContext('2d');
     function drawOrthoSchematic() {
@@ -632,61 +606,44 @@
       const w = orthoCanvas.width;
       const h = orthoCanvas.height;
 
-      // Ingress line
+      // Ingress tentacles curve
       orthoCtx.strokeStyle = '#171717';
       orthoCtx.lineWidth = 1.5;
-      orthoCtx.beginPath();
-      orthoCtx.moveTo(20, h / 2);
-      orthoCtx.lineTo(90, h / 2);
-      orthoCtx.stroke();
+      for (let i = -2; i <= 2; i++) {
+        orthoCtx.beginPath();
+        orthoCtx.moveTo(15, h / 2 + i * 8);
+        orthoCtx.bezierCurveTo(70, h / 2 + i * 4, 110, h / 2 + i * 14, 150, h / 2 + i * 3);
+        orthoCtx.stroke();
+      }
 
-      // Ingress Node
-      orthoCtx.fillStyle = '#ff5500';
-      orthoCtx.beginPath();
-      orthoCtx.arc(20, h / 2, 4, 0, Math.PI * 2);
-      orthoCtx.fill();
-
-      // Leader Node (Box)
-      orthoCtx.fillStyle = '#fdfdfd';
+      // Spiral Nautilus Septa Curve (Log segments)
       orthoCtx.strokeStyle = '#ff5500';
       orthoCtx.lineWidth = 2;
-      orthoCtx.fillRect(90, h / 2 - 20, 80, 40);
-      orthoCtx.strokeRect(90, h / 2 - 20, 80, 40);
-
-      orthoCtx.fillStyle = '#171717';
-      orthoCtx.font = 'bold 8px monospace';
-      orthoCtx.fillText('LEADER B1', 98, h / 2 - 6);
-      orthoCtx.fillStyle = '#ff5500';
-      orthoCtx.fillText('P0, P1, P2', 98, h / 2 + 8);
-
-      // ISR Sync lines to B2, B3
-      orthoCtx.strokeStyle = '#737373';
-      orthoCtx.lineWidth = 1;
-      orthoCtx.setLineDash([3, 3]);
       orthoCtx.beginPath();
-      orthoCtx.moveTo(130, h / 2 - 20);
-      orthoCtx.lineTo(130, 8);
-      orthoCtx.lineTo(220, 8);
+      let a = 0;
+      for (let t = 0; t < 20; t++) {
+        const r = 4 + t * 2.2;
+        const x = 200 + Math.cos(a) * r;
+        const y = h / 2 + Math.sin(a) * (r * 0.7);
+        if (t === 0) orthoCtx.moveTo(x, y);
+        else orthoCtx.lineTo(x, y);
+        a += 0.35;
+      }
       orthoCtx.stroke();
 
-      // Egress line to Consumers
-      orthoCtx.setLineDash([]);
+      // Zero-Copy Direct Line
       orthoCtx.strokeStyle = '#ff5500';
       orthoCtx.lineWidth = 1.5;
+      orthoCtx.setLineDash([4, 3]);
       orthoCtx.beginPath();
-      orthoCtx.moveTo(170, h / 2);
-      orthoCtx.lineTo(270, h / 2);
+      orthoCtx.moveTo(200, h / 2);
+      orthoCtx.lineTo(275, h / 2);
       orthoCtx.stroke();
-
-      // Consumer Node
-      orthoCtx.fillStyle = '#171717';
-      orthoCtx.beginPath();
-      orthoCtx.arc(270, h / 2, 5, 0, Math.PI * 2);
-      orthoCtx.fill();
+      orthoCtx.setLineDash([]);
     }
     drawOrthoSchematic();
 
-    // Section Radar Canvas
+    // Section Radar
     const radarCanvas = document.getElementById('section-radar');
     const radarCtx = radarCanvas.getContext('2d');
     function drawSectionRadar() {
@@ -694,8 +651,7 @@
       const cx = radarCanvas.width / 2;
       const cy = radarCanvas.height / 2;
 
-      // Concentric circles
-      [15, 28, 40].forEach((r, idx) => {
+      [14, 26, 38].forEach((r, idx) => {
         radarCtx.strokeStyle = idx === 1 ? '#ff5500' : '#d4d2cb';
         radarCtx.lineWidth = idx === 1 ? 1.5 : 1;
         radarCtx.beginPath();
@@ -706,19 +662,19 @@
       // Crosshairs
       radarCtx.strokeStyle = '#d4d2cb';
       radarCtx.beginPath();
-      radarCtx.moveTo(cx, 5); radarCtx.lineTo(cx, radarCanvas.height - 5);
-      radarCtx.moveTo(5, cy); radarCtx.lineTo(radarCanvas.width - 5, cy);
+      radarCtx.moveTo(cx, 4); radarCtx.lineTo(cx, radarCanvas.height - 4);
+      radarCtx.moveTo(4, cy); radarCtx.lineTo(radarCanvas.width - 4, cy);
       radarCtx.stroke();
 
-      // Orange Power Point (03 Page Cache)
+      // Turbine Power Unit
       radarCtx.fillStyle = '#ff5500';
       radarCtx.beginPath();
-      radarCtx.arc(cx + 20, cy - 20, 3.5, 0, Math.PI * 2);
+      radarCtx.arc(cx, cy, 5, 0, Math.PI * 2);
       radarCtx.fill();
     }
     drawSectionRadar();
 
-    // Oscilloscope Timeline Canvas
+    // Oscilloscope Timeline
     const timeCanvas = document.getElementById('timeline-canvas');
     const timeCtx = timeCanvas.getContext('2d');
     let waveOffset = 0;
@@ -727,7 +683,6 @@
       const w = timeCanvas.width;
       const h = timeCanvas.height;
 
-      // Center baseline
       timeCtx.strokeStyle = '#e0ded8';
       timeCtx.lineWidth = 1;
       timeCtx.beginPath();
@@ -735,80 +690,91 @@
       timeCtx.lineTo(w, h / 2);
       timeCtx.stroke();
 
-      // Ingestion waveform (Orange)
+      // Ingestion Waveform
       timeCtx.strokeStyle = '#ff5500';
       timeCtx.lineWidth = 1.8;
       timeCtx.beginPath();
       for (let x = 0; x < w; x++) {
-        const y = h / 2 + Math.sin(x * 0.05 + waveOffset) * 12 * Math.cos(x * 0.01) + (Math.random() - 0.5) * 2;
+        const y = h / 2 + Math.sin(x * 0.04 + waveOffset) * 11 * Math.cos(x * 0.015) + (Math.random() - 0.5) * 1.5;
         if (x === 0) timeCtx.moveTo(x, y);
         else timeCtx.lineTo(x, y);
       }
       timeCtx.stroke();
 
-      // Fetch waveform (Dark slate)
-      timeCtx.strokeStyle = 'rgba(23, 23, 23, 0.4)';
-      timeCtx.lineWidth = 1;
-      timeCtx.beginPath();
-      for (let x = 0; x < w; x++) {
-        const y = h / 2 + Math.sin(x * 0.03 + waveOffset * 0.8) * 8;
-        if (x === 0) timeCtx.moveTo(x, y);
-        else timeCtx.lineTo(x, y);
-      }
-      timeCtx.stroke();
-
-      waveOffset += 0.06;
+      waveOffset += 0.05;
     }
 
-    // Main 3D Animation Loop
+    // Animation Loop
     function render(time) {
-      // Smooth camera interpolation
       camera.rotX += (camera.targetRotX - camera.rotX) * 0.1;
       camera.rotY += (camera.targetRotY - camera.rotY) * 0.1;
       camera.zoom += (camera.targetZoom - camera.zoom) * 0.1;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // 1. Draw floor
       drawCadFloor();
-
-      // 2. Draw KRaft Core
-      drawMechanicalKRaft(time);
-
-      // 3. Draw Brokers
-      drawMechanicalBroker(nodes.broker1.x, nodes.broker1.y, nodes.broker1.z, displayState.broker1Alive, displayState.broker1Alive, '01 BROKER [LEADER]', displayState.exploded);
-      drawMechanicalBroker(nodes.broker2.x, nodes.broker2.y, nodes.broker2.z, true, !displayState.broker1Alive, '02 BROKER [FOLLOWER]', false);
-      drawMechanicalBroker(nodes.broker3.x, nodes.broker3.y, nodes.broker3.z, true, false, '03 BROKER [FOLLOWER]', false);
-
-      // 4. Draw Endpoints
-      drawEndpointPod(nodes.producer, 'INGRESS POD', 'PRODUCER BATCH');
-      drawEndpointPod(nodes.consumer, 'EGRESS POD', 'CONSUMER GROUP', true);
-
-      // 5. Draw Articulated Data Packets (Vertebrae style)
-      displayState.particles.forEach(p => {
-        p.update();
-
-        // Draw 3 segmented vertebrae per packet
-        for (let seg = 0; seg < 3; seg++) {
-          const pos = p.getPos(seg * 0.02);
-          const pt = project3D(pos.x, pos.y, pos.z);
-
-          const r = (3 - seg * 0.7) * pt.scale;
-          ctx.fillStyle = seg === 0 ? p.color : '#171717';
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-
-      // 6. Draw dynamic timeline
+      drawMechanicalNautilus(time);
       drawTimeline();
 
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 
-    // UI BUTTON CONTROLS
+    // Camera Presets
+    document.getElementById('cam-hero').addEventListener('click', () => {
+      camera.targetRotX = 0.28;
+      camera.targetRotY = -0.65;
+      camera.targetZoom = 1.15;
+      camera.panX = -20;
+      camera.panY = 20;
+      setActiveCam('cam-hero');
+    });
+
+    document.getElementById('cam-turbine').addEventListener('click', () => {
+      camera.targetRotX = 0.15;
+      camera.targetRotY = -0.85;
+      camera.targetZoom = 2.2;
+      camera.panX = 0;
+      camera.panY = 10;
+      setActiveCam('cam-turbine');
+    });
+
+    document.getElementById('cam-septa').addEventListener('click', () => {
+      camera.targetRotX = 0.45;
+      camera.targetRotY = -0.35;
+      camera.targetZoom = 1.8;
+      camera.panX = -60;
+      camera.panY = -10;
+      setActiveCam('cam-septa');
+    });
+
+    document.getElementById('cam-tentacles').addEventListener('click', () => {
+      camera.targetRotX = 0.2;
+      camera.targetRotY = -1.25;
+      camera.targetZoom = 1.6;
+      camera.panX = 140;
+      camera.panY = 20;
+      setActiveCam('cam-tentacles');
+    });
+
+    document.getElementById('cam-kraft').addEventListener('click', () => {
+      camera.targetRotX = 0.1;
+      camera.targetRotY = -0.4;
+      camera.targetZoom = 2.4;
+      camera.panX = -130;
+      camera.panY = 120;
+      setActiveCam('cam-kraft');
+    });
+
+    function setActiveCam(btnId) {
+      ['cam-hero', 'cam-turbine', 'cam-septa', 'cam-tentacles', 'cam-kraft'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      document.getElementById(btnId).classList.add('active');
+    }
+
+    // Toggle Buttons
     document.getElementById('btn-labels').addEventListener('click', (e) => {
       displayState.labels = !displayState.labels;
       e.target.classList.toggle('active');
@@ -824,91 +790,26 @@
       e.target.classList.toggle('active');
     });
 
-    // Camera Presets
-    document.getElementById('cam-hero').addEventListener('click', () => {
-      camera.targetRotX = 0.35;
-      camera.targetRotY = -0.55;
-      camera.targetZoom = 1.15;
-      camera.panX = -20;
-      camera.panY = 30;
-      setActiveCam('cam-hero');
+    document.getElementById('btn-burst').addEventListener('click', () => {
+      document.getElementById('stat-tps').innerText = '4,850 RPM (482 MB/s)';
+      setTimeout(() => {
+        document.getElementById('stat-tps').innerText = '1,504 RPM (184 MB/s)';
+      }, 2500);
     });
 
-    document.getElementById('cam-leader').addEventListener('click', () => {
-      camera.targetRotX = 0.2;
-      camera.targetRotY = -0.9;
-      camera.targetZoom = 1.8;
-      camera.panX = 140;
-      camera.panY = -20;
-      setActiveCam('cam-leader');
-    });
-
-    document.getElementById('cam-partitions').addEventListener('click', () => {
-      camera.targetRotX = 0.55;
-      camera.targetRotY = -0.3;
-      camera.targetZoom = 1.6;
-      camera.panX = 0;
-      camera.panY = 0;
-      setActiveCam('cam-partitions');
-    });
-
-    document.getElementById('cam-kraft').addEventListener('click', () => {
-      camera.targetRotX = 0.1;
-      camera.targetRotY = 0;
-      camera.targetZoom = 2.1;
-      camera.panX = 0;
-      camera.panY = 160;
-      setActiveCam('cam-kraft');
-    });
-
-    document.getElementById('cam-zerocopy').addEventListener('click', () => {
-      displayState.exploded = true;
-      document.getElementById('btn-exploded').classList.add('active');
-      camera.targetRotX = 0.15;
-      camera.targetRotY = -1.2;
-      camera.targetZoom = 2.2;
-      camera.panX = 180;
-      camera.panY = -10;
-    });
-
-    function setActiveCam(btnId) {
-      ['cam-hero', 'cam-leader', 'cam-partitions', 'cam-kraft'].forEach(id => {
-        document.getElementById(id).classList.remove('active');
-      });
-      document.getElementById(btnId).classList.add('active');
-    }
-
-    // Failover Button
-    const btnNuke = document.getElementById('btn-nuke');
-    btnNuke.addEventListener('click', () => {
+    document.getElementById('btn-nuke').addEventListener('click', (e) => {
       displayState.broker1Alive = !displayState.broker1Alive;
       if (!displayState.broker1Alive) {
-        btnNuke.innerText = '⚡ RESTORE L1 BROKER';
-        btnNuke.classList.replace('bg-red-600', 'bg-emerald-600');
-        document.getElementById('stat-isr').innerText = '2/3 (SHRINK)';
+        e.target.innerText = '⚡ RESTORE ENGINE';
+        e.target.classList.replace('bg-red-600', 'bg-emerald-600');
+        document.getElementById('stat-isr').innerText = '2/3 SHRINK';
         document.getElementById('stat-isr').classList.replace('text-emerald-700', 'text-amber-600');
       } else {
-        btnNuke.innerText = '💥 FAILOVER (KILL L1)';
-        btnNuke.classList.replace('bg-emerald-600', 'bg-red-600');
-        document.getElementById('stat-isr').innerText = '3/3 (100%)';
+        e.target.innerText = '💥 FAILOVER (KILL L1)';
+        e.target.classList.replace('bg-emerald-600', 'bg-red-600');
+        document.getElementById('stat-isr').innerText = '3/3 IN-SYNC REPLICAS';
         document.getElementById('stat-isr').classList.replace('text-amber-600', 'text-emerald-700');
       }
-      initParticles();
-      drawOrthoSchematic();
-    });
-
-    // Burst Button
-    document.getElementById('btn-burst').addEventListener('click', () => {
-      displayState.tps = 482.0;
-      document.getElementById('stat-tps').innerText = '482.0 MB/s';
-      const leader = displayState.broker1Alive ? nodes.broker1 : nodes.broker2;
-      for (let i = 0; i < 30; i++) {
-        displayState.particles.push(new MechanicalDataPacket(nodes.producer, leader, '#ff5500', 0.03));
-      }
-      setTimeout(() => {
-        displayState.tps = 184.2;
-        document.getElementById('stat-tps').innerText = '184.2 MB/s';
-      }, 2500);
     });
   </script>
 </body>
