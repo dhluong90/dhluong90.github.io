@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHIVE / 042 - APACHE KAFKA DISTRIBUTED ENGINE</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --bg-blueprint: #e8e7e3;
+      --card-bg: rgba(246, 245, 241, 0.94);
+      --card-border: #d4d2cb;
+      --accent-orange: #ff5500;
+      --accent-black: #171717;
+      --text-muted: #737373;
+    }
+
+    body {
+      background-color: var(--bg-blueprint);
+      font-family: 'Space Mono', monospace;
+      color: var(--accent-black);
+    }
+
+    .spec-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .spec-header {
+      border-left: 2px solid var(--accent-orange);
+      padding-left: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-black);
+    }
+
+    .btn-blueprint {
+      background: #dedcd5;
+      border: 1px solid #c9c7be;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #333;
+      transition: all 0.15s ease;
+    }
+    .btn-blueprint:hover {
+      background: #d0cecd;
+      color: #000;
+    }
+    .btn-blueprint.active {
+      background: var(--accent-orange);
+      border-color: var(--accent-orange);
+      color: #fff;
+    }
+
+    /* Subtle grid background */
+    .blueprint-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="blueprint-grid w-screen h-screen overflow-hidden select-none relative flex flex-col justify-between p-4">
+
+  <!-- 3D Canvas Layer (Takes full viewport in background) -->
+  <canvas id="blueprint-canvas" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing z-0"></canvas>
+
+  <!-- TOP BAR: Left Spec + Center Orthographic + Right Internal Section -->
+  <div class="relative z-10 grid grid-cols-12 gap-3 pointer-events-none">
+    
+    <!-- Top Left: ARCHIVE SPEC (001) -->
+    <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
+      <div class="flex justify-between items-start mb-2">
+        <div class="spec-header">ARCHIVE / 042 // SPEC</div>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">STABLE</span>
+      </div>
+      <div class="text-base font-black tracking-tight leading-none mb-1 text-neutral-900">
+        APACHE KAFKA
+      </div>
+      <div class="text-[10px] text-neutral-500 uppercase tracking-wider mb-2 pb-1 border-b border-neutral-200">
+        DISTRIBUTED STREAMING ARCHITECTURE
+      </div>
+
+      <div class="grid grid-cols-2 gap-y-1 text-[10px] text-neutral-600">
+        <div>CONSENSUS</div>
+        <div class="font-bold text-neutral-900">: KRAFT QUORUM</div>
+        <div>TOPOLOGY</div>
+        <div class="font-bold text-neutral-900">: 3 BROKERS / 3 ISR</div>
+        <div>I/O ENGINE</div>
+        <div class="font-bold text-neutral-900">: OS ZERO-COPY</div>
+        <div>DURABILITY</div>
+        <div class="font-bold text-neutral-900">: APPEND-ONLY LOG</div>
+      </div>
+
+      <div class="mt-2 pt-2 border-t border-neutral-200 flex items-center justify-between">
+        <div class="flex items-center gap-1.5 text-[10px] font-bold text-orange-600">
+          <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
+          <span>HIGH-THROUGHPUT CRUISE</span>
+        </div>
+        <span class="text-[9px] text-neutral-400">LATENCY &lt; 2.4 MS</span>
+      </div>
+    </div>
+
+    <!-- Top Center-Left: ORTHOGRAPHIC PROFILE 2D (002) -->
+    <div class="col-span-3 spec-card p-3 rounded pointer-events-auto flex flex-col justify-between">
+      <div class="flex justify-between items-center mb-1">
+        <div class="spec-header">ORTHOGRAPHIC PROFILE // TOPOLOGY</div>
+        <span class="text-[9px] text-neutral-400">2D SCHEMATIC</span>
+      </div>
+      <canvas id="ortho-canvas" width="300" height="75" class="w-full h-[75px] block"></canvas>
+      <div class="flex justify-between text-[9px] text-neutral-500 pt-1 border-t border-neutral-200">
+        <span>PRODUCERS &gt;&gt;</span>
+        <span class="text-orange-600 font-bold">LEADER (P0, P1)</span>
+        <span>&gt;&gt; CONSUMERS</span>
+      </div>
+    </div>
+
+    <!-- Top Spacer for clean view of 3D Model -->
+    <div class="col-span-3"></div>
+
+    <!-- Top Right: INTERNAL SECTION (003) -->
+    <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
+      <div class="flex justify-between items-center mb-1">
+        <div class="spec-header">INTERNAL SECTION // BROKER ANATOMY</div>
+        <span class="text-[9px] text-neutral-400">MODULAR</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 mt-1">
+        <!-- Radial Section Diagram -->
+        <canvas id="section-radar" width="90" height="90" class="w-[85px] h-[85px] mx-auto block"></canvas>
+        <div class="flex flex-col justify-center text-[10px] space-y-1">
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">01</span> Network Acceptor</div>
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">02</span> Request Purgatory</div>
+          <div class="font-bold text-neutral-900"><span class="text-orange-600">03</span> OS Page Cache</div>
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">04</span> Commit Log (000.log)</div>
+          <div class="text-neutral-500"><span class="text-orange-600 font-bold">05</span> Zero-Copy sendfile()</div>
+        </div>
+      </div>
+      <div class="mt-1 pt-1 border-t border-neutral-200 flex justify-between text-[9px] text-neutral-500">
+        <span>KERNEL MEMORY: 32 GB</span>
+        <span class="text-neutral-800 font-bold">JVM HEAP: 4 GB (LEAN)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MID-RIGHT FLOATING CONTROLS: Camera Views & Display Modes -->
+  <div class="absolute right-4 top-40 z-20 w-64 space-y-3 pointer-events-auto">
+    <!-- Camera Views Card -->
+    <div class="spec-card p-3 rounded space-y-2">
+      <div class="spec-header">CAMERA VIEWS // PERSPECTIVE</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button id="cam-hero" class="btn-blueprint py-1.5 px-2 rounded active">HERO CLUSTER</button>
+        <button id="cam-leader" class="btn-blueprint py-1.5 px-2 rounded">01 LEADER</button>
+        <button id="cam-partitions" class="btn-blueprint py-1.5 px-2 rounded">02 PARTITIONS</button>
+        <button id="cam-kraft" class="btn-blueprint py-1.5 px-2 rounded">03 KRAFT CORE</button>
+        <button id="cam-zerocopy" class="btn-blueprint py-1.5 px-2 rounded col-span-2 text-orange-700 bg-orange-100 border-orange-300">
+          ⚡ ZERO-COPY RAY TRACE
+        </button>
+      </div>
+    </div>
+
+    <!-- Display Modes Card -->
+    <div class="spec-card p-3 rounded space-y-2">
+      <div class="spec-header">DISPLAY MODES // CAD CONTROLS</div>
+      <div class="grid grid-cols-2 gap-1.5">
+        <button id="btn-labels" class="btn-blueprint py-1.5 px-2 rounded active">LABELS</button>
+        <button id="btn-xray" class="btn-blueprint py-1.5 px-2 rounded">X-RAY HULL</button>
+        <button id="btn-exploded" class="btn-blueprint py-1.5 px-2 rounded col-span-2">EXPLODED BROKER</button>
+      </div>
+      <div class="pt-2 border-t border-neutral-200 flex gap-1.5">
+        <button id="btn-nuke" class="w-full py-1.5 rounded bg-red-600 text-white font-bold text-[10px] hover:bg-red-700 transition">
+          💥 FAILOVER (KILL L1)
+        </button>
+        <button id="btn-burst" class="w-full py-1.5 rounded bg-orange-600 text-white font-bold text-[10px] hover:bg-orange-700 transition">
+          🚀 BURST 10K MSG
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR: Left Telemetry + Center Oscilloscope Timeline + Right Structural Overview -->
+  <div class="relative z-10 grid grid-cols-12 gap-3 items-end pointer-events-none">
+    
+    <!-- Bottom Left: TELEMETRY (005) -->
+    <div class="col-span-3 spec-card p-3 rounded pointer-events-auto">
+      <div class="flex justify-between items-center mb-1">
+        <div class="spec-header">INGRESS TELEMETRY</div>
+        <span class="text-[9px] text-neutral-400">REAL-TIME</span>
+      </div>
+      <div class="grid grid-cols-2 gap-y-1.5 text-[10px] pt-1">
+        <div class="text-neutral-500">THROUGHPUT</div>
+        <div id="stat-tps" class="font-bold text-neutral-900 text-right">184.2 MB/s</div>
+        <div class="text-neutral-500">ISR INTEGRITY</div>
+        <div id="stat-isr" class="font-bold text-emerald-700 text-right">3/3 (100%)</div>
+        <div class="text-neutral-500">PAGE CACHE HIT</div>
+        <div class="font-bold text-orange-600 text-right">99.4%</div>
+        <div class="text-neutral-500">CONSUMER LAG</div>
+        <div id="stat-lag" class="font-bold text-neutral-900 text-right">0 MSG</div>
+      </div>
+    </div>
+
+    <!-- Bottom Center: WAVEFORM TIMELINE (006) -->
+    <div class="col-span-5 spec-card p-3 rounded pointer-events-auto">
+      <div class="flex justify-between items-center mb-1">
+        <div class="spec-header">ENVIRONMENTAL DATA & OPERATION TIMELINE</div>
+        <div class="flex items-center gap-2 text-[9px] text-neutral-500">
+          <span>LATENCY: 1.8 MS</span>
+          <span>COMMIT RATE: 4.8K/S</span>
+        </div>
+      </div>
+      <!-- Waveform canvas -->
+      <canvas id="timeline-canvas" width="500" height="50" class="w-full h-[50px] block"></canvas>
+      <div class="flex justify-between items-center pt-1.5 border-t border-neutral-200 text-[10px]">
+        <div class="flex items-center gap-2">
+          <button id="btn-timeline-pause" class="w-5 h-5 rounded bg-neutral-200 text-neutral-800 flex items-center justify-center font-bold text-[9px]">⏸</button>
+          <span class="text-neutral-500 font-bold">PHASE 01 - STEADY-STATE INGESTION</span>
+        </div>
+        <span class="text-orange-600 font-bold">SPEED: 1.0X</span>
+      </div>
+    </div>
+
+    <!-- Bottom Right: STRUCTURAL OVERVIEW - SPIRAL LOG SEGMENTS (007) -->
+    <div class="col-span-4 spec-card p-3 rounded pointer-events-auto">
+      <div class="flex justify-between items-center mb-1">
+        <div class="spec-header">STRUCTURAL OVERVIEW // COMMIT LOG SEGMENTS</div>
+        <span class="text-[9px] text-neutral-400">PARTITION 0</span>
+      </div>
+      <div class="flex justify-between items-center pt-1 text-[9px]">
+        <div class="text-center">
+          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S01</div>
+          <span class="text-[8px] text-neutral-400">00000.log</span>
+        </div>
+        <div class="text-center">
+          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S02</div>
+          <span class="text-[8px] text-neutral-400">01048.log</span>
+        </div>
+        <div class="text-center">
+          <div class="w-8 h-8 rounded-full border border-neutral-300 bg-neutral-100 flex items-center justify-center font-bold text-neutral-700 mx-auto mb-1">S03</div>
+          <span class="text-[8px] text-neutral-400">02096.log</span>
+        </div>
+        <div class="text-center">
+          <div class="w-8 h-8 rounded-full border-2 border-orange-500 bg-orange-50 flex items-center justify-center font-bold text-orange-600 mx-auto mb-1">ACTIVE</div>
+          <span class="text-[8px] text-orange-600 font-bold">03144.log</span>
+        </div>
+        <div class="text-center">
+          <div class="w-8 h-8 rounded-full border border-dashed border-neutral-300 flex items-center justify-center font-bold text-neutral-400 mx-auto mb-1">.idx</div>
+          <span class="text-[8px] text-neutral-400">index</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- INTERACTIVE JAVASCRIPT: 3D ENGINE & SCHEMATICS -->
+  <script>
+    const canvas = document.getElementById('blueprint-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Canvas sizing
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Camera settings (White Industrial CAD style)
+    let camera = {
+      rotX: 0.35,
+      rotY: -0.55,
+      targetRotX: 0.35,
+      targetRotY: -0.55,
+      zoom: 1.15,
+      targetZoom: 1.15,
+      panX: -20,
+      panY: 30
+    };
+
+    let isDragging = false;
+    let prevMouse = { x: 0, y: 0 };
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target === canvas) {
+        isDragging = true;
+        prevMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - prevMouse.x;
+        const dy = e.clientY - prevMouse.y;
+        camera.targetRotY += dx * 0.005;
+        camera.targetRotX = Math.max(-0.2, Math.min(1.2, camera.targetRotX + dy * 0.005));
+        prevMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('wheel', (e) => {
+      camera.targetZoom = Math.max(0.6, Math.min(2.8, camera.targetZoom - e.deltaY * 0.001));
+    });
+
+    // 3D Projection
+    function project3D(x, y, z) {
+      const cosY = Math.cos(camera.rotY);
+      const sinY = Math.sin(camera.rotY);
+      const x1 = x * cosY - z * sinY;
+      const z1 = z * cosY + x * sinY;
+
+      const cosX = Math.cos(camera.rotX);
+      const sinX = Math.sin(camera.rotX);
+      const y2 = y * cosX - z1 * sinX;
+      const z2 = z1 * cosX + y * sinX;
+
+      const fov = 850;
+      const distance = 950;
+      const scale = (fov / (distance + z2)) * camera.zoom;
+
+      return {
+        x: canvas.width / 2 + x1 * scale + camera.panX,
+        y: canvas.height / 2 + y2 * scale + camera.panY,
+        scale: scale,
+        depth: z2
+      };
+    }
+
+    // CAD Display State
+    let displayState = {
+      labels: true,
+      xray: false,
+      exploded: false,
+      zeroCopyRay: false,
+      broker1Alive: true,
+      tps: 184.2,
+      lag: 0,
+      particles: []
+    };
+
+    // Nodes in 3D Space (Industrial Porcelain White & Orange accents)
+    const nodes = {
+      producer: { x: -390, y: 0, z: 0, label: 'INGRESS / PRODUCER' },
+      kraft: { x: 0, y: -100, z: 0, label: 'KRAFT QUORUM' },
+      broker1: { x: -130, y: 30, z: -80, label: 'BROKER-01 [LEADER]', leader: true },
+      broker2: { x: 130, y: 30, z: -80, label: 'BROKER-02 [FOLLOWER]', leader: false },
+      broker3: { x: 0, y: 60, z: 130, label: 'BROKER-03 [FOLLOWER]', leader: false },
+      consumer: { x: 390, y: 0, z: 0, label: 'EGRESS / CONSUMER GROUP' }
+    };
+
+    // Segmented Particle (Like the mechanical articulated tentacles of the nautilus)
+    class MechanicalDataPacket {
+      constructor(from, to, color = '#ff5500', speed = 0.012) {
+        this.from = from;
+        this.to = to;
+        this.progress = Math.random();
+        this.speed = speed + Math.random() * 0.004;
+        this.color = color;
+        this.arcHeight = -35 - Math.random() * 25;
+      }
+
+      update() {
+        this.progress += this.speed;
+        if (this.progress > 1) this.progress = 0;
+      }
+
+      getPos(offset = 0) {
+        const p = Math.max(0, Math.min(1, this.progress - offset));
+        const x = (1 - p) * (1 - p) * this.from.x + 2 * (1 - p) * p * ((this.from.x + this.to.x) / 2) + p * p * this.to.x;
+        const y = (1 - p) * (1 - p) * this.from.y + 2 * (1 - p) * p * ((this.from.y + this.to.y) / 2 + this.arcHeight) + p * p * this.to.y;
+        const z = (1 - p) * (1 - p) * this.from.z + 2 * (1 - p) * p * ((this.from.z + this.to.z) / 2) + p * p * this.to.z;
+        return { x, y, z };
+      }
+    }
+
+    function initParticles() {
+      displayState.particles = [];
+      const leader = displayState.broker1Alive ? nodes.broker1 : nodes.broker2;
+
+      // Ingress packets
+      for (let i = 0; i < 28; i++) {
+        displayState.particles.push(new MechanicalDataPacket(nodes.producer, leader, '#ff5500', 0.011));
+      }
+      // ISR sync packets
+      for (let i = 0; i < 18; i++) {
+        displayState.particles.push(new MechanicalDataPacket(leader, nodes.broker3, '#262626', 0.016));
+      }
+      if (displayState.broker1Alive) {
+        for (let i = 0; i < 18; i++) {
+          displayState.particles.push(new MechanicalDataPacket(nodes.broker1, nodes.broker2, '#262626', 0.016));
+        }
+      }
+      // Egress consumer packets
+      for (let i = 0; i < 24; i++) {
+        displayState.particles.push(new MechanicalDataPacket(leader, nodes.consumer, '#ff5500', 0.014));
+      }
+    }
+    initParticles();
+
+    // Draw Floor Grid (Clean CAD isometric style)
+    function drawCadFloor() {
+      const size = 520;
+      const step = 65;
+      ctx.lineWidth = 1;
+
+      for (let x = -size; x <= size; x += step) {
+        const p1 = project3D(x, 110, -size);
+        const p2 = project3D(x, 110, size);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      for (let z = -size; z <= size; z += step) {
+        const p1 = project3D(-size, 110, z);
+        const p2 = project3D(size, 110, z);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      // Center crosshair
+      const center = project3D(0, 110, 0);
+      ctx.strokeStyle = '#ff5500';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(center.x - 12, center.y);
+      ctx.lineTo(center.x + 12, center.y);
+      ctx.moveTo(center.x, center.y - 12);
+      ctx.lineTo(center.x, center.y + 12);
+      ctx.stroke();
+    }
+
+    // Draw Mechanical Tower Broker (Matte Porcelain White & Orange Rings)
+    function drawMechanicalBroker(x, y, z, isAlive, isLeader, label, isExploded = false) {
+      const width = 42;
+      const height = 95;
+
+      if (!isAlive) {
+        // Red failure outline
+        const pt = project3D(x, y, z);
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(pt.x - 30 * pt.scale, pt.y - 40 * pt.scale, 60 * pt.scale, 80 * pt.scale);
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.08)';
+        ctx.fillRect(pt.x - 30 * pt.scale, pt.y - 40 * pt.scale, 60 * pt.scale, 80 * pt.scale);
+
+        if (displayState.labels) {
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 10px "Space Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('⚡ L1 FAILURE // RE-ELECTED', pt.x, pt.y - 50 * pt.scale);
+        }
+        return;
+      }
+
+      if (isExploded) {
+        // Exploded View: Segmented modules like Nautilus septa
+        const l1 = project3D(x, y - 90, z);
+        const l2 = project3D(x, y, z);
+        const l3 = project3D(x, y + 90, z);
+
+        // Module 1: Network Ingress
+        ctx.fillStyle = '#faf9f5';
+        ctx.strokeStyle = '#171717';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 32 * l1.scale);
+        ctx.strokeRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 32 * l1.scale);
+        // Orange top cap
+        ctx.fillStyle = '#ff5500';
+        ctx.fillRect(l1.x - 45 * l1.scale, l1.y - 16 * l1.scale, 90 * l1.scale, 4 * l1.scale);
+
+        // Module 2: OS Page Cache (Middle)
+        ctx.fillStyle = displayState.xray ? 'rgba(255, 85, 0, 0.15)' : '#ffffff';
+        ctx.strokeStyle = '#ff5500';
+        ctx.lineWidth = 2;
+        ctx.fillRect(l2.x - 52 * l2.scale, l2.y - 20 * l2.scale, 104 * l2.scale, 40 * l2.scale);
+        ctx.strokeRect(l2.x - 52 * l2.scale, l2.y - 20 * l2.scale, 104 * l2.scale, 40 * l2.scale);
+
+        // Module 3: Commit Log Discs (Bottom)
+        ctx.fillStyle = '#171717';
+        ctx.fillRect(l3.x - 45 * l3.scale, l3.y - 18 * l3.scale, 90 * l3.scale, 36 * l3.scale);
+
+        // Laser Ray: Zero-Copy bypassing JVM
+        ctx.strokeStyle = '#ff5500';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 3]);
+        ctx.beginPath();
+        ctx.moveTo(l2.x + 52 * l2.scale, l2.y);
+        ctx.lineTo(l1.x + 45 * l1.scale, l1.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (displayState.labels) {
+          ctx.fillStyle = '#171717';
+          ctx.font = 'bold 9px "Space Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('01 INGRESS // PURGATORY', l1.x, l1.y + 3);
+          ctx.fillStyle = '#ff5500';
+          ctx.fillText('02 OS PAGE CACHE (ZERO-COPY)', l2.x, l2.y + 3);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText('03 COMMIT LOG (000.log)', l3.x, l3.y + 3);
+        }
+        return;
+      }
+
+      // Normal Mode: Segmented Shell Towers
+      const segments = 4;
+      const segH = height / segments;
+
+      for (let i = 0; i < segments; i++) {
+        const curY = y - height / 2 + i * segH;
+        const pt = project3D(x, curY, z);
+        const w = (width - i * 2) * pt.scale;
+        const h = (segH - 2.5) * pt.scale;
+
+        // Mechanical body: Matte off-white with dark outline
+        ctx.fillStyle = displayState.xray ? 'rgba(255,255,255,0.4)' : '#fdfdfd';
+        ctx.strokeStyle = '#171717';
+        ctx.lineWidth = 1.5;
+
+        ctx.fillRect(pt.x - w, pt.y, w * 2, h);
+        ctx.strokeRect(pt.x - w, pt.y, w * 2, h);
+
+        // Orange accent stripes (Mechanical Nautilus aesthetic)
+        if (isLeader && i === 0) {
+          ctx.fillStyle = '#ff5500';
+          ctx.fillRect(pt.x - w, pt.y, w * 2, 4 * pt.scale);
+        }
+
+        // Inner partition slot
+        ctx.fillStyle = isLeader ? '#ff5500' : '#737373';
+        ctx.font = `${Math.max(8, Math.floor(9 * pt.scale))}px "Space Mono", monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`PART-0${i}`, pt.x, pt.y + h / 2 + 3);
+      }
+
+      if (displayState.labels) {
+        const topPt = project3D(x, y - height / 2 - 14, z);
+        ctx.fillStyle = isLeader ? '#ff5500' : '#171717';
+        ctx.font = 'bold 10px "Space Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, topPt.x, topPt.y);
+      }
+    }
+
+    // Draw KRaft Controller Quorum (Mechanical Core)
+    function drawMechanicalKRaft(time) {
+      const k = nodes.kraft;
+      const pt = project3D(k.x, k.y, k.z);
+
+      const r = 26 * pt.scale;
+      ctx.fillStyle = '#171717';
+      ctx.strokeStyle = '#ff5500';
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Inner orange core
+      ctx.fillStyle = '#ff5500';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rotating dashed ring
+      ctx.strokeStyle = 'rgba(255, 85, 0, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r * 1.5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (displayState.labels) {
+        ctx.fillStyle = '#171717';
+        ctx.font = 'bold 9px "Space Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('KRAFT CORE', pt.x, pt.y - r - 6);
+        ctx.fillStyle = '#737373';
+        ctx.fillText('METADATA CONSENSUS', pt.x, pt.y + r + 14);
+      }
+    }
+
+    // Draw Endpoints: Producers & Consumers (Cylindrical Ingress/Egress Pods)
+    function drawEndpointPod(node, title, subtitle, isEgress = false) {
+      const pt = project3D(node.x, node.y, node.z);
+      const w = 45 * pt.scale;
+      const h = 55 * pt.scale;
+
+      ctx.fillStyle = '#171717';
+      ctx.strokeStyle = '#d4d2cb';
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(pt.x - w / 2, pt.y - h / 2, w, h);
+      ctx.strokeRect(pt.x - w / 2, pt.y - h / 2, w, h);
+
+      // Top status LED
+      ctx.fillStyle = '#ff5500';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y - h / 2 - 4, 3 * pt.scale, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (displayState.labels) {
+        ctx.fillStyle = '#171717';
+        ctx.font = 'bold 9px "Space Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(title, pt.x, pt.y - h / 2 - 12);
+        ctx.fillStyle = '#737373';
+        ctx.font = '8px "Space Mono", monospace';
+        ctx.fillText(subtitle, pt.x, pt.y + h / 2 + 12);
+      }
+    }
+
+    // 2D Orthographic Schematic Canvas
+    const orthoCanvas = document.getElementById('ortho-canvas');
+    const orthoCtx = orthoCanvas.getContext('2d');
+    function drawOrthoSchematic() {
+      orthoCtx.clearRect(0, 0, orthoCanvas.width, orthoCanvas.height);
+      const w = orthoCanvas.width;
+      const h = orthoCanvas.height;
+
+      // Ingress line
+      orthoCtx.strokeStyle = '#171717';
+      orthoCtx.lineWidth = 1.5;
+      orthoCtx.beginPath();
+      orthoCtx.moveTo(20, h / 2);
+      orthoCtx.lineTo(90, h / 2);
+      orthoCtx.stroke();
+
+      // Ingress Node
+      orthoCtx.fillStyle = '#ff5500';
+      orthoCtx.beginPath();
+      orthoCtx.arc(20, h / 2, 4, 0, Math.PI * 2);
+      orthoCtx.fill();
+
+      // Leader Node (Box)
+      orthoCtx.fillStyle = '#fdfdfd';
+      orthoCtx.strokeStyle = '#ff5500';
+      orthoCtx.lineWidth = 2;
+      orthoCtx.fillRect(90, h / 2 - 20, 80, 40);
+      orthoCtx.strokeRect(90, h / 2 - 20, 80, 40);
+
+      orthoCtx.fillStyle = '#171717';
+      orthoCtx.font = 'bold 8px monospace';
+      orthoCtx.fillText('LEADER B1', 98, h / 2 - 6);
+      orthoCtx.fillStyle = '#ff5500';
+      orthoCtx.fillText('P0, P1, P2', 98, h / 2 + 8);
+
+      // ISR Sync lines to B2, B3
+      orthoCtx.strokeStyle = '#737373';
+      orthoCtx.lineWidth = 1;
+      orthoCtx.setLineDash([3, 3]);
+      orthoCtx.beginPath();
+      orthoCtx.moveTo(130, h / 2 - 20);
+      orthoCtx.lineTo(130, 8);
+      orthoCtx.lineTo(220, 8);
+      orthoCtx.stroke();
+
+      // Egress line to Consumers
+      orthoCtx.setLineDash([]);
+      orthoCtx.strokeStyle = '#ff5500';
+      orthoCtx.lineWidth = 1.5;
+      orthoCtx.beginPath();
+      orthoCtx.moveTo(170, h / 2);
+      orthoCtx.lineTo(270, h / 2);
+      orthoCtx.stroke();
+
+      // Consumer Node
+      orthoCtx.fillStyle = '#171717';
+      orthoCtx.beginPath();
+      orthoCtx.arc(270, h / 2, 5, 0, Math.PI * 2);
+      orthoCtx.fill();
+    }
+    drawOrthoSchematic();
+
+    // Section Radar Canvas
+    const radarCanvas = document.getElementById('section-radar');
+    const radarCtx = radarCanvas.getContext('2d');
+    function drawSectionRadar() {
+      radarCtx.clearRect(0, 0, radarCanvas.width, radarCanvas.height);
+      const cx = radarCanvas.width / 2;
+      const cy = radarCanvas.height / 2;
+
+      // Concentric circles
+      [15, 28, 40].forEach((r, idx) => {
+        radarCtx.strokeStyle = idx === 1 ? '#ff5500' : '#d4d2cb';
+        radarCtx.lineWidth = idx === 1 ? 1.5 : 1;
+        radarCtx.beginPath();
+        radarCtx.arc(cx, cy, r, 0, Math.PI * 2);
+        radarCtx.stroke();
+      });
+
+      // Crosshairs
+      radarCtx.strokeStyle = '#d4d2cb';
+      radarCtx.beginPath();
+      radarCtx.moveTo(cx, 5); radarCtx.lineTo(cx, radarCanvas.height - 5);
+      radarCtx.moveTo(5, cy); radarCtx.lineTo(radarCanvas.width - 5, cy);
+      radarCtx.stroke();
+
+      // Orange Power Point (03 Page Cache)
+      radarCtx.fillStyle = '#ff5500';
+      radarCtx.beginPath();
+      radarCtx.arc(cx + 20, cy - 20, 3.5, 0, Math.PI * 2);
+      radarCtx.fill();
+    }
+    drawSectionRadar();
+
+    // Oscilloscope Timeline Canvas
+    const timeCanvas = document.getElementById('timeline-canvas');
+    const timeCtx = timeCanvas.getContext('2d');
+    let waveOffset = 0;
+    function drawTimeline() {
+      timeCtx.clearRect(0, 0, timeCanvas.width, timeCanvas.height);
+      const w = timeCanvas.width;
+      const h = timeCanvas.height;
+
+      // Center baseline
+      timeCtx.strokeStyle = '#e0ded8';
+      timeCtx.lineWidth = 1;
+      timeCtx.beginPath();
+      timeCtx.moveTo(0, h / 2);
+      timeCtx.lineTo(w, h / 2);
+      timeCtx.stroke();
+
+      // Ingestion waveform (Orange)
+      timeCtx.strokeStyle = '#ff5500';
+      timeCtx.lineWidth = 1.8;
+      timeCtx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y = h / 2 + Math.sin(x * 0.05 + waveOffset) * 12 * Math.cos(x * 0.01) + (Math.random() - 0.5) * 2;
+        if (x === 0) timeCtx.moveTo(x, y);
+        else timeCtx.lineTo(x, y);
+      }
+      timeCtx.stroke();
+
+      // Fetch waveform (Dark slate)
+      timeCtx.strokeStyle = 'rgba(23, 23, 23, 0.4)';
+      timeCtx.lineWidth = 1;
+      timeCtx.beginPath();
+      for (let x = 0; x < w; x++) {
+        const y = h / 2 + Math.sin(x * 0.03 + waveOffset * 0.8) * 8;
+        if (x === 0) timeCtx.moveTo(x, y);
+        else timeCtx.lineTo(x, y);
+      }
+      timeCtx.stroke();
+
+      waveOffset += 0.06;
+    }
+
+    // Main 3D Animation Loop
+    function render(time) {
+      // Smooth camera interpolation
+      camera.rotX += (camera.targetRotX - camera.rotX) * 0.1;
+      camera.rotY += (camera.targetRotY - camera.rotY) * 0.1;
+      camera.zoom += (camera.targetZoom - camera.zoom) * 0.1;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw floor
+      drawCadFloor();
+
+      // 2. Draw KRaft Core
+      drawMechanicalKRaft(time);
+
+      // 3. Draw Brokers
+      drawMechanicalBroker(nodes.broker1.x, nodes.broker1.y, nodes.broker1.z, displayState.broker1Alive, displayState.broker1Alive, '01 BROKER [LEADER]', displayState.exploded);
+      drawMechanicalBroker(nodes.broker2.x, nodes.broker2.y, nodes.broker2.z, true, !displayState.broker1Alive, '02 BROKER [FOLLOWER]', false);
+      drawMechanicalBroker(nodes.broker3.x, nodes.broker3.y, nodes.broker3.z, true, false, '03 BROKER [FOLLOWER]', false);
+
+      // 4. Draw Endpoints
+      drawEndpointPod(nodes.producer, 'INGRESS POD', 'PRODUCER BATCH');
+      drawEndpointPod(nodes.consumer, 'EGRESS POD', 'CONSUMER GROUP', true);
+
+      // 5. Draw Articulated Data Packets (Vertebrae style)
+      displayState.particles.forEach(p => {
+        p.update();
+
+        // Draw 3 segmented vertebrae per packet
+        for (let seg = 0; seg < 3; seg++) {
+          const pos = p.getPos(seg * 0.02);
+          const pt = project3D(pos.x, pos.y, pos.z);
+
+          const r = (3 - seg * 0.7) * pt.scale;
+          ctx.fillStyle = seg === 0 ? p.color : '#171717';
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // 6. Draw dynamic timeline
+      drawTimeline();
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    // UI BUTTON CONTROLS
+    document.getElementById('btn-labels').addEventListener('click', (e) => {
+      displayState.labels = !displayState.labels;
+      e.target.classList.toggle('active');
+    });
+
+    document.getElementById('btn-xray').addEventListener('click', (e) => {
+      displayState.xray = !displayState.xray;
+      e.target.classList.toggle('active');
+    });
+
+    document.getElementById('btn-exploded').addEventListener('click', (e) => {
+      displayState.exploded = !displayState.exploded;
+      e.target.classList.toggle('active');
+    });
+
+    // Camera Presets
+    document.getElementById('cam-hero').addEventListener('click', () => {
+      camera.targetRotX = 0.35;
+      camera.targetRotY = -0.55;
+      camera.targetZoom = 1.15;
+      camera.panX = -20;
+      camera.panY = 30;
+      setActiveCam('cam-hero');
+    });
+
+    document.getElementById('cam-leader').addEventListener('click', () => {
+      camera.targetRotX = 0.2;
+      camera.targetRotY = -0.9;
+      camera.targetZoom = 1.8;
+      camera.panX = 140;
+      camera.panY = -20;
+      setActiveCam('cam-leader');
+    });
+
+    document.getElementById('cam-partitions').addEventListener('click', () => {
+      camera.targetRotX = 0.55;
+      camera.targetRotY = -0.3;
+      camera.targetZoom = 1.6;
+      camera.panX = 0;
+      camera.panY = 0;
+      setActiveCam('cam-partitions');
+    });
+
+    document.getElementById('cam-kraft').addEventListener('click', () => {
+      camera.targetRotX = 0.1;
+      camera.targetRotY = 0;
+      camera.targetZoom = 2.1;
+      camera.panX = 0;
+      camera.panY = 160;
+      setActiveCam('cam-kraft');
+    });
+
+    document.getElementById('cam-zerocopy').addEventListener('click', () => {
+      displayState.exploded = true;
+      document.getElementById('btn-exploded').classList.add('active');
+      camera.targetRotX = 0.15;
+      camera.targetRotY = -1.2;
+      camera.targetZoom = 2.2;
+      camera.panX = 180;
+      camera.panY = -10;
+    });
+
+    function setActiveCam(btnId) {
+      ['cam-hero', 'cam-leader', 'cam-partitions', 'cam-kraft'].forEach(id => {
+        document.getElementById(id).classList.remove('active');
+      });
+      document.getElementById(btnId).classList.add('active');
+    }
+
+    // Failover Button
+    const btnNuke = document.getElementById('btn-nuke');
+    btnNuke.addEventListener('click', () => {
+      displayState.broker1Alive = !displayState.broker1Alive;
+      if (!displayState.broker1Alive) {
+        btnNuke.innerText = '⚡ RESTORE L1 BROKER';
+        btnNuke.classList.replace('bg-red-600', 'bg-emerald-600');
+        document.getElementById('stat-isr').innerText = '2/3 (SHRINK)';
+        document.getElementById('stat-isr').classList.replace('text-emerald-700', 'text-amber-600');
+      } else {
+        btnNuke.innerText = '💥 FAILOVER (KILL L1)';
+        btnNuke.classList.replace('bg-emerald-600', 'bg-red-600');
+        document.getElementById('stat-isr').innerText = '3/3 (100%)';
+        document.getElementById('stat-isr').classList.replace('text-amber-600', 'text-emerald-700');
+      }
+      initParticles();
+      drawOrthoSchematic();
+    });
+
+    // Burst Button
+    document.getElementById('btn-burst').addEventListener('click', () => {
+      displayState.tps = 482.0;
+      document.getElementById('stat-tps').innerText = '482.0 MB/s';
+      const leader = displayState.broker1Alive ? nodes.broker1 : nodes.broker2;
+      for (let i = 0; i < 30; i++) {
+        displayState.particles.push(new MechanicalDataPacket(nodes.producer, leader, '#ff5500', 0.03));
+      }
+      setTimeout(() => {
+        displayState.tps = 184.2;
+        document.getElementById('stat-tps').innerText = '184.2 MB/s';
+      }, 2500);
+    });
+  </script>
+</body>
+</html>
