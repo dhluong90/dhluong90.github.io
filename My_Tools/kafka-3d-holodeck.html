@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka 3D Holodeck - Architectural Simulator</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(1000%); }
+    }
+    .hud-border {
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2), inset 0 0 15px rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+    }
+    .hud-danger {
+      box-shadow: 0 0 20px rgba(255, 0, 85, 0.4), inset 0 0 15px rgba(255, 0, 85, 0.2);
+      border: 1px solid rgba(255, 0, 85, 0.7);
+    }
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-[#050811] text-slate-100 font-mono antialiased select-none overflow-hidden h-screen w-screen relative">
+  <!-- Scanline overlay -->
+  <div class="absolute inset-0 scanlines z-20"></div>
+
+  <!-- Top Iron Man HUD Bar -->
+  <header class="absolute top-0 left-0 right-0 z-30 p-4 flex items-center justify-between pointer-events-none">
+    <div class="flex items-center space-x-3 pointer-events-auto">
+      <div class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></div>
+      <div>
+        <h1 class="text-sm font-bold tracking-widest text-cyan-400 uppercase flex items-center gap-2">
+          <span>KAFKA HOLODECK // MK-VII</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">KRAFT ACTIVE</span>
+        </h1>
+        <p class="text-xs text-slate-400">Interactive 3D Architectural Digital Twin</p>
+      </div>
+    </div>
+
+    <!-- Live Telemetry Ticker -->
+    <div class="flex items-center space-x-6 text-xs bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-xl hud-border pointer-events-auto">
+      <div>
+        <span class="text-slate-400">THROUGHPUT:</span>
+        <span id="stat-tps" class="font-bold text-cyan-300 ml-1">4,200 msg/s</span>
+      </div>
+      <div class="h-4 w-px bg-slate-700"></div>
+      <div>
+        <span class="text-slate-400">ISR STATUS:</span>
+        <span id="stat-isr" class="font-bold text-emerald-400 ml-1">3/3 IN-SYNC</span>
+      </div>
+      <div class="h-4 w-px bg-slate-700"></div>
+      <div>
+        <span class="text-slate-400">ZERO-COPY:</span>
+        <span class="font-bold text-amber-400 ml-1">ACTIVE (sendfile)</span>
+      </div>
+      <div class="h-4 w-px bg-slate-700"></div>
+      <div>
+        <span class="text-slate-400">CONSUMER LAG:</span>
+        <span id="stat-lag" class="font-bold text-slate-200 ml-1">0 msg</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3D Canvas -->
+  <canvas id="holodeck-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+
+  <!-- Left Info Card: Concept Explainer -->
+  <aside id="concept-panel" class="absolute left-4 top-20 w-80 bg-slate-950/85 backdrop-blur-md p-4 rounded-xl hud-border z-30 text-xs space-y-3 transition-all duration-300">
+    <div class="flex justify-between items-center border-b border-cyan-500/30 pb-2">
+      <span class="font-bold text-cyan-300 tracking-wider">SYSTEM TELEMETRY</span>
+      <span id="status-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">OPTIMAL</span>
+    </div>
+    
+    <div id="inspector-content" class="space-y-2 text-slate-300 leading-relaxed">
+      <p class="text-slate-400 italic">Drag mouse to orbit 360°, scroll to zoom. Hover over nodes to inspect details.</p>
+      <div class="p-2 rounded bg-cyan-950/40 border border-cyan-800/40 space-y-1">
+        <div class="text-cyan-300 font-semibold flex items-center justify-between">
+          <span>Broker 1 (Leader - P0, P1)</span>
+          <span class="text-[10px] text-emerald-400">ONLINE</span>
+        </div>
+        <p class="text-[11px] text-slate-400">Đang nhận Traffic trực tiếp từ Producers. Ghi Append-Only vào OS Page Cache và đồng bộ ISR sang Broker 2 & 3.</p>
+      </div>
+    </div>
+
+    <!-- Architectural Deep-Dive Box -->
+    <div class="p-2.5 rounded bg-amber-950/20 border border-amber-600/30 text-amber-200 space-y-1">
+      <div class="font-semibold text-xs text-amber-400 flex items-center gap-1.5">
+        <span>⚡ CONCEPT INVARIANT:</span>
+      </div>
+      <p id="invariant-text" class="text-[11px] leading-snug text-amber-100/90">
+        "Producer chỉ ghi vào Leader Partition. Dữ liệu chỉ được coi là Committed khi toàn bộ ISR (In-Sync Replicas) đã xác nhận."
+      </p>
+    </div>
+  </aside>
+
+  <!-- Bottom Tony Stark Action HUD -->
+  <footer class="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2">
+    <!-- Quick Status Alert -->
+    <div id="alert-banner" class="hidden px-4 py-1.5 rounded-full bg-red-950/90 border border-red-500 text-red-200 text-xs font-semibold tracking-wider animate-bounce">
+      ⚠️ BROKER-1 DOWN! KRAFT QUORUM RE-ELECTING LEADER...
+    </div>
+
+    <!-- HUD Action Button Dock -->
+    <div class="flex items-center gap-2.5 bg-slate-950/90 backdrop-blur-lg px-4 py-2.5 rounded-2xl hud-border">
+      <button id="btn-fire" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/50 text-cyan-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+        <span>🚀 FIRE 5,000 MSG</span>
+      </button>
+
+      <button id="btn-kill" class="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-400/50 text-red-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+        <span>💥 NUKE LEADER BROKER</span>
+      </button>
+
+      <button id="btn-explode" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+        <span>🔍 EXPLODE & ZERO-COPY</span>
+      </button>
+
+      <button id="btn-lag" class="px-3.5 py-2 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-purple-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+        <span>🐢 SLOW CONSUMER (LAG)</span>
+      </button>
+
+      <div class="h-6 w-px bg-slate-800 mx-1"></div>
+
+      <button id="btn-reset" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold hover:scale-105 transition-all">
+        🔄 RESET
+      </button>
+    </div>
+  </footer>
+
+  <!-- 3D Simulation Script -->
+  <script>
+    const canvas = document.getElementById('holodeck-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // UI elements
+    const statTps = document.getElementById('stat-tps');
+    const statIsr = document.getElementById('stat-isr');
+    const statLag = document.getElementById('stat-lag');
+    const alertBanner = document.getElementById('alert-banner');
+    const statusBadge = document.getElementById('status-badge');
+    const invariantText = document.getElementById('invariant-text');
+    const btnKill = document.getElementById('btn-kill');
+    const btnExplode = document.getElementById('btn-explode');
+    const btnLag = document.getElementById('btn-lag');
+
+    // Resize handler
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 3D Camera State
+    let camera = {
+      rotX: 0.38,
+      rotY: -0.65,
+      zoom: 1.05,
+      panX: 0,
+      panY: 30
+    };
+
+    let isDragging = false;
+    let prevMouse = { x: 0, y: 0 };
+
+    window.addEventListener('mousedown', (e) => {
+      if (e.target === canvas) {
+        isDragging = true;
+        prevMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - prevMouse.x;
+        const dy = e.clientY - prevMouse.y;
+        camera.rotY += dx * 0.006;
+        camera.rotX = Math.max(-0.2, Math.min(1.2, camera.rotX + dy * 0.006));
+        prevMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('wheel', (e) => {
+      camera.zoom = Math.max(0.6, Math.min(2.5, camera.zoom - e.deltaY * 0.001));
+    });
+
+    // 3D Math Utilities
+    function project3D(x, y, z) {
+      // Rotate Y
+      const cosY = Math.cos(camera.rotY);
+      const sinY = Math.sin(camera.rotY);
+      const x1 = x * cosY - z * sinY;
+      const z1 = z * cosY + x * sinY;
+
+      // Rotate X
+      const cosX = Math.cos(camera.rotX);
+      const sinX = Math.sin(camera.rotX);
+      const y2 = y * cosX - z1 * sinX;
+      const z2 = z1 * cosX + y * sinX;
+
+      // Perspective projection
+      const fov = 750;
+      const distance = 900;
+      const scale = (fov / (distance + z2)) * camera.zoom;
+
+      return {
+        x: canvas.width / 2 + x1 * scale + camera.panX,
+        y: canvas.height / 2 + y2 * scale + camera.panY,
+        scale: scale,
+        depth: z2
+      };
+    }
+
+    // Simulation Domain State
+    let simState = {
+      broker1Alive: true,
+      explodedView: false,
+      slowConsumer: false,
+      tps: 4200,
+      lag: 0,
+      particles: [],
+      burstTimer: 0
+    };
+
+    // 3D Nodes Definition
+    const nodes = {
+      producer: { x: -380, y: 0, z: 0, color: '#ffb700', label: 'Producers' },
+      kraft: { x: 0, y: -90, z: 0, color: '#f59e0b', label: 'KRaft Controller Quorum' },
+      broker1: { x: -140, y: 40, z: -100, color: '#00f0ff', label: 'Broker-1 (Leader)', leader: true },
+      broker2: { x: 140, y: 40, z: -100, color: '#00f0ff', label: 'Broker-2 (Follower)', leader: false },
+      broker3: { x: 0, y: 70, z: 120, color: '#00f0ff', label: 'Broker-3 (Follower)', leader: false },
+      consumer: { x: 380, y: 0, z: 0, color: '#c084fc', label: 'Consumer Group (C1, C2)' }
+    };
+
+    // Particle class for data streams
+    class DataParticle {
+      constructor(from, to, color, speed = 0.015, type = 'normal') {
+        this.from = from;
+        this.to = to;
+        this.progress = Math.random();
+        this.speed = speed + Math.random() * 0.005;
+        this.color = color;
+        this.type = type;
+        this.arcHeight = -40 - Math.random() * 30;
+      }
+
+      update() {
+        this.progress += this.speed;
+        if (this.progress > 1) {
+          this.progress = 0;
+        }
+      }
+
+      getPos() {
+        const p = this.progress;
+        // Quadratic bezier arc
+        const x = (1 - p) * (1 - p) * this.from.x + 2 * (1 - p) * p * ((this.from.x + this.to.x) / 2) + p * p * this.to.x;
+        const y = (1 - p) * (1 - p) * this.from.y + 2 * (1 - p) * p * ((this.from.y + this.to.y) / 2 + this.arcHeight) + p * p * this.to.y;
+        const z = (1 - p) * (1 - p) * this.from.z + 2 * (1 - p) * p * ((this.from.z + this.to.z) / 2) + p * p * this.to.z;
+        return { x, y, z };
+      }
+    }
+
+    // Initialize particle stream
+    function initParticles() {
+      simState.particles = [];
+      const targetBroker = simState.broker1Alive ? nodes.broker1 : nodes.broker2;
+
+      // Producer -> Active Leader
+      for (let i = 0; i < 35; i++) {
+        simState.particles.push(new DataParticle(nodes.producer, targetBroker, '#ffb700', 0.012, 'produce'));
+      }
+
+      // Leader -> Follower 1 (ISR Sync)
+      for (let i = 0; i < 20; i++) {
+        simState.particles.push(new DataParticle(targetBroker, nodes.broker3, '#00f0ff', 0.018, 'isr'));
+      }
+
+      // Leader -> Follower 2 (ISR Sync if broker1 alive)
+      if (simState.broker1Alive) {
+        for (let i = 0; i < 20; i++) {
+          simState.particles.push(new DataParticle(nodes.broker1, nodes.broker2, '#00f0ff', 0.018, 'isr'));
+        }
+      }
+
+      // Leader -> Consumer
+      const consumerSpeed = simState.slowConsumer ? 0.003 : 0.02;
+      for (let i = 0; i < 30; i++) {
+        simState.particles.push(new DataParticle(targetBroker, nodes.consumer, '#c084fc', consumerSpeed, 'consume'));
+      }
+    }
+    initParticles();
+
+    // Draw Holodeck Hex Grid Floor
+    function drawFloorGrid() {
+      const size = 500;
+      const step = 70;
+      ctx.lineWidth = 1;
+
+      for (let x = -size; x <= size; x += step) {
+        const p1 = project3D(x, 120, -size);
+        const p2 = project3D(x, 120, size);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.07)';
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      for (let z = -size; z <= size; z += step) {
+        const p1 = project3D(-size, 120, z);
+        const p2 = project3D(size, 120, z);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.07)';
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+
+      // Concentric radar circles
+      [150, 300, 450].forEach(r => {
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+        ctx.beginPath();
+        for (let a = 0; a <= Math.PI * 2; a += 0.2) {
+          const px = Math.cos(a) * r;
+          const pz = Math.sin(a) * r;
+          const pt = project3D(px, 120, pz);
+          if (a === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+      });
+    }
+
+    // Draw a 3D Wireframe Tower (Broker)
+    function drawBrokerTower(x, y, z, isAlive, isLeader, name, isExploded = false) {
+      const p = project3D(x, y, z);
+      const width = 36;
+      const height = 90;
+      const color = isAlive ? (isLeader ? '#00f0ff' : '#38bdf8') : '#ef4444';
+
+      if (!isAlive) {
+        // Sparking / Alarm state
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.8)';
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+        ctx.lineWidth = 1.5;
+
+        // Broken glitch box
+        const top = project3D(x, y - height / 2, z);
+        const btm = project3D(x, y + height / 2, z);
+
+        ctx.strokeRect(top.x - width * top.scale, top.y, width * 2 * top.scale, (btm.y - top.y));
+        ctx.fillRect(top.x - width * top.scale, top.y, width * 2 * top.scale, (btm.y - top.y));
+
+        // Red Warning badge floating
+        const tag = project3D(x, y - height - 20, z);
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚡ CRITICAL FAILURE', tag.x, tag.y);
+        return;
+      }
+
+      if (isExploded) {
+        // DRAW EXPLODED VIEW LAYERS
+        // Layer 1: Network Threads & Purgatory (Top)
+        const l1 = project3D(x, y - 90, z);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+        ctx.strokeRect(l1.x - 45 * l1.scale, l1.y - 15 * l1.scale, 90 * l1.scale, 30 * l1.scale);
+        ctx.fillRect(l1.x - 45 * l1.scale, l1.y - 15 * l1.scale, 90 * l1.scale, 30 * l1.scale);
+        ctx.fillStyle = '#93c5fd';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('1. Network Threads & Purgatory', l1.x, l1.y + 4);
+
+        // Layer 2: OS Page Cache (Middle)
+        const l2 = project3D(x, y, z);
+        ctx.strokeStyle = '#2dd4bf';
+        ctx.fillStyle = 'rgba(45, 212, 191, 0.2)';
+        ctx.strokeRect(l2.x - 50 * l2.scale, l2.y - 18 * l2.scale, 100 * l2.scale, 36 * l2.scale);
+        ctx.fillRect(l2.x - 50 * l2.scale, l2.y - 18 * l2.scale, 100 * l2.scale, 36 * l2.scale);
+        ctx.fillStyle = '#2dd4bf';
+        ctx.fillText('2. OS Page Cache (Kernel)', l2.x, l2.y + 4);
+
+        // Layer 3: Disk Commit Log Segments (Bottom)
+        const l3 = project3D(x, y + 80, z);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.15)';
+        ctx.strokeRect(l3.x - 45 * l3.scale, l3.y - 20 * l3.scale, 90 * l3.scale, 40 * l3.scale);
+        ctx.fillRect(l3.x - 45 * l3.scale, l3.y - 20 * l3.scale, 90 * l3.scale, 40 * l3.scale);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('3. Commit Log (00000.log)', l3.x, l3.y + 4);
+
+        // Golden Laser Beam: ZERO-COPY (sendfile) bypassing JVM!
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 3]);
+        ctx.beginPath();
+        ctx.moveTo(l2.x + 50 * l2.scale, l2.y);
+        ctx.bezierCurveTo(l2.x + 100 * l2.scale, l2.y, l1.x + 100 * l1.scale, l1.y, l1.x + 45 * l1.scale, l1.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.lineWidth = 1;
+
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText('⚡ ZERO-COPY (sendfile)', l2.x + 85 * l2.scale, l2.y - 25);
+        return;
+      }
+
+      // Normal Holographic Cylinder / Tower
+      const segments = 4;
+      const segH = height / segments;
+
+      for (let i = 0; i < segments; i++) {
+        const curY = y - height / 2 + i * segH;
+        const pt = project3D(x, curY, z);
+        const w = width * pt.scale;
+        const h = (segH - 3) * pt.scale;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = isLeader ? 1.8 : 1.2;
+        ctx.fillStyle = isLeader ? 'rgba(0, 240, 255, 0.12)' : 'rgba(56, 189, 248, 0.06)';
+
+        ctx.strokeRect(pt.x - w, pt.y, w * 2, h);
+        ctx.fillRect(pt.x - w, pt.y, w * 2, h);
+
+        // Partition label inside segment
+        ctx.fillStyle = isLeader ? '#a5f3fc' : '#94a3b8';
+        ctx.font = `${Math.max(9, Math.floor(10 * pt.scale))}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`Part-${i} [Off:${1042 + i * 350}]`, pt.x, pt.y + h / 2 + 3);
+      }
+
+      // Tower Top Label
+      const topPt = project3D(x, y - height / 2 - 16, z);
+      ctx.fillStyle = isLeader ? '#00f0ff' : '#94a3b8';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(name, topPt.x, topPt.y);
+
+      if (isLeader) {
+        ctx.fillStyle = '#34d399';
+        ctx.font = '9px monospace';
+        ctx.fillText('★ ACTIVE LEADER', topPt.x, topPt.y + 12);
+      }
+    }
+
+    // Draw Central KRaft Quorum Controller
+    function drawKRaft(time) {
+      const k = nodes.kraft;
+      const pt = project3D(k.x, k.y, k.z);
+
+      // Rotating Octahedron wireframe
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 1.5;
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+
+      const r = 24 * pt.scale;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fill();
+
+      // Pulsing aura rings
+      const pulseR = r + (Math.sin(time * 0.004) * 8 + 8) * pt.scale;
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, pulseR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('KRaft Quorum', pt.x, pt.y - r - 8);
+      ctx.font = '9px monospace';
+      ctx.fillStyle = '#fed7aa';
+      ctx.fillText('Metadata Consensus', pt.x, pt.y + r + 14);
+    }
+
+    // Draw Producer and Consumer Nodes
+    function drawEndpoint(node, title, subtitle, color, isLagging = false) {
+      const pt = project3D(node.x, node.y, node.z);
+      const r = 32 * pt.scale;
+
+      ctx.strokeStyle = isLagging ? '#ef4444' : color;
+      ctx.lineWidth = 2;
+      ctx.fillStyle = isLagging ? 'rgba(239, 68, 68, 0.15)' : 'rgba(255, 255, 255, 0.05)';
+
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fill();
+
+      ctx.fillStyle = isLagging ? '#f87171' : color;
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, pt.x, pt.y - 4);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px monospace';
+      ctx.fillText(subtitle, pt.x, pt.y + 12);
+
+      if (isLagging) {
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 10px monospace';
+        ctx.fillText(`LAG: ${simState.lag} msg`, pt.x, pt.y + r + 16);
+      }
+    }
+
+    // Animation Render Loop
+    let lastTime = 0;
+    function render(time) {
+      const dt = time - lastTime;
+      lastTime = time;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw Holodeck floor
+      drawFloorGrid();
+
+      // 2. Draw KRaft Controller
+      drawKRaft(time);
+
+      // 3. Draw Brokers
+      drawBrokerTower(nodes.broker1.x, nodes.broker1.y, nodes.broker1.z, simState.broker1Alive, simState.broker1Alive, 'Broker-1', simState.explodedView);
+      drawBrokerTower(nodes.broker2.x, nodes.broker2.y, nodes.broker2.z, true, !simState.broker1Alive, 'Broker-2', false);
+      drawBrokerTower(nodes.broker3.x, nodes.broker3.y, nodes.broker3.z, true, false, 'Broker-3', false);
+
+      // 4. Draw Endpoints
+      drawEndpoint(nodes.producer, 'PRODUCERS', 'Push to Leader', '#ffb700');
+      drawEndpoint(nodes.consumer, 'CONSUMERS', simState.slowConsumer ? 'POLL THROTTLED' : 'Pull via Zero-Copy', '#c084fc', simState.slowConsumer);
+
+      // 5. Update & Draw Particles (Data Streams)
+      simState.particles.forEach(p => {
+        p.update();
+        const pos = p.getPos();
+        const pt = project3D(pos.x, pos.y, pos.z);
+
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 2.5 * pt.scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Subtle glow tail
+        ctx.fillStyle = p.color + '44';
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 5 * pt.scale, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Update Consumer Lag counter if slow
+      if (simState.slowConsumer) {
+        simState.lag += Math.floor(Math.random() * 8 + 3);
+        statLag.innerText = `${simState.lag.toLocaleString()} msg`;
+      }
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    // Button Actions
+    document.getElementById('btn-fire').addEventListener('click', () => {
+      simState.tps += 5000;
+      statTps.innerText = `${simState.tps.toLocaleString()} msg/s`;
+
+      // Spawn rapid burst of particles
+      const targetBroker = simState.broker1Alive ? nodes.broker1 : nodes.broker2;
+      for (let i = 0; i < 40; i++) {
+        const p = new DataParticle(nodes.producer, targetBroker, '#ffdd00', 0.035, 'burst');
+        simState.particles.push(p);
+      }
+
+      setTimeout(() => {
+        simState.tps = 4200;
+        statTps.innerText = `${simState.tps.toLocaleString()} msg/s`;
+      }, 2500);
+    });
+
+    btnKill.addEventListener('click', () => {
+      simState.broker1Alive = !simState.broker1Alive;
+
+      if (!simState.broker1Alive) {
+        // BROKER 1 DIES
+        btnKill.innerHTML = '<span>⚡ RESURRECT BROKER-1</span>';
+        btnKill.className = 'px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5';
+        
+        alertBanner.classList.remove('hidden');
+        statIsr.innerText = '2/3 SHRINK';
+        statIsr.className = 'font-bold text-amber-400 ml-1';
+        statusBadge.innerText = 'FAILOVER RE-ELECT';
+        statusBadge.className = 'px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40';
+
+        invariantText.innerText = '🚨 FAILOVER OBSERVED: Broker-1 gãy kết nối! KRaft Controller ngay lập tức thu hẹp ISR thành [2, 3] và phong Broker-2 lên làm Leader mới cho Partition 0, 1. Luồng Producer tự động đổi đích đến!';
+
+        initParticles();
+      } else {
+        // BROKER 1 RESURRECTS
+        btnKill.innerHTML = '<span>💥 NUKE LEADER BROKER</span>';
+        btnKill.className = 'px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-400/50 text-red-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5';
+        
+        alertBanner.classList.add('hidden');
+        statIsr.innerText = '3/3 IN-SYNC';
+        statIsr.className = 'font-bold text-emerald-400 ml-1';
+        statusBadge.innerText = 'OPTIMAL';
+        statusBadge.className = 'px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+
+        invariantText.innerText = '✅ RECOVERY COMPLETE: Broker-1 phục hồi, fetch catch-up dữ liệu còn thiếu từ Broker-2, rồi tự động gia nhập lại ISR mà không làm gián đoạn hệ thống.';
+
+        initParticles();
+      }
+    });
+
+    btnExplode.addEventListener('click', () => {
+      simState.explodedView = !simState.explodedView;
+      btnExplode.classList.toggle('hud-border');
+
+      if (simState.explodedView) {
+        invariantText.innerText = '🔬 ZERO-COPY DEEP-DIVE: Dữ liệu từ Page Cache (Kernel) được truyền thẳng ra Network Socket qua system call sendfile() của Linux, hoàn toàn KHÔNG copy vào JVM Heap!';
+      } else {
+        invariantText.innerText = 'Producer chỉ ghi vào Leader Partition. Dữ liệu chỉ được coi là Committed khi toàn bộ ISR (In-Sync Replicas) đã xác nhận.';
+      }
+    });
+
+    btnLag.addEventListener('click', () => {
+      simState.slowConsumer = !simState.slowConsumer;
+      btnLag.classList.toggle('hud-danger');
+
+      if (simState.slowConsumer) {
+        invariantText.innerText = '🐢 BACKPRESSURE DETECTED: Consumer Group đọc chậm. Dữ liệu đọng lại trong Commit Log, chỉ số Lag tăng vọt nhưng Broker và Producer vẫn hoạt động ổn định nhờ cơ chế Pull-based!';
+      } else {
+        simState.lag = 0;
+        statLag.innerText = '0 msg';
+        invariantText.innerText = 'Consumer đã xử lý hết Lag, offset bắt kịp high watermark.';
+      }
+      initParticles();
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      simState.broker1Alive = true;
+      simState.explodedView = false;
+      simState.slowConsumer = false;
+      simState.lag = 0;
+      simState.tps = 4200;
+      statTps.innerText = '4,200 msg/s';
+      statIsr.innerText = '3/3 IN-SYNC';
+      statIsr.className = 'font-bold text-emerald-400 ml-1';
+      statLag.innerText = '0 msg';
+      alertBanner.classList.add('hidden');
+      statusBadge.innerText = 'OPTIMAL';
+      statusBadge.className = 'px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      btnKill.innerHTML = '<span>💥 NUKE LEADER BROKER</span>';
+      btnKill.className = 'px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-400/50 text-red-200 text-xs font-bold tracking-wider hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5';
+      invariantText.innerText = 'Hệ thống đã reset về trạng thái ban đầu.';
+      initParticles();
+    });
+  </script>
+</body>
+</html>
