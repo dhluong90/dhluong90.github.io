@@ -487,76 +487,81 @@
       dragon: {
         id: "dragon",
         title: "DRAGON",
-        subtitle: "VŨ ĐIỆU THANH LONG • MESH SKINNING",
+        subtitle: "VŨ ĐIỆU THANH LONG • CELESTIAL SERPENTINE",
+        locomotion: "serpentine",
         bgColor: "#06080e",
         accentColor: "#38bdf8",
         spriteUrl: "images/dragon.png",
-        baseLength: 390,
-        numJoints: 36,
-        maxJointAngle: 0.062,
-        speed: 3.6,
-        sWaveAmp: 22,
-        sWaveFreq: 3.2,
+        baseLength: 420,
+        numJoints: 40,
+        maxJointAngle: 0.075,
+        speed: 3.5,
+        sWaveAmp: 24,
+        sWaveFreq: 2.8,
         audioTone: 110
       },
       jellyfish: {
         id: "jellyfish",
         title: "ABYSS",
-        subtitle: "VỰC THẲM DẠ QUANG • LUMEN",
+        subtitle: "VỰC THẲM DẠ QUANG • HYDRO-JET PROPULSION",
+        locomotion: "jellyfish_jet",
         bgColor: "#020617",
         accentColor: "#c084fc",
         spriteUrl: "images/jellyfish.png",
         baseLength: 350,
         numJoints: 32,
-        maxJointAngle: 0.052,
-        speed: 3.2,
-        sWaveAmp: 16,
-        sWaveFreq: 2.2,
+        maxJointAngle: 0.038,
+        speed: 3.4,
+        sWaveAmp: 10,
+        sWaveFreq: 1.2,
         audioTone: 55
       },
       silk: {
         id: "silk",
         title: "ELEGANCE",
-        subtitle: "HAUTE COUTURE • SATIN FLOW",
+        subtitle: "HAUTE COUTURE • 3D SATIN TWIST & WIND",
+        locomotion: "silk_wind",
         bgColor: "#0c0204",
         accentColor: "#f87171",
         spriteUrl: "images/silk.png",
         baseLength: 400,
         numJoints: 38,
-        maxJointAngle: 0.075,
+        maxJointAngle: 0.082,
         speed: 3.8,
-        sWaveAmp: 26,
-        sWaveFreq: 3.6,
+        sWaveAmp: 22,
+        sWaveFreq: 3.4,
         audioTone: 220
       },
       phoenix: {
         id: "phoenix",
         title: "REBIRTH",
-        subtitle: "HỎA PHỤNG HOÀNG TÁI SINH • PHOENIX",
+        subtitle: "HỎA PHỤNG HOÀNG • AVIAN FLAP & THERMAL SOAR",
+        locomotion: "avian_flight",
         bgColor: "#0a0402",
         accentColor: "#fbbf24",
         spriteUrl: "images/phoenix.png",
-        baseLength: 340,
+        baseLength: 350,
         numJoints: 32,
-        maxJointAngle: 0.055,
-        speed: 4.2,
-        sWaveAmp: 18,
-        sWaveFreq: 4.0,
+        maxJointAngle: 0.035,
+        speed: 4.4,
+        sWaveAmp: 16,
+        sWaveFreq: 4.4,
         audioTone: 146
       },
       banana: {
         id: "banana",
         title: "BANANA",
-        subtitle: "BÉ CHUỐI TAY ĐUA VIP • MALAYSIA TRIP",
+        subtitle: "BÉ CHUỐI TAY ĐUA VIP • KART DRIFT & NITRO",
+        locomotion: "kart_drift",
         bgColor: "#0f172a",
         accentColor: "#facc15",
         spriteUrl: "images/banana.png",
-        baseLength: 330,
-        numJoints: 28,
-        maxJointAngle: 0.045,
-        speed: 3.8,
-        sWaveAmp: 14,
-        sWaveFreq: 3.0,
+        baseLength: 340,
+        numJoints: 24,
+        maxJointAngle: 0.015,
+        speed: 4.8,
+        sWaveAmp: 8,
+        sWaveFreq: 2.0,
         audioTone: 180
       }
     };
@@ -771,6 +776,16 @@
         this.fabric = 0;
         this.speed = 3.6;
 
+        // Specialized locomotion state trackers
+        this.pulseTimer = 0;
+        this.bellSquash = 1.0;
+        this.flapPhase = 0;
+        this.bankAngle = 0;
+        this.turnVel = 0;
+        this.driftSlip = 0;
+        this.windPhase = 0;
+        this.serpPhase = 0;
+
         for (let i = 0; i < 48; i++) {
           this.spine.push({ x: 0, y: 0 });
           this.ripplePts.push({ x: 0, y: 0, angle: 0 });
@@ -779,6 +794,8 @@
 
       init(x, y, angle = 0) {
         this.heading = angle;
+        this.turnVel = 0;
+        this.driftSlip = 0;
         for (let i = 0; i < 48; i++) {
           this.spine[i].x = x - Math.cos(angle) * i * 10;
           this.spine[i].y = y - Math.sin(angle) * i * 10;
@@ -792,7 +809,7 @@
       update(targetX, targetY, conf, effectiveLen, dt) {
         this.numJoints = conf.numJoints || 34;
         this.wavePhase += dt * (conf.sWaveFreq || 3.0) * speedMult;
-        this.fabric += dt * 1.6 * speedMult;
+        this.fabric += dt * 1.8 * speedMult;
 
         const head = this.spine[0];
         const dx = targetX - head.x;
@@ -811,25 +828,84 @@
         diff = Math.max(-maxTurn, Math.min(maxTurn, diff * steerDamp));
         this.heading += diff;
 
-        // Dynamic speed based on distance
-        const cruiseSpeed = (conf.speed || 3.6) * speedMult;
-        const targetSpeed = Math.min(Math.max(2.6, dist * 0.035), 7.0) * speedMult;
+        const cruiseSpeed = (conf.speed || 3.8) * speedMult;
+        const targetSpeed = Math.min(Math.max(2.6, dist * 0.035), 7.2) * speedMult;
         this.speed += (targetSpeed - this.speed) * 0.1;
 
-        // 1. KOI SECRET 1: Thrust surge on tail stroke + head counter-oscillation
-        const thrust = 1 + 0.05 * Math.sin(this.wavePhase * 2);
-        const headWiggle = Math.sin(this.wavePhase) * 0.075;
-        const swimAngle = this.heading + headWiggle;
-
-        head.x += Math.cos(swimAngle) * this.speed * thrust;
-        head.y += Math.sin(swimAngle) * this.speed * thrust;
-
-        // Segment length along spine
+        const loc = conf.locomotion || "serpentine";
         const segLen = effectiveLen / (this.numJoints - 1);
-        const C = conf.maxJointAngle || 0.065;
+        let swimAngle = this.heading;
+        let C = conf.maxJointAngle || 0.065;
 
-        // 2. KOI SECRET 2: Hyperbolic Tangent (tanh) Elastic Spine Curvature
-        // Eliminates all rigid angle limits and gives infinitely smooth bending
+        // ======================================================================
+        // 1. DIVERGENT BIOLOGICAL / MECHANICAL PROPULSION & STEERING ENGINES
+        // ======================================================================
+        if (loc === "jellyfish_jet") {
+          // 🪼 SỨA BIỂN: Co bóp dù đẩy phản lực nước (Hydro-jetting) + trôi dạt quán tính
+          this.pulseTimer += dt * 1.25 * speedMult;
+          const cycle = this.pulseTimer % 1.0;
+          let jetThrust = 0;
+          if (cycle < 0.30) {
+            // Pha 1: Co bóp dù cực mạnh (Power Contraction) phụt nước về sau
+            const p = cycle / 0.30;
+            jetThrust = Math.sin(p * Math.PI) * 3.4;
+            this.bellSquash = 1.0 - Math.sin(p * Math.PI) * 0.32; // Dù co thắt lại
+          } else {
+            // Pha 2: Dãn nở dù & trôi dạt (Expansion & Viscous Glide)
+            const g = (cycle - 0.30) / 0.70;
+            jetThrust = Math.exp(-g * 4.2) * 0.35;
+            this.bellSquash = 1.0 + Math.sin(g * Math.PI) * 0.16; // Dù bung rộng
+          }
+          const jSpeed = Math.max(0.7, this.speed * (0.28 + jetThrust));
+          head.x += Math.cos(this.heading) * jSpeed;
+          head.y += Math.sin(this.heading) * jSpeed;
+          swimAngle = this.heading; // Sứa bơi thẳng hướng dù, tuyệt đối KHÔNG lắc đầu như cá!
+          C = 0.038;
+
+        } else if (loc === "avian_flight") {
+          // 🔥 HỎA PHỤNG HOÀNG: Vỗ cánh phập phồng (Wing Flap) & nghiêng cánh lượn vòng (Banking)
+          this.flapPhase += dt * 4.6 * speedMult;
+          const flap = Math.sin(this.flapPhase);
+          const downstrokeLift = Math.max(0, -flap) * 0.70; // Nhát đập cánh đẩy gió về sau
+          this.turnVel += (diff - this.turnVel) * 0.16;
+          this.bankAngle = Math.max(-0.45, Math.min(0.45, this.turnVel * 5.5)); // Góc nghiêng phi cơ
+
+          const flySpeed = this.speed * (0.85 + downstrokeLift);
+          head.x += Math.cos(this.heading) * flySpeed;
+          head.y += Math.sin(this.heading) * flySpeed;
+          swimAngle = this.heading; // Chim săn mồi mỏ hướng thẳng con mồi
+          C = 0.026; // Lồng ngực chim cứng cáp, không bị uốn éo như lươn
+
+        } else if (loc === "kart_drift") {
+          // 🍌 BÉ CHUỐI TAY ĐUA: Thân chuối cứng cáp, văng đuôi trượt lốp ôm cua (Drift Centrifugal Slide)
+          this.driftSlip += (diff * 3.8 - this.driftSlip) * 0.22;
+          head.x += Math.cos(this.heading) * this.speed * 1.06;
+          head.y += Math.sin(this.heading) * this.speed * 1.06;
+          swimAngle = this.heading;
+          C = 0.012; // Quả chuối tiêu cứng cáp vững chãi, không bị biến dạng nhũn nhoét!
+
+        } else if (loc === "silk_wind") {
+          // 🎗️ DẢI LỤA SATIN: Trôi dạt tự do theo gió & quán tính chất lỏng
+          this.windPhase += dt * 3.6 * speedMult;
+          head.x += Math.cos(this.heading) * this.speed;
+          head.y += Math.sin(this.heading) * this.speed;
+          swimAngle = this.heading;
+          C = 0.085; // Cực kỳ mềm mại dẻo dai
+
+        } else {
+          // 🐉 THANH LONG: Rồng Á Đông uốn lượn hình chữ S nhiều nhịp trong mây
+          this.serpPhase += dt * 3.2 * speedMult;
+          const thrust = 1 + 0.04 * Math.sin(this.serpPhase * 1.5);
+          const headWiggle = Math.sin(this.serpPhase) * 0.085;
+          swimAngle = this.heading + headWiggle;
+          head.x += Math.cos(swimAngle) * this.speed * thrust;
+          head.y += Math.sin(swimAngle) * this.speed * thrust;
+          C = 0.075;
+        }
+
+        // ======================================================================
+        // 2. KINEMATIC SPINE FOLLOW-CHAIN (Hyperbolic Tangent & Laplacian)
+        // ======================================================================
         for (let i = 1; i < this.numJoints; i++) {
           const prev = this.spine[i - 1];
           const curr = this.spine[i];
@@ -844,8 +920,7 @@
           this.angles[i] = F + Math.tanh(ie / C) * C;
         }
 
-        // 3. KOI SECRET 3: Laplacian Spine Smoothing Pass
-        // Diffuses discrete curvature shockwaves across adjacent vertebrae
+        // Laplacian Smoothing
         let prevA = this.angles[1];
         for (let i = 2; i < this.numJoints - 1; i++) {
           const uA = prevA;
@@ -864,7 +939,7 @@
           this.angles[i] = bA + (diff1 + diff2) * 0.18;
         }
 
-        // Position spine points exactly segLen apart
+        // Position spine points along angles
         for (let i = 1; i < this.numJoints; i++) {
           const prev = this.spine[i - 1];
           const curr = this.spine[i];
@@ -872,19 +947,41 @@
           curr.y = prev.y + Math.sin(this.angles[i]) * segLen;
         }
 
-        // 4. KOI SECRET 4: Quadratic Traveling S-Wave Ripple Points
-        // Amplitudes grow parabolically toward the tail just like real fish/fins
+        // ======================================================================
+        // 3. DIVERGENT LATERAL RIPPLE & DRIFT DISPLACEMENT
+        // ======================================================================
         for (let i = 0; i < this.numJoints; i++) {
           const se = i / (this.numJoints - 1);
-          const env = 0.12 + 0.88 * se * se;
-          const wave = Math.sin(this.wavePhase - se * Math.PI * 2) * (conf.sWaveAmp || 16) * env;
-
           const curA = i === 0 ? swimAngle : this.angles[i] - Math.PI;
           const perpX = -Math.sin(curA);
           const perpY = Math.cos(curA);
+          let lateralDisp = 0;
 
-          this.ripplePts[i].x = this.spine[i].x + perpX * wave;
-          this.ripplePts[i].y = this.spine[i].y + perpY * wave;
+          if (loc === "jellyfish_jet") {
+            // SỨA: Thân dù phía trước đứng yên (se <= 0.28), xúc tua sau trôi lững lờ theo nước
+            if (se > 0.28) {
+              const dragFrac = (se - 0.28) / 0.72;
+              lateralDisp = Math.sin(this.pulseTimer * 1.8 - se * 4.5) * (11.0 * (dragFrac ** 1.4));
+            }
+          } else if (loc === "avian_flight") {
+            // PHƯỢNG HOÀNG: Ngực và sải cánh ổn định (se <= 0.38), 5 dải đuôi phấp phới sau gió
+            if (se > 0.38) {
+              const tailFrac = (se - 0.38) / 0.62;
+              lateralDisp = Math.sin(this.flapPhase * 0.75 - se * 3.8) * (14.0 * (tailFrac ** 1.6));
+            }
+          } else if (loc === "kart_drift") {
+            // BÉ CHUỐI: Văng đuôi trượt ngang quán tính khi bẻ lái cua!
+            lateralDisp = this.driftSlip * (se ** 1.2) * 28.0;
+          } else if (loc === "silk_wind") {
+            // DẢI LỤA: Sóng gió liên tục lan truyền dọc chiều dài
+            lateralDisp = Math.sin(this.windPhase - se * Math.PI * 3.4) * 20.0 * (0.2 + 0.8 * se);
+          } else {
+            // THANH LONG: 2.2 chu kỳ uốn lượn chữ S dọc thân rồng
+            lateralDisp = Math.sin(this.serpPhase - se * Math.PI * 4.4) * (20.0 * (0.35 + 0.65 * se));
+          }
+
+          this.ripplePts[i].x = this.spine[i].x + perpX * lateralDisp;
+          this.ripplePts[i].y = this.spine[i].y + perpY * lateralDisp;
           this.ripplePts[i].angle = curA;
         }
       }
@@ -936,6 +1033,7 @@
 
       renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, targetH, conf) {
         const halfH = targetH * 0.5;
+        const loc = conf.locomotion || "serpentine";
 
         // Precompute mesh rings along the spine
         const rings = [];
@@ -947,8 +1045,44 @@
           const tSpine = 1.0 - uFrac;
           const pt = this.sampleSpine(tSpine, numJ);
 
-          // 5. KOI SECRET 5: Fabric Ripple on fins/tails/ribbons
-          const clothFlutter = Math.sin(this.fabric * 2.0 - uFrac * 6.5) * (conf.sWaveAmp * 0.12) * (uFrac * uFrac);
+          let currentHalfH = halfH;
+          let clothFlutter = 0;
+
+          // ==================================================================
+          // 4. DISTINCT SURFACE MESH DEFORMATIONS PER CREATURE
+          // ==================================================================
+          if (loc === "jellyfish_jet") {
+            // VÒM DÙ SỨA: Co bóp phập phồng chu kỳ khi phụt nước
+            if (uFrac > 0.62) {
+              const domeFrac = (uFrac - 0.62) / 0.38;
+              currentHalfH *= (1.0 + (this.bellSquash - 1.0) * domeFrac);
+            } else {
+              // Chùm xúc tua mềm mại buông lơi
+              clothFlutter = Math.sin(this.fabric * 2.2 - uFrac * 9.0) * 3.5;
+            }
+          } else if (loc === "avian_flight") {
+            // CÁNH PHƯỢNG HOÀNG: Sải cánh đập lên xuống & nghiêng theo góc lượn
+            const flap = Math.sin(this.flapPhase || 0);
+            if (uFrac > 0.38 && uFrac < 0.88) {
+              const wingProfile = Math.sin(((uFrac - 0.38) / 0.50) * Math.PI);
+              currentHalfH *= (1.0 + flap * 0.25 * wingProfile + (this.bankAngle || 0) * 0.22);
+            }
+            clothFlutter = Math.sin(this.fabric * 2.4 - uFrac * 6.0) * (3.0 * (1.0 - uFrac));
+          } else if (loc === "silk_wind") {
+            // DẢI LỤA 3D: Xoắn lượn trong không gian, lật bản rộng sang mép sắc
+            const twist = Math.abs(Math.cos((this.windPhase || 0) * 0.65 + uFrac * Math.PI * 2.2));
+            currentHalfH *= Math.max(0.18, twist);
+            clothFlutter = Math.sin(this.fabric * 2.0 - uFrac * 5.0) * 2.5;
+          } else if (loc === "kart_drift") {
+            // BÉ CHUỐI: Quả chuối giữ nguyên khối, khăn choàng đỏ sau cổ tung bay 120km/h
+            if (uFrac < 0.50) {
+              const capeFrac = (0.50 - uFrac) / 0.50;
+              clothFlutter = Math.sin(this.fabric * 4.5 - uFrac * 14.0) * 12.0 * capeFrac;
+            }
+          } else {
+            // RỒNG: Râu rồng và dải vây lụa dập dờn theo gió
+            clothFlutter = Math.sin(this.fabric * 2.2 - uFrac * 6.5) * (conf.sWaveAmp * 0.12) * (uFrac * uFrac);
+          }
 
           // Normal perpendicular to spine (pointing to dorsal / top edge of sprite)
           const nx = Math.sin(pt.angle);
@@ -957,10 +1091,10 @@
           // Top vertex (v = 0) and Bottom vertex (v = imgH)
           rings.push({
             u: u,
-            topX: pt.x + nx * (halfH + clothFlutter),
-            topY: pt.y + ny * (halfH + clothFlutter),
-            botX: pt.x - nx * (halfH - clothFlutter),
-            botY: pt.y - ny * (halfH - clothFlutter)
+            topX: pt.x + nx * (currentHalfH + clothFlutter),
+            topY: pt.y + ny * (currentHalfH + clothFlutter),
+            botX: pt.x - nx * (currentHalfH - clothFlutter),
+            botY: pt.y - ny * (currentHalfH - clothFlutter)
           });
         }
 
@@ -1090,10 +1224,24 @@
       creature.update(targetX, targetY, conf, effectiveLen, dt);
       creature.draw(ctx, conf, effectiveLen, effectiveH);
 
-      // Emitter trailing sparkles
-      if (Math.random() < 0.3) {
-        const head = creature.spine[0];
-        sparks.push(new SparkParticle(head.x, head.y, conf.accentColor));
+      // Emitter specialized particles based on creature locomotion
+      if (Math.random() < 0.35) {
+        if (conf.locomotion === "kart_drift") {
+          // Banana emits nitro sparks from rear stem!
+          const tail = creature.ripplePts[creature.numJoints - 1];
+          sparks.push(new SparkParticle(tail.x, tail.y, Math.random() < 0.6 ? "#facc15" : "#f97316"));
+        } else if (conf.locomotion === "avian_flight") {
+          // Phoenix emits embers from wings
+          const mid = creature.ripplePts[Math.floor(creature.numJoints * 0.45)];
+          sparks.push(new SparkParticle(mid.x, mid.y, "#fbbf24"));
+        } else if (conf.locomotion === "jellyfish_jet") {
+          // Jellyfish emits bioluminescent spores from dome
+          const head = creature.spine[0];
+          sparks.push(new SparkParticle(head.x, head.y, "#c084fc"));
+        } else {
+          const head = creature.spine[0];
+          sparks.push(new SparkParticle(head.x, head.y, conf.accentColor));
+        }
       }
 
       // 2. UPDATE & DRAW RIPPLES
