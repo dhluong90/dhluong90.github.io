@@ -44,5 +44,32 @@ hide:
       </a>
     </div>
 
+    <!-- CARD: INTERACTIVE KOI POND -->
+    <div class="lab-card featured-lab-card">
+      <div class="lab-card-header">
+        <span class="lab-pill-badge">Đồ Chơi WebGL</span>
+        <div class="lab-card-icon">🐟</div>
+      </div>
+      
+      <h3 class="lab-card-title">Hồ Cá Koi Tương Tác</h3>
+      <p class="lab-card-desc">
+        Đàn cá chép đuôi bướm uốn lượn theo phương trình vật lý 2D Mesh Skinning và sóng vải lụa mềm mại. Khúc xạ sóng nước WebGL tương tác chuột kèm âm thanh giọt nước thiền định.
+      </p>
+      
+      <div class="lab-tags">
+        <span class="lab-tag">WebGL 2D Mesh</span>
+        <span class="lab-tag">Sóng Nước Khúc Xạ</span>
+        <span class="lab-tag">Thiền Định & Âm Thanh</span>
+      </div>
+      
+      <a href="/koi/" class="lab-primary-btn">
+        <span>Thả mình vào hồ cá</span>
+        <svg class="lab-btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
   </div>
 </div>
