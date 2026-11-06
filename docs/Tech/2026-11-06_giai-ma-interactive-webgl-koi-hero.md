@@ -89,6 +89,18 @@ Cái hay của kỹ thuật này là anh em có thể thay thế con cá Koi b�
 ### Biến thể 3: Dải Lụa Bay (Fashion / Agency)
 > *"Thay con cá bằng một dải lụa satin đỏ mềm mại bay lượn trong không gian, uốn lượn xuyên qua dòng chữ thương hiệu thời trang cao cấp."*
 
+### Biến thể 4: Hỏa Phụng Hoàng Tái Sinh (Phoenix Rebirth)
+> *"Thay con cá bằng chim Phượng Hoàng Lửa (Hỏa Phụng). Đôi cánh lửa sải rộng phập phồng tạo lực đẩy bay lượn, 5 dải lông đuôi ngũ sắc uốn lượn bốc cháy, tỏa tàn lửa vàng cam rực rỡ trong bóng đêm. Chữ đổi thành 'REBIRTH'."*
+
+!!! success "Trải Nghiệm Trực Tiếp Phòng Thí Nghiệm Sinh Vật (Creatures Studio)"
+    Anh em có thể trải nghiệm trực tiếp cả 4 biến thể (kèm âm thanh Web Audio tổng hợp thời gian thực) tại:
+    
+    * 🐉 **Thanh Long Phương Đông**: [https://dhluong90.github.io/creatures/#dragon](https://dhluong90.github.io/creatures/#dragon)
+    * 🪼 **Sứa Biển Dạ Quang**: [https://dhluong90.github.io/creatures/#jellyfish](https://dhluong90.github.io/creatures/#jellyfish)
+    * 🎗️ **Dải Lụa Satin Bay**: [https://dhluong90.github.io/creatures/#silk](https://dhluong90.github.io/creatures/#silk)
+    * 🔥 **Hỏa Phụng Hoàng**: [https://dhluong90.github.io/creatures/#phoenix](https://dhluong90.github.io/creatures/#phoenix)
+    * 🍌 **Bé Chuối Phượt Malaysia (Map & Day/Night)**: [https://dhluong90.github.io/roadtrip/](https://dhluong90.github.io/roadtrip/)
+
 ---
 
 ## 4. Ba "Thần Chú" Cần Nhớ Khi Giao Tiếp Với AI

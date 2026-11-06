@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Creative WebGL Creatures Studio — Sếp Lương Đình</title>
+  <meta name="description" content="Phòng thí nghiệm đồ họa chuyển động tương tác: Thanh Long, Sứa Biển Dạ Quang, Dải Lụa Bay và Hỏa Phụng Hoàng sử dụng 2D Mesh Skinning & Procedural Kinematics.">
+  <link rel="icon" href="/koi/favicon.ico">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #06080e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-color: #38bdf8;
+      --panel-bg: rgba(15, 23, 42, 0.78);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Fullscreen Viewport Stacking */
+    #canvas-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Layer 2: Big Display Typography */
+    .hero-typography-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+      text-align: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4.5rem, 18vw, 19rem);
+      line-height: 0.85;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      opacity: 0.14;
+      color: var(--accent-color);
+      transition: color 0.8s ease, opacity 0.5s ease;
+      white-space: nowrap;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-mono);
+      font-size: clamp(0.75rem, 1.2vw, 1.1rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-top: 1.5rem;
+      opacity: 0.4;
+      color: var(--text-main);
+      transition: color 0.8s ease;
+    }
+
+    /* Layer 3: Interactive Simulation Canvas */
+    #sim-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      cursor: crosshair;
+    }
+
+    /* Layer 4: UI Controls & Header Glassmorphism Bar */
+    .top-header-bar {
+      position: absolute;
+      top: 1.25rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      z-index: 20;
+      pointer-events: auto;
+    }
+
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 0.6rem 1.1rem;
+      border-radius: 9999px;
+      border: 1px solid var(--panel-border);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .brand-pill:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+    }
+
+    /* Mode Selector Segmented Pill */
+    .mode-selector {
+      display: flex;
+      align-items: center;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 0.35rem;
+      border-radius: 9999px;
+      border: 1px solid var(--panel-border);
+      gap: 0.35rem;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+    }
+
+    .mode-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 9999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .mode-btn:hover {
+      color: #f8fafc;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .mode-btn.active {
+      color: #ffffff;
+      background: rgba(255,255,255,0.14);
+      border-color: var(--panel-border);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .mode-btn.active[data-mode="dragon"] {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(14, 165, 233, 0.22);
+      color: #7dd3fc;
+    }
+    .mode-btn.active[data-mode="jellyfish"] {
+      border-color: rgba(168, 85, 247, 0.5);
+      background: rgba(168, 85, 247, 0.22);
+      color: #e9d5ff;
+    }
+    .mode-btn.active[data-mode="silk"] {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.22);
+      color: #fca5a5;
+    }
+    .mode-btn.active[data-mode="phoenix"] {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.22);
+      color: #fde68a;
+    }
+
+    /* Action Buttons (Right) */
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .icon-btn:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    .icon-btn.active {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+
+    /* Bottom Info Card */
+    .bottom-info-card {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      max-width: 420px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 1.2rem 1.4rem;
+      z-index: 20;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      pointer-events: auto;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .info-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.22rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      margin-bottom: 0.6rem;
+    }
+
+    .info-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: #fff;
+    }
+
+    .info-desc {
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #94a3b8;
+    }
+
+    .info-metrics {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-top: 0.85rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+
+    .metric-item span {
+      color: var(--accent-color);
+      font-weight: 700;
+    }
+
+    /* Bottom-Right Controls Pill */
+    .bottom-controls-bar {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--panel-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 0.5rem 0.8rem;
+      border-radius: 9999px;
+      border: 1px solid var(--panel-border);
+      z-index: 20;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .speed-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(255,255,255,0.06);
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      color: #e2e8f0;
+      transition: all 0.2s;
+    }
+    .speed-pill:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Modal Architecture Guide */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 2rem;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .modal-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .modal-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #38bdf8;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .code-block {
+      background: #030712;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .top-header-bar {
+        flex-wrap: wrap;
+        top: 0.75rem;
+        left: 0.75rem;
+        right: 0.75rem;
+      }
+      .brand-pill span {
+        display: none;
+      }
+      .mode-selector {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        justify-content: space-between;
+      }
+      .bottom-info-card {
+        bottom: 5.5rem;
+        left: 0.75rem;
+        right: 0.75rem;
+        max-width: none;
+      }
+      .bottom-controls-bar {
+        bottom: 0.75rem;
+        left: 0.75rem;
+        right: 0.75rem;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container">
+    <!-- Big Typographic Layer (z-index: 2) -->
+    <div class="hero-typography-layer">
+      <h1 class="hero-title" id="hero-title">DRAGON</h1>
+      <p class="hero-subtitle" id="hero-subtitle">VŨ ĐIỆU THANH LONG • PROCEDURAL KINEMATICS</p>
+    </div>
+
+    <!-- Canvas Simulation Layer (z-index: 3) -->
+    <canvas id="sim-canvas"></canvas>
+  </div>
+
+  <!-- Header Navigation & Switcher (z-index: 20) -->
+  <header class="top-header-bar">
+    <a href="/" class="brand-pill" title="Về trang chủ Luong Dinh's Notes">
+      <span>🏛️</span>
+      <strong>Luong Dinh's Studio</strong>
+    </a>
+
+    <!-- 4 Creative Modes Selector -->
+    <nav class="mode-selector" aria-label="Bộ chọn sinh vật">
+      <button class="mode-btn active" data-mode="dragon" onclick="switchMode('dragon')">
+        <span>🐉</span>
+        <span>Thanh Long</span>
+      </button>
+      <button class="mode-btn" data-mode="jellyfish" onclick="switchMode('jellyfish')">
+        <span>🪼</span>
+        <span>Sứa Biển</span>
+      </button>
+      <button class="mode-btn" data-mode="silk" onclick="switchMode('silk')">
+        <span>🎗️</span>
+        <span>Dải Lụa</span>
+      </button>
+      <button class="mode-btn" data-mode="phoenix" onclick="switchMode('phoenix')">
+        <span>🔥</span>
+        <span>Hỏa Phụng</span>
+      </button>
+    </nav>
+
+    <!-- Quick Tool Action Buttons -->
+    <div class="action-group">
+      <button class="icon-btn" id="btn-audio" title="Bật/Tắt âm thanh tổng hợp Web Audio" onclick="toggleAudio()">
+        🔈
+      </button>
+      <button class="icon-btn" id="btn-info" title="Xem giải mã thuật toán toán học" onclick="toggleModal(true)">
+        📐
+      </button>
+      <a href="/koi/" class="icon-btn" title="Xem Hồ cá Koi nguyên bản" style="text-decoration:none;">
+        🐟
+      </a>
+      <a href="/roadtrip/" class="icon-btn" title="Xem Chuyến phượt Bé Chuối Malaysia" style="text-decoration:none;">
+        🍌
+      </a>
+    </div>
+  </header>
+
+  <!-- Bottom Lore & Spec Card -->
+  <aside class="bottom-info-card" id="info-card">
+    <div class="info-tag" id="card-tag">Procedural 2D Mesh Skinning</div>
+    <h2 class="info-title" id="card-title">Thanh Long Phương Đông (Azure Dragon)</h2>
+    <p class="info-desc" id="card-desc">
+      Thân rồng 28 đốt khớp nối xương sống mềm mại, râu rồng vẫy lượn theo quán tính thủy khí quyển, vảy ngọc phát sáng óng ánh dọc sống lưng theo hướng trỏ chuột.
+    </p>
+    <div class="info-metrics">
+      <div class="metric-item">Khớp IK: <span id="metric-joints">28 Đốt</span></div>
+      <div class="metric-item">Lưới Skin: <span id="metric-grid">48×16</span></div>
+      <div class="metric-item">FPS: <span id="metric-fps">60 FPS</span></div>
+    </div>
+  </aside>
+
+  <!-- Bottom-Right Controls Pill -->
+  <footer class="bottom-controls-bar">
+    <div class="speed-pill" id="btn-speed" onclick="cycleSpeed()" title="Đổi tốc độ bơi / uốn lượn">
+      <span>⚡</span>
+      <span id="speed-label">1.0x Tốc độ</span>
+    </div>
+    <div class="speed-pill" id="btn-lead" onclick="toggleLeadMode()" title="Chế độ chuột dắt hay tự do">
+      <span>🎯</span>
+      <span id="lead-label">Dắt chuột: BẬT</span>
+    </div>
+  </footer>
+
+  <!-- Architecture Guide Modal -->
+  <div class="modal-overlay" id="arch-modal" onclick="if(event.target===this) toggleModal(false)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="toggleModal(false)">✕</button>
+      <h2 class="modal-title">📐 Giải Mã Kỹ Thuật Đồ Họa Động</h2>
+      <p class="modal-subtitle">CHEAP TRICK, EXPENSIVE LOOK • ZERO 3D HEAVY ASSETS</p>
+      
+      <p style="color:#cbd5e1; line-height:1.6; font-size:0.9rem; margin-bottom:1rem;">
+        Cả 4 sinh vật trong phòng thí nghiệm này đều <strong>hoàn toàn không tải bất kỳ file mô hình 3D (.gltf / .fbx) nặng hàng chục Megabyte nào</strong>. Mọi chuyển động hữu cơ đều được sinh ra bằng công thức toán học chạy trực tiếp trên GPU và Canvas:
+      </p>
+
+      <div class="code-block">
+1. 2D Mesh Skinning & Inverse Kinematics (IK):
+   - Xương sống n-đốt: d = p[i] - p[i-1]; p[i] = p[i-1] + (d / |d|) * len;
+   - Sóng truyền hình Sin: offset = A * sin(omega * t - i * phi);
+
+2. Fluid Shockwaves & Ripple Refraction:
+   - Sóng chấn động lan tỏa hình xuyến khi chạm chuột, biến dạng điểm ảnh;
+
+3. Pure Procedural Web Audio:
+   - 100% âm thanh tạo bằng bộ dao động tần số OscillatorNode & BiquadFilterNode;
+   - Không tốn một byte băng thông tải file âm thanh mp3 nào!
+      </div>
+
+      <p style="color:#94a3b8; font-size:0.85rem; line-height:1.6;">
+        Tác giả: <strong>Lương Đình</strong> — Senior Enterprise/Solutions Architect.<br>
+        Xem bài viết chi tiết tại: <a href="/Tech/2026-11-06_giai-ma-interactive-webgl-koi-hero/" style="color:#38bdf8;">Giải Mã Nghệ Thuật WebGL Interactive Hero</a>.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. CREATURE MODES CONFIGURATION
+       ========================================================================== */
+    const MODES = {
+      dragon: {
+        id: "dragon",
+        title: "DRAGON",
+        subtitle: "VŨ ĐIỆU THANH LONG • AWAKEN",
+        cardTag: "Procedural Serpentine Spine",
+        cardTitle: "Thanh Long Phương Đông (Azure Dragon)",
+        cardDesc: "Thân rồng 28 đốt khớp nối mềm mại uốn lượn hình chữ S qua các con chữ. Râu rồng vẫy tự do theo quán tính gió, bờm lửa dập dờn và vảy rồng ngọc bích óng ánh.",
+        joints: "28 Đốt",
+        grid: "56×18",
+        bgColor: "#06080e",
+        accentColor: "#38bdf8",
+        leadSpeed: 1.15
+      },
+      jellyfish: {
+        id: "jellyfish",
+        title: "ABYSS",
+        subtitle: "VỰC THẲM DẠ QUANG • LUMEN",
+        cardTag: "Elastic Bell Cavity & Verlet Tentacles",
+        cardTitle: "Sứa Biển Phát Sáng (Bioluminescent Jellyfish)",
+        cardDesc: "Chu kỳ co bóp đẩy nước phập phồng tự nhiên. Vòm dù dạ quang trong suốt với 14 xúc tua dài mềm rũ trôi bồng bềnh trong màn đêm xanh thẳm đại dương.",
+        joints: "4 Đàn Sứa",
+        grid: "14 Xúc tua/con",
+        bgColor: "#020617",
+        accentColor: "#c084fc",
+        leadSpeed: 0.8
+      },
+      silk: {
+        id: "silk",
+        title: "ELEGANCE",
+        subtitle: "HAUTE COUTURE • SATIN FLOW",
+        cardTag: "3D Twisted Ribbon with Specular Shading",
+        cardTitle: "Dải Lụa Bay (Haute Couture Silk Ribbon)",
+        cardDesc: "Dải lụa satin đỏ mềm mại bay lượn xuyên qua dòng chữ thương hiệu thời trang. Tính toán pháp tuyến 3D tạo ánh lụa bóng kim loại trên nếp gấp uốn lượn.",
+        joints: "64 Dát lụa",
+        grid: "Ribbon 3D",
+        bgColor: "#0d0205",
+        accentColor: "#f87171",
+        leadSpeed: 1.3
+      },
+      phoenix: {
+        id: "phoenix",
+        title: "REBIRTH",
+        subtitle: "HỎA PHỤNG HOÀNG TÁI SINH • PHOENIX",
+        cardTag: "Avian Aerodynamics & Ember Feathers",
+        cardTitle: "Hỏa Phụng Hoàng (Phoenix Rebirth)",
+        cardDesc: "Cánh lửa sải rộng phập phồng tạo lực đẩy bay lượn. Đuôi chim phụng ngũ sắc uốn lượn bốc cháy, tỏa tàn lửa vàng cam rực rỡ trong bóng đêm tro tàn.",
+        joints: "32 Đốt Lửa",
+        grid: "Winged Mesh",
+        bgColor: "#0a0402",
+        accentColor: "#fbbf24",
+        leadSpeed: 1.25
+      }
+    };
+
+    let currentModeKey = "dragon";
+    let speedMult = 1.0;
+    let isLeadEnabled = true;
+
+    /* ==========================================================================
+       2. PROCEDURAL WEB AUDIO SYNTHESIZER (ZERO EXTERNAL MP3s)
+       ========================================================================== */
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.isMuted = true;
+        this.osc1 = null;
+        this.osc2 = null;
+        this.filter = null;
+        this.gainNode = null;
+      }
+
+      init() {
+        if (this.ctx) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        this.ctx = new AudioCtx();
+
+        // Master gain
+        this.gainNode = this.ctx.createGain();
+        this.gainNode.gain.setValueAtTime(0.001, this.ctx.currentTime);
+        this.gainNode.connect(this.ctx.destination);
+
+        // Lowpass Filter for ocean/wind feel
+        this.filter = this.ctx.createBiquadFilter();
+        this.filter.type = 'lowpass';
+        this.filter.frequency.setValueAtTime(450, this.ctx.currentTime);
+        this.filter.connect(this.gainNode);
+
+        // Ambient Drone Osc 1
+        this.osc1 = this.ctx.createOscillator();
+        this.osc1.type = 'sine';
+        this.osc1.frequency.setValueAtTime(110, this.ctx.currentTime); // A2
+        this.osc1.connect(this.filter);
+        this.osc1.start();
+
+        // Ambient Drone Osc 2 (Detuned harmonic)
+        this.osc2 = this.ctx.createOscillator();
+        this.osc2.type = 'triangle';
+        this.osc2.frequency.setValueAtTime(164.81, this.ctx.currentTime); // E3
+        this.osc2.connect(this.filter);
+        this.osc2.start();
+
+        this.applyModeTuning(currentModeKey);
+      }
+
+      applyModeTuning(mode) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        if (mode === 'dragon') {
+          this.osc1.frequency.setTargetAtTime(110, now, 0.4);
+          this.osc2.frequency.setTargetAtTime(165, now, 0.4);
+          this.filter.frequency.setTargetAtTime(500, now, 0.4);
+        } else if (mode === 'jellyfish') {
+          this.osc1.frequency.setTargetAtTime(55, now, 0.4); // Deep underwater sub-bass
+          this.osc2.frequency.setTargetAtTime(82.4, now, 0.4);
+          this.filter.frequency.setTargetAtTime(280, now, 0.4);
+        } else if (mode === 'silk') {
+          this.osc1.frequency.setTargetAtTime(220, now, 0.4); // Ethereal harp
+          this.osc2.frequency.setTargetAtTime(330, now, 0.4);
+          this.filter.frequency.setTargetAtTime(800, now, 0.4);
+        } else if (mode === 'phoenix') {
+          this.osc1.frequency.setTargetAtTime(146.8, now, 0.4); // Warm solar tone
+          this.osc2.frequency.setTargetAtTime(220, now, 0.4);
+          this.filter.frequency.setTargetAtTime(650, now, 0.4);
+        }
+      }
+
+      playRipplePlop() {
+        if (!this.ctx || this.isMuted) return;
+        const now = this.ctx.currentTime;
+        const plop = this.ctx.createOscillator();
+        const plopGain = this.ctx.createGain();
+
+        plop.type = currentModeKey === 'phoenix' ? 'sawtooth' : 'sine';
+        const startFreq = currentModeKey === 'jellyfish' ? 380 : currentModeKey === 'dragon' ? 520 : 640;
+        plop.frequency.setValueAtTime(startFreq, now);
+        plop.frequency.exponentialRampToValueAtTime(120, now + 0.28);
+
+        plopGain.gain.setValueAtTime(0.2, now);
+        plopGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        plop.connect(plopGain);
+        plopGain.connect(this.ctx.destination);
+
+        plop.start(now);
+        plop.stop(now + 0.3);
+      }
+
+      toggle() {
+        this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        this.isMuted = !this.isMuted;
+        const now = this.ctx.currentTime;
+        if (this.isMuted) {
+          this.gainNode.gain.setTargetAtTime(0.0001, now, 0.1);
+        } else {
+          this.gainNode.gain.setTargetAtTime(0.12, now, 0.15);
+        }
+        return !this.isMuted;
+      }
+    }
+
+    const sound = new ProceduralAudioEngine();
+
+    /* ==========================================================================
+       3. INTERACTIVE SHOCKWAVES & PARTICLES
+       ========================================================================== */
+    class Shockwave {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.r = 5;
+        this.maxR = 180;
+        this.alpha = 0.85;
+        this.speed = 4.5;
+      }
+      update() {
+        this.r += this.speed;
+        this.alpha = Math.max(0, 0.85 * (1 - this.r / this.maxR));
+      }
+      draw(ctx) {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.strokeStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.lineWidth = Math.max(1, 3 * (1 - this.r / this.maxR));
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    class Particle {
+      constructor(x, y, mode) {
+        this.reset(x, y, mode);
+      }
+      reset(x, y, mode) {
+        this.x = x + (Math.random() - 0.5) * 40;
+        this.y = y + (Math.random() - 0.5) * 40;
+        this.mode = mode;
+        this.life = 1.0;
+        this.decay = 0.01 + Math.random() * 0.02;
+
+        if (mode === 'dragon') {
+          this.vx = (Math.random() - 0.5) * 1.5;
+          this.vy = (Math.random() - 0.5) * 1.5 - 0.4;
+          this.size = 2 + Math.random() * 3.5;
+          this.color = Math.random() > 0.4 ? '#38bdf8' : '#facc15';
+        } else if (mode === 'jellyfish') {
+          this.vx = (Math.random() - 0.5) * 0.8;
+          this.vy = -0.5 - Math.random() * 1.0; // Float upwards like marine snow
+          this.size = 1.5 + Math.random() * 2.5;
+          this.color = Math.random() > 0.5 ? '#a855f7' : '#06b6d4';
+        } else if (mode === 'silk') {
+          this.vx = (Math.random() - 0.5) * 1.2;
+          this.vy = (Math.random() - 0.5) * 1.2;
+          this.size = 1.8 + Math.random() * 3.0;
+          this.color = Math.random() > 0.3 ? '#f87171' : '#fde047';
+        } else { // phoenix
+          this.vx = (Math.random() - 0.5) * 2.5;
+          this.vy = -1.2 - Math.random() * 2.5; // Embers rise fast
+          this.size = 2.5 + Math.random() * 4.0;
+          this.color = Math.random() > 0.5 ? '#f97316' : '#facc15';
+        }
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+      }
+      draw(ctx) {
+        if (this.life <= 0) return;
+        ctx.save();
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = Math.max(0, this.life * 0.75);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       4. PROCEDURAL CREATURE 1: THANH LONG (AZURE DRAGON)
+       ========================================================================== */
+    class AzureDragon {
+      constructor() {
+        this.numJoints = 28;
+        this.spine = [];
+        this.jointLengths = [];
+        this.widths = [];
+        this.wavePhase = 0;
+        this.heading = 0;
+
+        // Long serpentine lengths and tapering widths
+        for (let i = 0; i < this.numJoints; i++) {
+          this.spine.push({ x: 0, y: 0, angle: 0 });
+          this.jointLengths.push(16);
+          // Body taper: head medium, belly thick, tail slender
+          const frac = i / (this.numJoints - 1);
+          const w = Math.sin(Math.pow(frac, 0.7) * Math.PI) * 22 + 4;
+          this.widths.push(Math.max(4, w));
+        }
+
+        // Whiskers (2 whiskers, 8 verlet nodes each)
+        this.whiskers = [[], []];
+        for (let w = 0; w < 2; w++) {
+          for (let j = 0; j < 8; j++) {
+            this.whiskers[w].push({ x: 0, y: 0 });
+          }
+        }
+      }
+
+      init(x, y) {
+        for (let i = 0; i < this.numJoints; i++) {
+          this.spine[i].x = x - i * 16;
+          this.spine[i].y = y;
+          this.spine[i].angle = 0;
+        }
+        for (let w = 0; w < 2; w++) {
+          for (let j = 0; j < 8; j++) {
+            this.whiskers[w][j].x = x - j * 8;
+            this.whiskers[w][j].y = y + (w === 0 ? -12 : 12);
+          }
+        }
+      }
+
+      update(targetX, targetY, dt) {
+        this.wavePhase += dt * 3.8 * speedMult;
+
+        const head = this.spine[0];
+        const dx = targetX - head.x;
+        const dy = targetY - head.y;
+        const dist = Math.hypot(dx, dy);
+
+        // Steering towards target
+        const targetAngle = Math.atan2(dy, dx);
+        let diff = targetAngle - this.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        this.heading += diff * Math.min(0.12 * speedMult, 0.25);
+
+        // Head advances
+        const speed = Math.min(dist * 0.05, 7.5) * speedMult;
+        head.x += Math.cos(this.heading) * Math.max(2.5, speed);
+        head.y += Math.sin(this.heading) * Math.max(2.5, speed);
+        head.angle = this.heading;
+
+        // Follow chain with Travelling Sinusoidal S-Wave
+        for (let i = 1; i < this.numJoints; i++) {
+          const prev = this.spine[i - 1];
+          const curr = this.spine[i];
+          const len = this.jointLengths[i - 1];
+
+          const sWave = Math.sin(this.wavePhase - i * 0.42) * (i * 1.1);
+          const cdx = curr.x - prev.x;
+          const cdy = curr.y - prev.y;
+          const d = Math.hypot(cdx, cdy) || 1;
+
+          curr.x = prev.x + (cdx / d) * len;
+          curr.y = prev.y + (cdy / d) * len;
+
+          const baseAngle = Math.atan2(prev.y - curr.y, prev.x - curr.x);
+          curr.angle = baseAngle + (sWave * 0.035);
+        }
+
+        // Whiskers Verlet lag
+        const normalX = -Math.sin(this.heading);
+        const normalY = Math.cos(this.heading);
+        for (let w = 0; w < 2; w++) {
+          const side = w === 0 ? -1 : 1;
+          const rootX = head.x + Math.cos(this.heading) * 12 + normalX * side * 14;
+          const rootY = head.y + Math.sin(this.heading) * 12 + normalY * side * 14;
+          this.whiskers[w][0].x = rootX;
+          this.whiskers[w][0].y = rootY;
+
+          for (let j = 1; j < 8; j++) {
+            const pNode = this.whiskers[w][j - 1];
+            const cNode = this.whiskers[w][j];
+            const wWave = Math.sin(this.wavePhase * 1.5 - j * 0.6) * 4;
+            const wx = cNode.x - pNode.x;
+            const wy = cNode.y - pNode.y;
+            const wd = Math.hypot(wx, wy) || 1;
+            cNode.x = pNode.x + (wx / wd) * 10 - Math.cos(this.heading) * 1.2;
+            cNode.y = pNode.y + (wy / wd) * 10 + wWave * 0.4;
+          }
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+
+        // 1. DORSAL FIN RIDGE (Vây lưng rồng dập dờn)
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+        ctx.beginPath();
+        for (let i = 2; i < this.numJoints - 4; i++) {
+          const pt = this.spine[i];
+          const finLen = 14 + Math.sin(this.wavePhase + i * 0.5) * 4;
+          const nx = -Math.sin(pt.angle), ny = Math.cos(pt.angle);
+          const fx = pt.x + nx * (this.widths[i] + finLen);
+          const fy = pt.y + ny * (this.widths[i] + finLen);
+          if (i === 2) ctx.moveTo(fx, fy);
+          else ctx.lineTo(fx, fy);
+        }
+        for (let i = this.numJoints - 5; i >= 2; i--) {
+          const pt = this.spine[i];
+          ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+
+        // 2. MAIN SERPENTINE BODY MESH
+        const leftOutline = [];
+        const rightOutline = [];
+
+        for (let i = 0; i < this.numJoints; i++) {
+          const pt = this.spine[i];
+          const w = this.widths[i];
+          const nx = -Math.sin(pt.angle), ny = Math.cos(pt.angle);
+          leftOutline.push({ x: pt.x + nx * w, y: pt.y + ny * w });
+          rightOutline.push({ x: pt.x - nx * w, y: pt.y - ny * w });
+        }
+
+        // Body Gradient (Emerald Jade to Cyan and Gold)
+        const head = this.spine[0];
+        const tail = this.spine[this.numJoints - 1];
+        const bodyGrad = ctx.createLinearGradient(head.x, head.y, tail.x, tail.y);
+        bodyGrad.addColorStop(0, '#38bdf8');
+        bodyGrad.addColorStop(0.3, '#0284c7');
+        bodyGrad.addColorStop(0.7, '#0f766e');
+        bodyGrad.addColorStop(1, '#064e3b');
+
+        ctx.beginPath();
+        leftOutline.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        for (let i = rightOutline.length - 1; i >= 0; i--) {
+          ctx.lineTo(rightOutline[i].x, rightOutline[i].y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = bodyGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // 3. OVERLAPPING DRAGON SCALES (Vảy Rồng Ngọc)
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.45)';
+        for (let i = 2; i < this.numJoints - 3; i += 2) {
+          const pt = this.spine[i];
+          const scaleSize = this.widths[i] * 0.55;
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, scaleSize, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // 4. TAIL FLAME TUFT (Bờm đuôi lửa)
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        const t1 = this.spine[this.numJoints - 1];
+        const t0 = this.spine[this.numJoints - 2];
+        const tAngle = Math.atan2(t1.y - t0.y, t1.x - t0.x);
+        ctx.save();
+        ctx.translate(t1.x, t1.y);
+        ctx.rotate(tAngle);
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(20, -18, 50, -25, 65, 0);
+        ctx.bezierCurveTo(50, 25, 20, 18, 0, 0);
+        ctx.fill();
+        ctx.restore();
+
+        // 5. DRAGON HEAD & HORNS & WHISKERS
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(head.angle);
+
+        // Head Base Shape
+        ctx.fillStyle = '#0284c7';
+        ctx.beginPath();
+        ctx.moveTo(18, 0);
+        ctx.lineTo(5, -14);
+        ctx.lineTo(-15, -18);
+        ctx.lineTo(-20, 0);
+        ctx.lineTo(-15, 18);
+        ctx.lineTo(5, 14);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#7dd3fc';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Horns / Antlers (Gạc Rồng Vàng)
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        // Left horn
+        ctx.moveTo(-10, -12);
+        ctx.quadraticCurveTo(-26, -32, -45, -28);
+        ctx.moveTo(-22, -24);
+        ctx.lineTo(-32, -15);
+        // Right horn
+        ctx.moveTo(-10, 12);
+        ctx.quadraticCurveTo(-26, 32, -45, 28);
+        ctx.moveTo(-22, 24);
+        ctx.lineTo(-32, 15);
+        ctx.stroke();
+
+        // Glowing Amber Eyes (Mắt Rồng Phát Sáng)
+        ctx.fillStyle = '#fde047';
+        ctx.shadowColor = '#facc15';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(4, -8, 3.5, 0, Math.PI * 2);
+        ctx.arc(4, 8, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.restore();
+
+        // 6. DRAW WHISKERS (Râu rồng)
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.85)';
+        ctx.lineWidth = 1.8;
+        for (let w = 0; w < 2; w++) {
+          ctx.beginPath();
+          this.whiskers[w].forEach((node, idx) => {
+            if (idx === 0) ctx.moveTo(node.x, node.y);
+            else ctx.lineTo(node.x, node.y);
+          });
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       5. PROCEDURAL CREATURE 2: BIOLUMINESCENT JELLYFISH
+       ========================================================================== */
+    class Jellyfish {
+      constructor(radius, isLeader = false) {
+        this.x = 0;
+        this.y = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.heading = -Math.PI / 2;
+        this.baseR = radius;
+        this.isLeader = isLeader;
+        this.pulsePhase = Math.random() * Math.PI * 2;
+        this.pulseSpeed = (isLeader ? 1.8 : 2.4) * (0.8 + Math.random() * 0.4);
+        this.tentacleCount = isLeader ? 14 : 8;
+        this.tentacles = [];
+
+        for (let i = 0; i < this.tentacleCount; i++) {
+          const chain = [];
+          const segCount = isLeader ? 16 : 10;
+          for (let s = 0; s < segCount; s++) {
+            chain.push({ x: 0, y: 0 });
+          }
+          this.tentacles.push(chain);
+        }
+      }
+
+      init(x, y) {
+        this.x = x;
+        this.y = y;
+        this.tentacles.forEach(chain => {
+          chain.forEach((seg, s) => {
+            seg.x = x;
+            seg.y = y + s * 14;
+          });
+        });
+      }
+
+      update(targetX, targetY, dt) {
+        this.pulsePhase += dt * this.pulseSpeed * speedMult;
+        const pulse = Math.sin(this.pulsePhase);
+
+        // Contraction (jet propulsion: quick squeeze and lunge)
+        const isContracting = Math.cos(this.pulsePhase) > 0;
+        const currentR = this.baseR * (1 + (pulse > 0 ? pulse * 0.22 : pulse * 0.1));
+
+        // Steering towards target
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+        const targetAngle = Math.atan2(dy, dx);
+
+        let diff = targetAngle - this.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        this.heading += diff * 0.05 * speedMult;
+
+        // Thrust impulse during contraction
+        if (isContracting && pulse > 0.4) {
+          const thrust = (this.isLeader ? 3.5 : 2.5) * speedMult;
+          this.vx += Math.cos(this.heading) * thrust * 0.2;
+          this.vy += Math.sin(this.heading) * thrust * 0.2;
+        }
+
+        // Fluid Drag
+        this.vx *= 0.94;
+        this.vy *= 0.94;
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Update Tentacles along rim perimeter
+        const normalX = -Math.sin(this.heading);
+        const normalY = Math.cos(this.heading);
+
+        this.tentacles.forEach((chain, tIdx) => {
+          const frac = (tIdx / (this.tentacleCount - 1) - 0.5) * 1.8;
+          const rimX = this.x + normalX * frac * currentR * 0.85;
+          const rimY = this.y + normalY * frac * currentR * 0.85;
+
+          chain[0].x = rimX;
+          chain[0].y = rimY;
+
+          for (let s = 1; s < chain.length; s++) {
+            const prev = chain[s - 1];
+            const curr = chain[s];
+            const wave = Math.sin(this.pulsePhase * 1.2 - s * 0.45 + tIdx * 0.6) * (s * 1.3);
+            const tdx = curr.x - prev.x;
+            const tdy = curr.y - prev.y;
+            const td = Math.hypot(tdx, tdy) || 1;
+
+            curr.x = prev.x + (tdx / td) * (this.isLeader ? 15 : 10) + normalX * wave * 0.15;
+            curr.y = prev.y + (tdy / td) * (this.isLeader ? 15 : 10) + normalY * wave * 0.15;
+          }
+        });
+      }
+
+      draw(ctx) {
+        ctx.save();
+        const pulse = Math.sin(this.pulsePhase);
+        const currentR = this.baseR * (1 + (pulse > 0 ? pulse * 0.22 : pulse * 0.1));
+
+        // 1. TRAILING TENTACLES
+        this.tentacles.forEach((chain, idx) => {
+          ctx.beginPath();
+          chain.forEach((seg, s) => {
+            if (s === 0) ctx.moveTo(seg.x, seg.y);
+            else ctx.lineTo(seg.x, seg.y);
+          });
+          ctx.strokeStyle = idx % 2 === 0 ? 'rgba(168, 85, 247, 0.45)' : 'rgba(6, 182, 212, 0.45)';
+          ctx.lineWidth = this.isLeader ? 1.6 : 1.1;
+          ctx.stroke();
+        });
+
+        // 2. TRANSLUCENT BELL DOME
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.heading + Math.PI / 2);
+
+        // Outer Glow Halo
+        const glowGrad = ctx.createRadialGradient(0, -currentR * 0.3, 5, 0, -currentR * 0.3, currentR * 1.6);
+        glowGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)');
+        glowGrad.addColorStop(0.6, 'rgba(6, 182, 212, 0.15)');
+        glowGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(0, -currentR * 0.3, currentR * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Bell Cap (Dome curve)
+        ctx.beginPath();
+        ctx.moveTo(-currentR, 0);
+        ctx.bezierCurveTo(-currentR * 0.9, -currentR * 1.35, currentR * 0.9, -currentR * 1.35, currentR, 0);
+        ctx.bezierCurveTo(currentR * 0.6, currentR * 0.15, -currentR * 0.6, currentR * 0.15, -currentR, 0);
+        ctx.closePath();
+
+        const bellGrad = ctx.createLinearGradient(0, -currentR * 1.2, 0, currentR * 0.1);
+        bellGrad.addColorStop(0, 'rgba(238, 242, 255, 0.85)');
+        bellGrad.addColorStop(0.35, 'rgba(192, 132, 252, 0.6)');
+        bellGrad.addColorStop(0.8, 'rgba(6, 182, 212, 0.35)');
+        bellGrad.addColorStop(1, 'rgba(168, 85, 247, 0.7)');
+
+        ctx.fillStyle = bellGrad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Internal Glowing Organs (Manubrium)
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.65)';
+        ctx.beginPath();
+        ctx.arc(0, -currentR * 0.45, currentR * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       6. PROCEDURAL CREATURE 3: HAUTE COUTURE SILK RIBBON
+       ========================================================================== */
+    class SilkRibbon {
+      constructor() {
+        this.numNodes = 58;
+        this.spine = [];
+        this.wavePhase = 0;
+        this.heading = 0;
+
+        for (let i = 0; i < this.numNodes; i++) {
+          this.spine.push({ x: 0, y: 0, angle: 0, twist: 0 });
+        }
+      }
+
+      init(x, y) {
+        for (let i = 0; i < this.numNodes; i++) {
+          this.spine[i].x = x - i * 14;
+          this.spine[i].y = y;
+          this.spine[i].angle = 0;
+          this.spine[i].twist = (i / this.numNodes) * Math.PI * 4;
+        }
+      }
+
+      update(targetX, targetY, dt) {
+        this.wavePhase += dt * 4.2 * speedMult;
+
+        const head = this.spine[0];
+        const dx = targetX - head.x;
+        const dy = targetY - head.y;
+        const dist = Math.hypot(dx, dy);
+
+        const targetAngle = Math.atan2(dy, dx);
+        let diff = targetAngle - this.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        this.heading += diff * Math.min(0.14 * speedMult, 0.3);
+
+        const speed = Math.min(dist * 0.06, 9.5) * speedMult;
+        head.x += Math.cos(this.heading) * Math.max(3.0, speed);
+        head.y += Math.sin(this.heading) * Math.max(3.0, speed);
+        head.angle = this.heading;
+        head.twist = this.wavePhase * 0.6;
+
+        for (let i = 1; i < this.numNodes; i++) {
+          const prev = this.spine[i - 1];
+          const curr = this.spine[i];
+          const len = 14;
+
+          const twistWave = Math.sin(this.wavePhase - i * 0.35) * (i * 0.85);
+          const cdx = curr.x - prev.x;
+          const cdy = curr.y - prev.y;
+          const d = Math.hypot(cdx, cdy) || 1;
+
+          curr.x = prev.x + (cdx / d) * len;
+          curr.y = prev.y + (cdy / d) * len;
+
+          const baseAngle = Math.atan2(prev.y - curr.y, prev.x - curr.x);
+          curr.angle = baseAngle + twistWave * 0.03;
+          curr.twist = prev.twist + 0.16;
+        }
+      }
+
+      draw(ctx) {
+        ctx.save();
+        const ribbonWidth = 28;
+
+        for (let i = 0; i < this.numNodes - 1; i++) {
+          const p1 = this.spine[i];
+          const p2 = this.spine[i + 1];
+
+          // Compute twist projection factor
+          const twistFactor1 = Math.cos(p1.twist);
+          const twistFactor2 = Math.cos(p2.twist);
+
+          const nx1 = -Math.sin(p1.angle), ny1 = Math.cos(p1.angle);
+          const nx2 = -Math.sin(p2.angle), ny2 = Math.cos(p2.angle);
+
+          const w1 = ribbonWidth * twistFactor1;
+          const w2 = ribbonWidth * twistFactor2;
+
+          const q1x = p1.x + nx1 * w1, q1y = p1.y + ny1 * w1;
+          const q2x = p1.x - nx1 * w1, q2y = p1.y - ny1 * w1;
+          const q3x = p2.x - nx2 * w2, q3y = p2.y - ny2 * w2;
+          const q4x = p2.x + nx2 * w2, q4y = p2.y + ny2 * w2;
+
+          // Front-facing (scarlet sheen) vs Back-facing (burgundy shadow)
+          const isFront = twistFactor1 > 0;
+          ctx.beginPath();
+          ctx.moveTo(q1x, q1y);
+          ctx.lineTo(q2x, q2y);
+          ctx.lineTo(q3x, q3y);
+          ctx.lineTo(q4x, q4y);
+          ctx.closePath();
+
+          if (isFront) {
+            ctx.fillStyle = `rgba(239, 68, 68, ${0.4 + Math.abs(twistFactor1) * 0.55})`;
+          } else {
+            ctx.fillStyle = `rgba(127, 29, 29, ${0.35 + Math.abs(twistFactor1) * 0.45})`;
+          }
+          ctx.fill();
+
+          // Gold Hem Stitching on Edge
+          ctx.strokeStyle = 'rgba(254, 240, 138, 0.7)';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(q1x, q1y);
+          ctx.lineTo(q4x, q4y);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       7. PROCEDURAL CREATURE 4: HỎA PHỤNG HOÀNG (PHOENIX REBIRTH)
+       ========================================================================== */
+    class PhoenixRebirth {
+      constructor() {
+        this.x = 0;
+        this.y = 0;
+        this.heading = 0;
+        this.wingPhase = 0;
+        this.tailCount = 5;
+        this.tailStreamers = [];
+
+        for (let t = 0; t < this.tailCount; t++) {
+          const chain = [];
+          for (let s = 0; s < 24; s++) {
+            chain.push({ x: 0, y: 0 });
+          }
+          this.tailStreamers.push(chain);
+        }
+      }
+
+      init(x, y) {
+        this.x = x;
+        this.y = y;
+        this.tailStreamers.forEach(chain => {
+          chain.forEach((seg, s) => {
+            seg.x = x - s * 14;
+            seg.y = y;
+          });
+        });
+      }
+
+      update(targetX, targetY, dt) {
+        this.wingPhase += dt * 5.2 * speedMult;
+
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+        const dist = Math.hypot(dx, dy);
+
+        const targetAngle = Math.atan2(dy, dx);
+        let diff = targetAngle - this.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        this.heading += diff * Math.min(0.12 * speedMult, 0.25);
+
+        const speed = Math.min(dist * 0.055, 8.5) * speedMult;
+        this.x += Math.cos(this.heading) * Math.max(3.0, speed);
+        this.y += Math.sin(this.heading) * Math.max(3.0, speed);
+
+        // Update 5 Undulating Tail Streamers
+        const normalX = -Math.sin(this.heading);
+        const normalY = Math.cos(this.heading);
+
+        this.tailStreamers.forEach((chain, tIdx) => {
+          const offsetFrac = (tIdx / (this.tailCount - 1) - 0.5) * 16;
+          const rootX = this.x - Math.cos(this.heading) * 25 + normalX * offsetFrac;
+          const rootY = this.y - Math.sin(this.heading) * 25 + normalY * offsetFrac;
+
+          chain[0].x = rootX;
+          chain[0].y = rootY;
+
+          for (let s = 1; s < chain.length; s++) {
+            const prev = chain[s - 1];
+            const curr = chain[s];
+            const wave = Math.sin(this.wingPhase * 0.8 - s * 0.38 + tIdx * 0.7) * (s * 1.4);
+            const cdx = curr.x - prev.x;
+            const cdy = curr.y - prev.y;
+            const cd = Math.hypot(cdx, cdy) || 1;
+
+            curr.x = prev.x + (cdx / cd) * 14 + normalX * wave * 0.12;
+            curr.y = prev.y + (cdy / cd) * 14 + normalY * wave * 0.12;
+          }
+        });
+      }
+
+      draw(ctx) {
+        ctx.save();
+
+        // 1. TAIL FLAME STREAMERS (Ngũ Sắc Phụng Vĩ)
+        this.tailStreamers.forEach((chain, idx) => {
+          ctx.beginPath();
+          chain.forEach((seg, s) => {
+            if (s === 0) ctx.moveTo(seg.x, seg.y);
+            else ctx.lineTo(seg.x, seg.y);
+          });
+          const colors = ['#f59e0b', '#ef4444', '#facc15', '#dc2626', '#f97316'];
+          ctx.strokeStyle = colors[idx % colors.length];
+          ctx.lineWidth = Math.max(1.5, 3.5 - idx * 0.4);
+          ctx.stroke();
+
+          // Tail Tip Eye-Spot (Mắt Phụng)
+          const tip = chain[chain.length - 1];
+          ctx.fillStyle = '#fde047';
+          ctx.beginPath();
+          ctx.arc(tip.x, tip.y, 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // 2. AVIAN BODY & FEATHERED WINGS
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.heading);
+
+        const wingFlap = Math.sin(this.wingPhase);
+        const wingSpan = 85;
+
+        // Draw Left & Right Fiery Wings
+        for (let side = -1; side <= 1; side += 2) {
+          ctx.save();
+          ctx.scale(1, side);
+
+          // 3-Joint Wing Bone
+          const wingGrad = ctx.createLinearGradient(0, 0, 30, wingSpan);
+          wingGrad.addColorStop(0, '#facc15');
+          wingGrad.addColorStop(0.5, '#ea580c');
+          wingGrad.addColorStop(1, '#991b1b');
+
+          ctx.fillStyle = wingGrad;
+          ctx.beginPath();
+          ctx.moveTo(10, 0);
+          ctx.quadraticCurveTo(20, wingSpan * 0.5 * wingFlap, -15, wingSpan * (0.8 + wingFlap * 0.3));
+          ctx.lineTo(-25, 0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Phoenix Torso
+        const bodyGrad = ctx.createLinearGradient(25, 0, -25, 0);
+        bodyGrad.addColorStop(0, '#fef08a');
+        bodyGrad.addColorStop(0.4, '#f59e0b');
+        bodyGrad.addColorStop(1, '#b91c1c');
+        ctx.fillStyle = bodyGrad;
+
+        ctx.beginPath();
+        ctx.moveTo(32, 0); // Beak tip
+        ctx.quadraticCurveTo(15, -12, -15, -10);
+        ctx.lineTo(-25, 0);
+        ctx.lineTo(-15, 10);
+        ctx.quadraticCurveTo(15, 12, 32, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // Glowing Crest Feather Crown (Vương Miện Lửa)
+        ctx.strokeStyle = '#fde047';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(15, -8);
+        ctx.quadraticCurveTo(2, -26, -14, -22);
+        ctx.moveTo(18, -4);
+        ctx.quadraticCurveTo(6, -20, -6, -18);
+        ctx.stroke();
+
+        // Eyes
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(16, -4, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================================
+       8. MAIN CANVAS CONTROLLER & RENDER PIPELINE
+       ========================================================================== */
+    const canvas = document.getElementById('sim-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let viewW = window.innerWidth;
+    let viewH = window.innerHeight;
+
+    function resize() {
+      viewW = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0, 800);
+      viewH = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, 600);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = viewW * dpr;
+      canvas.height = viewH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mouse Tracking
+    const mouse = { x: viewW * 0.5, y: viewH * 0.5, isHovering: false };
+    let autonomousTimer = 0;
+
+    window.addEventListener('pointermove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.isHovering = true;
+      autonomousTimer = performance.now();
+    });
+
+    window.addEventListener('pointerdown', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      sound.init();
+      sound.playRipplePlop();
+
+      // Spawn shockwave ring
+      const mode = MODES[currentModeKey];
+      shockwaves.push(new Shockwave(e.clientX, e.clientY, mode.accentColor));
+
+      // Spawn burst of particles
+      for (let i = 0; i < 18; i++) {
+        particles.push(new Particle(e.clientX, e.clientY, currentModeKey));
+      }
+    });
+
+    // Creatures Instances
+    const dragon = new AzureDragon();
+    const leaderJelly = new Jellyfish(45, true);
+    const satelliteJellies = [
+      new Jellyfish(22, false),
+      new Jellyfish(18, false),
+      new Jellyfish(25, false)
+    ];
+    const silkRibbon = new SilkRibbon();
+    const phoenix = new PhoenixRebirth();
+
+    // Init positions
+    dragon.init(viewW * 0.5, viewH * 0.5);
+    leaderJelly.init(viewW * 0.5, viewH * 0.5);
+    satelliteJellies.forEach((j, idx) => {
+      j.init(viewW * (0.3 + idx * 0.2), viewH * (0.4 + idx * 0.15));
+    });
+    silkRibbon.init(viewW * 0.5, viewH * 0.5);
+    phoenix.init(viewW * 0.5, viewH * 0.5);
+
+    const shockwaves = [];
+    const particles = [];
+
+    // Main Animation Loop
+    let lastTime = performance.now();
+    let frameCounter = 0;
+    let fpsTimer = performance.now();
+
+    function render(now) {
+      const dt = Math.max(0, Math.min((now - lastTime) / 1000, 0.1));
+      lastTime = now;
+
+      // FPS Counter
+      frameCounter++;
+      if (now - fpsTimer >= 1000) {
+        document.getElementById('metric-fps').innerText = `${frameCounter} FPS`;
+        frameCounter = 0;
+        fpsTimer = now;
+      }
+
+      // Compute Target Position: cursor or autonomous infinity figure-8
+      let targetX = mouse.x;
+      let targetY = mouse.y;
+
+      if (!isLeadEnabled || (now - autonomousTimer > 3500)) {
+        const t = now * 0.0008 * speedMult;
+        targetX = viewW * 0.5 + Math.sin(t) * (viewW * 0.35);
+        targetY = viewH * 0.5 + Math.sin(t * 2) * (viewH * 0.25);
+      }
+
+      ctx.clearRect(0, 0, viewW, viewH);
+
+      // 1. UPDATE & DRAW ACTIVE CREATURE
+      if (currentModeKey === 'dragon') {
+        dragon.update(targetX, targetY, dt);
+        dragon.draw(ctx);
+        // Emitter trail
+        if (Math.random() < 0.35) {
+          particles.push(new Particle(dragon.spine[0].x, dragon.spine[0].y, 'dragon'));
+        }
+      } else if (currentModeKey === 'jellyfish') {
+        leaderJelly.update(targetX, targetY, dt);
+        leaderJelly.draw(ctx);
+        satelliteJellies.forEach((j, idx) => {
+          const offsetX = Math.sin(now * 0.001 + idx) * 120;
+          const offsetY = Math.cos(now * 0.001 + idx) * 80;
+          j.update(leaderJelly.x + offsetX, leaderJelly.y + offsetY, dt);
+          j.draw(ctx);
+        });
+        if (Math.random() < 0.4) {
+          particles.push(new Particle(Math.random() * viewW, viewH + 20, 'jellyfish'));
+        }
+      } else if (currentModeKey === 'silk') {
+        silkRibbon.update(targetX, targetY, dt);
+        silkRibbon.draw(ctx);
+        if (Math.random() < 0.35) {
+          particles.push(new Particle(silkRibbon.spine[0].x, silkRibbon.spine[0].y, 'silk'));
+        }
+      } else if (currentModeKey === 'phoenix') {
+        phoenix.update(targetX, targetY, dt);
+        phoenix.draw(ctx);
+        if (Math.random() < 0.6) {
+          particles.push(new Particle(phoenix.x, phoenix.y, 'phoenix'));
+        }
+      }
+
+      // 2. UPDATE & DRAW SHOCKWAVES
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        shockwaves[i].update();
+        shockwaves[i].draw(ctx);
+        if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1);
+      }
+
+      // 3. UPDATE & DRAW PARTICLES
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw(ctx);
+        if (particles[i].life <= 0) particles.splice(i, 1);
+      }
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    /* ==========================================================================
+       9. MODE SWITCHER & UI CONTROL LOGIC
+       ========================================================================== */
+    function switchMode(key) {
+      if (!MODES[key]) return;
+      currentModeKey = key;
+      const conf = MODES[key];
+
+      // Update Root CSS & Colors
+      document.documentElement.style.setProperty('--bg-color', conf.bgColor);
+      document.documentElement.style.setProperty('--accent-color', conf.accentColor);
+
+      // Update Big Typography
+      document.getElementById('hero-title').innerText = conf.title;
+      document.getElementById('hero-subtitle').innerText = conf.subtitle;
+
+      // Update Info Card
+      document.getElementById('card-tag').innerText = conf.cardTag;
+      document.getElementById('card-title').innerText = conf.cardTitle;
+      document.getElementById('card-desc').innerText = conf.cardDesc;
+      document.getElementById('metric-joints').innerText = conf.joints;
+      document.getElementById('metric-grid').innerText = conf.grid;
+
+      // Update Buttons
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-mode') === key);
+      });
+
+      // Update URL hash
+      if (window.location.hash !== `#${key}`) {
+        window.history.replaceState(null, null, `#${key}`);
+      }
+
+      // Retune Audio
+      sound.applyModeTuning(key);
+      sound.playRipplePlop();
+
+      // Reset creature positions around center
+      dragon.init(viewW * 0.5, viewH * 0.5);
+      leaderJelly.init(viewW * 0.5, viewH * 0.5);
+      silkRibbon.init(viewW * 0.5, viewH * 0.5);
+      phoenix.init(viewW * 0.5, viewH * 0.5);
+    }
+
+    function toggleAudio() {
+      const isAudible = sound.toggle();
+      const btn = document.getElementById('btn-audio');
+      btn.classList.toggle('active', isAudible);
+      btn.innerText = isAudible ? '🔊' : '🔈';
+    }
+
+    function toggleModal(open) {
+      document.getElementById('arch-modal').classList.toggle('open', open);
+    }
+
+    function cycleSpeed() {
+      if (speedMult === 1.0) speedMult = 1.75;
+      else if (speedMult === 1.75) speedMult = 0.5;
+      else speedMult = 1.0;
+
+      document.getElementById('speed-label').innerText = `${speedMult}x Tốc độ`;
+    }
+
+    function toggleLeadMode() {
+      isLeadEnabled = !isLeadEnabled;
+      document.getElementById('lead-label').innerText = isLeadEnabled ? 'Dắt chuột: BẬT' : 'Dắt chuột: TỰ DO';
+    }
+
+    // Hash Navigation Listener
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (hash && MODES[hash]) {
+        switchMode(hash);
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (hash && MODES[hash]) {
+        switchMode(hash);
+      }
+    });
+  </script>
+</body>
+</html>
