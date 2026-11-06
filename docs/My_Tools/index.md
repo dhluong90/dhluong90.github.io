@@ -71,5 +71,33 @@ hide:
       </a>
     </div>
 
+    <!-- CARD: MALAYSIA ROAD TRIP 3D BANANA SIMULATOR -->
+    <div class="lab-card featured-lab-card">
+      <div class="lab-card-header">
+        <span class="lab-pill-badge">Đồ Chơi Procedural 3D</span>
+        <div class="lab-card-icon">🍌</div>
+      </div>
+      
+      <h3 class="lab-card-title">Malaysia Road Trip 3D Simulator</h3>
+      <p class="lab-card-desc">
+        Giả lập sống động hành trình phượt 3 ngày (Woodlands ➔ Batu Pahat ➔ Muar ➔ Melaka ➔ Port Dickson) bám sát Biểu đồ Gantt 28 chặng. Bé Chuối (Banana) ngầu đét đeo kính râm phi xe bằng công nghệ 2D Mesh Skinning, chu kỳ bầu trời ngày đêm và âm thanh động cơ synthesizer.
+      </p>
+      
+      <div class="lab-tags">
+        <span class="lab-tag">2D Mesh Skinning</span>
+        <span class="lab-tag">Bé Chuối Đeo Kính</span>
+        <span class="lab-tag">Gantt 28 Chặng</span>
+        <span class="lab-tag">Web Audio API</span>
+      </div>
+      
+      <a href="/roadtrip/" class="lab-primary-btn">
+        <span>Bắt đầu phượt cùng Bé Chuối</span>
+        <svg class="lab-btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+
   </div>
 </div>

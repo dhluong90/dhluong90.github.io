@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Malaysia Road Trip 3D Simulator — Sếp Lương Đình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --accent-yellow: #facc15;
+      --accent-cyan: #38bdf8;
+      --accent-orange: #fb923c;
+      --accent-red: #ef4444;
+      --accent-green: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    /* CANVAS VIEWPORT */
+    #sim-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: grab;
+    }
+    #sim-canvas:active {
+      cursor: grabbing;
+    }
+
+    /* TOP HEADER & STATUS */
+    .top-bar {
+      position: absolute;
+      top: 20px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .brand-box {
+      pointer-events: auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-yellow);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .brand-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem;
+      line-height: 1.1;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .pill-btn {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+    .pill-btn.active {
+      background: var(--accent-yellow);
+      color: #0f172a;
+      border-color: var(--accent-yellow);
+      font-weight: 700;
+    }
+
+    /* FLOATING MILESTONE CARD */
+    .milestone-hud {
+      position: absolute;
+      top: 130px;
+      left: 24px;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 22px;
+      z-index: 20;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .milestone-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .badge-drive { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-food { background: rgba(250, 204, 21, 0.15); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.3); }
+    .badge-sight { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-cruise { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-hotel { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+    .milestone-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .milestone-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent-yellow);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .milestone-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .milestone-progress {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* BOTTOM TIMELINE & CONTROL DOCK */
+    .control-dock {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(920px, calc(100vw - 32px));
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 16px 24px;
+      z-index: 20;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .time-slider-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .time-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .time-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-yellow);
+      border: 3px solid #0f172a;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.8);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .time-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider-days-marks {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: -4px;
+    }
+
+    .controls-btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .play-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .btn-play {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--accent-yellow);
+      color: #0f172a;
+      border: none;
+      font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
+    }
+    .btn-play:hover {
+      background: #fde047;
+      transform: scale(1.08);
+    }
+
+    .speed-pills {
+      display: flex;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .speed-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .speed-btn.active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    .clock-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .clock-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-yellow);
+      box-shadow: 0 0 8px var(--accent-yellow);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* GANTT MODAL OVERLAY */
+    .gantt-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(7, 9, 14, 0.92);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .gantt-overlay.open {
+      display: flex;
+    }
+    .gantt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .gantt-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.2rem;
+      color: #fff;
+    }
+    .gantt-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    .gantt-table th, .gantt-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gantt-table th {
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .gantt-table tr:hover {
+      background: rgba(250, 204, 21, 0.06);
+    }
+    .gantt-table tr.active-row {
+      background: rgba(250, 204, 21, 0.15);
+      border-left: 3px solid var(--accent-yellow);
+    }
+
+    /* BANANA SPEECH BUBBLE */
+    .banana-bubble {
+      position: absolute;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      pointer-events: none;
+      z-index: 25;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .banana-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #fff;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .brand-title { font-size: 1.4rem; }
+      .brand-sub { display: none; }
+      .milestone-hud { width: calc(100vw - 32px); top: auto; bottom: 180px; left: 16px; padding: 16px; }
+      .control-dock { bottom: 12px; padding: 12px 16px; width: calc(100vw - 24px); }
+      .clock-display { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIMULATION WEBGL / 2D CANVAS -->
+  <canvas id="sim-canvas"></canvas>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand-box">
+      <div class="brand-tag">🍌 3D Procedural Mesh Skinning Simulator</div>
+      <h1 class="brand-title">Malaysia Road Trip</h1>
+      <p class="brand-sub">Singapore Woodlands ➔ Batu Pahat ➔ Muar ➔ Melaka ➔ Port Dickson (3 Ngày)</p>
+    </div>
+
+    <div class="top-actions">
+      <button class="pill-btn" id="btn-toggle-sound">
+        <span id="sound-icon">🔊</span> <span id="sound-text">Âm Thanh: Bật</span>
+      </button>
+      <button class="pill-btn" id="btn-view-gantt">
+        <span>📊</span> <span>Biểu Đồ Gantt</span>
+      </button>
+      <a href="/" class="pill-btn" style="text-decoration: none;">
+        <span>🏠</span> <span>Vườn Số</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- FLOATING MILESTONE HUD CARD -->
+  <aside class="milestone-hud" id="milestone-hud">
+    <span class="milestone-badge badge-drive" id="hud-badge">🚗 ĐANG DI CHUYỂN</span>
+    <h2 class="milestone-title" id="hud-title">Xuất phát từ Woodlands Checkpoint</h2>
+    <div class="milestone-time" id="hud-time">
+      <span>⏱️ 10:00 - 10:30 (Day 1)</span>
+    </div>
+    <p class="milestone-desc" id="hud-desc">
+      Tập trung đoàn và kiểm tra hành lý, chuẩn bị làm thủ tục xuất cảnh sang bờ Tây Malaysia.
+    </p>
+    <div class="milestone-progress">
+      <span id="hud-step">Chặng: 1 / 28</span>
+      <span id="hud-day">NGÀY 1 / 3</span>
+    </div>
+  </aside>
+
+  <!-- FLOATING BANANA BUBBLE -->
+  <div class="banana-bubble" id="banana-bubble">Bắt đầu nào Sếp ơi! 🍌💨</div>
+
+  <!-- BOTTOM CONTROL DOCK -->
+  <div class="control-dock">
+    <div class="timeline-row">
+      <div class="time-slider-wrapper">
+        <input type="range" class="time-slider" id="time-slider" min="0" max="1000" value="0">
+      </div>
+    </div>
+    <div class="slider-days-marks">
+      <span>DAY 1 (10:00 Xuất phát Woodlands)</span>
+      <span>DAY 2 (09:00 Cà phê 434 & Phố cổ)</span>
+      <span>DAY 3 (16:30 Về Woodlands)</span>
+    </div>
+
+    <div class="controls-btn-row">
+      <div class="play-group">
+        <button class="action-btn" id="btn-prev" title="Chặng trước">⏮️</button>
+        <button class="action-btn btn-play" id="btn-play-pause" title="Play / Pause">▶️</button>
+        <button class="action-btn" id="btn-next" title="Chặng kế">⏭️</button>
+        <button class="action-btn" id="btn-reset" title="Về đầu">🔄</button>
+      </div>
+
+      <div class="speed-pills">
+        <button class="speed-btn active" data-speed="1">1x</button>
+        <button class="speed-btn" data-speed="3">3x</button>
+        <button class="speed-btn" data-speed="8">8x</button>
+        <button class="speed-btn" data-speed="20">20x</button>
+      </div>
+
+      <div class="clock-display">
+        <div class="clock-dot"></div>
+        <span id="live-clock">DAY 1 — 10:00 SA</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GANTT MODAL OVERLAY -->
+  <div class="gantt-overlay" id="gantt-overlay">
+    <div class="gantt-header">
+      <h2 class="gantt-title">Biểu Đồ Gantt Chi Tiết 3 Ngày — Lương Đình & Đoàn Phượt</h2>
+      <button class="pill-btn active" id="btn-close-gantt">Đóng ✕</button>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="gantt-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ngày</th>
+            <th>Khung Giờ</th>
+            <th>Hạng Mục / Điểm Đến</th>
+            <th>Phân Loại</th>
+            <th>Ghi Chú Thực Chiến</th>
+          </tr>
+        </thead>
+        <tbody id="gantt-table-body">
+          <!-- Populated dynamically via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+    if (typeof r === "number") r = [r, r, r, r];
+    this.rect(x, y, w, h);
+    return this;
+  };
+}
+
+    /* ==========================================================================
+       1. DATA SPECIFICATION (28 STOPS EXTRACTED FROM GANTT CHART)
+       ========================================================================== */
+    const ITINERARY = [
+      // DAY 1 (10:00 - 20:30)
+      { id: 1, day: 1, start: "10:00", end: "10:30", name: "Tập trung đoàn", type: "drive", badge: "🚗 Tập trung", desc: "Tập trung tại Woodlands, kiểm tra hộ chiếu và giấy tờ xe, khởi động tinh thần!", speech: "Tập trung nào Sếp ơi! 🍌", t0: 0, t1: 25 },
+      { id: 2, day: 1, start: "10:30", end: "11:30", name: "Xuất cảnh Singapore, nhập cảnh Malaysia và nhận xe", type: "drive", badge: "🛂 Cửa khẩu", desc: "Qua cầu Causeway sang Johor Bahru, làm thủ tục hải quan nhận xe bắt đầu phượt.", speech: "Qua ải Johor Bahru rồi! 🇲🇾", t0: 25, t1: 65 },
+      { id: 3, day: 1, start: "11:30", end: "13:30", name: "Lái xe Woodlands - Batu Pahat", type: "drive", badge: "🚗 Cao tốc", desc: "Đạp ga đường trường ~130km về thị trấn cổ Batu Pahat, ngắm rặng cọ xanh mát.", speech: "Bon bon về Batu Pahat!", t0: 65, t1: 155 },
+      { id: 4, day: 1, start: "13:30", end: "14:15", name: "Ăn trưa tại Kedai Makan Soon Lai", type: "food", badge: "🍜 Ẩm thực", desc: "Thưởng thức món bánh canh thảo mộc trứ danh Soon Lai nức tiếng Batu Pahat.", speech: "Bánh canh Soon Lai ngon xỉu! 🍲", t0: 155, t1: 195 },
+      { id: 5, day: 1, start: "14:15", end: "14:45", name: "Di chuyển nội đô đến Old Street", type: "drive", badge: "🚗 Nội đô", desc: "Lướt qua các góc phố cổ điển bình yên của Batu Pahat.", speech: "Rẽ sang phố cổ Old Street!", t0: 195, t1: 220 },
+      { id: 6, day: 1, start: "14:45", end: "15:45", name: "Check-in Old Street và Mural Street", type: "sight", badge: "🎨 Check-in", desc: "Dạo bước chụp ảnh phố tranh tường bích họa đầy màu sắc hoài niệm.", speech: "Pose dáng chụp hình sống ảo! 📸", t0: 220, t1: 270 },
+      { id: 7, day: 1, start: "15:45", end: "16:30", name: "Lái xe đến Pantai Minyak Beku", type: "drive", badge: "🚗 Hướng biển", desc: "Lái xe dọc bờ biển phía Nam hướng ra eo biển Malacca lộng gió.", speech: "Gió biển thổi mát rượi!", t0: 270, t1: 305 },
+      { id: 8, day: 1, start: "16:30", end: "17:30", name: "Pantai Minyak Beku & Chong Long Gong Temple", type: "sight", badge: "🌅 Hoàng hôn biển", desc: "Thăm giếng dầu cổ huyền thoại và Chùa Long Cung (sờ cá rồng cầu tài lộc).", speech: "Sờ cá rồng lấy may mắn nè! 🐉", t0: 305, t1: 355 },
+      { id: 9, day: 1, start: "17:30", end: "18:30", name: "Lái xe Batu Pahat - Muar", type: "drive", badge: "🚗 Duyên hải", desc: "Hoàng hôn buông trên cung đường ven biển hướng về thành phố hoàng gia Muar.", speech: "Hoàng hôn tím ngắt Muar ơi!", t0: 355, t1: 405 },
+      { id: 10, day: 1, start: "18:30", end: "20:00", name: "Ăn tối tại Avenue 4 / Glutton Street", type: "food", badge: "🍢 Chợ đêm", desc: "Càn quét phố ẩm thực Glutton Street: Otak-otak Muar, hàu chiên trứng, trà đá.", speech: "Otak-otak nóng hổi thơm nức! 🍢", t0: 405, t1: 475 },
+      { id: 11, day: 1, start: "20:00", end: "20:30", name: "Nhận phòng và nghỉ đêm tại Muar", type: "hotel", badge: "🏨 Khách sạn", desc: "Về khách sạn tắm rửa, sạc pin sau ngày đầu tiên tràn ngập trải nghiệm.", speech: "Nghỉ ngơi mai chiến tiếp! 😴", t0: 475, t1: 500 },
+
+      // DAY 2 (09:00 - 21:30)
+      { id: 12, day: 2, start: "09:00", end: "10:00", name: "Ăn sáng tại Kopi 434", type: "food", badge: "☕ Cà phê hoàng gia", desc: "Uống cà phê vợt thơm lừng của thương hiệu hoàng gia Kopi 434 huyền thoại.", speech: "Cà phê 434 tỉnh cả người! ☕", t0: 500, t1: 545 },
+      { id: 13, day: 2, start: "10:00", end: "11:30", name: "Maharani Mural Lane & Muar Cultural Walk", type: "sight", badge: "🏛️ Di sản", desc: "Tản bộ qua các bức bích họa khổng lồ tái hiện văn hóa hoàng tộc Muar.", speech: "Tranh tường Muar đỉnh thật!", t0: 545, t1: 605 },
+      { id: 14, day: 2, start: "11:30", end: "12:30", name: "Ăn trưa tại Glutton Street", type: "food", badge: "🍲 Ẩm thực", desc: "Bổ sung năng lượng với mì xào Mee Bandung cay nồng đặc sản Muar.", speech: "Làm tô Mee Bandung ấm bụng!", t0: 605, t1: 650 },
+      { id: 15, day: 2, start: "12:30", end: "13:30", name: "Muar River Cruise / Tanjung Emas", type: "cruise", badge: "🛥️ Du thuyền sông", desc: "Lên thuyền lướt nhẹ trên dòng sông Muar ngắm rừng ngập mặn thanh bình.", speech: "Lên thuyền ngắm sông Muar 🛥️", t0: 650, t1: 695 },
+      { id: 16, day: 2, start: "13:30", end: "14:30", name: "Lái xe Muar - Melaka", type: "drive", badge: "🚗 Sang Melaka", desc: "Rời Muar tiến về Melaka — cố đô lịch sử di sản thế giới UNESCO.", speech: "Melaka thẳng tiến nào!", t0: 695, t1: 735 },
+      { id: 17, day: 2, start: "14:30", end: "16:30", name: "Dutch Square, St. Paul Hill & A Famosa", type: "sight", badge: "🏰 Cổ thành", desc: "Check-in Quảng trường Đỏ, nhà thờ Christ Church và pháo đài Bồ Đào Nha 500 năm tuổi.", speech: "Quảng trường Đỏ đẹp mê ly! 🔴", t0: 735, t1: 805 },
+      { id: 18, day: 2, start: "16:30", end: "18:00", name: "Jonker Street và phố cổ Melaka", type: "sight", badge: "🏮 Phố cổ", desc: "Lạc bước vào phố cổ Jonker: Nhà cổ Peranakan, đồ cổ mỹ nghệ và quà lưu niệm.", speech: "Lạc vào phố cổ Jonker rồi!", t0: 805, t1: 855 },
+      { id: 19, day: 2, start: "18:00", end: "19:00", name: "Ăn tối sớm tại Jonker Street", type: "food", badge: "🍚 Cơm gà viên", desc: "Nếm thử cơm gà viên Famosa trứ danh và tráng miệng Chendol sầu riêng béo ngậy.", speech: "Chendol sầu riêng số dách! 🍧", t0: 855, t1: 890 },
+      { id: 20, day: 2, start: "19:00", end: "20:00", name: "Melaka River Cruise", type: "cruise", badge: "🛥️ Du thuyền đêm", desc: "Thuyền trôi giữa hai bờ sông Melaka rực rỡ ánh đèn lồng lung linh huyền ảo.", speech: "Sông Melaka lên đèn thơ quá! ✨", t0: 890, t1: 925 },
+      { id: 21, day: 2, start: "20:00", end: "21:30", name: "Lái xe Melaka - Port Dickson", type: "drive", badge: "🚗 Đi biển đêm", desc: "Đạp ga xuyên màn đêm ~90km hướng về thành phố biển Port Dickson.", speech: "Gió biển đêm vẫy gọi rồi!", t0: 925, t1: 975 },
+      { id: 22, day: 2, start: "21:30", end: "22:00", name: "Nhận phòng và nghỉ đêm tại Port Dickson", type: "hotel", badge: "🏨 Resort biển", desc: "Check-in resort ven biển, nghe tiếng sóng vỗ rì rào ngủ một giấc thật sâu.", speech: "Nghe sóng vỗ ngủ ngon nha Sếp! 🌊", t0: 975, t1: 1000 },
+
+      // DAY 3 (08:30 - 16:30) — Mapped in timeline normalized
+      { id: 23, day: 3, start: "08:30", end: "09:30", name: "Ăn sáng gần khách sạn", type: "food", badge: "🍳 Bữa sáng biển", desc: "Thưởng thức bánh roti canai nóng giòn và trà sữa Teh Tarik bên bờ biển.", speech: "Roti canai giòn rụm chào ngày mới! 🥞", t0: 1000, t1: 1045 },
+      { id: 24, day: 3, start: "09:30", end: "10:00", name: "Di chuyển đến Army Museum", type: "drive", badge: "🚗 Nội đô PD", desc: "Xe chạy ven bờ cát trắng rợp bóng dừa hướng về bảo tàng quân sự.", speech: "Đến Bảo tàng Quân đội thôi!", t0: 1045, t1: 1070 },
+      { id: 25, day: 3, start: "10:00", end: "11:30", name: "Army Museum Port Dickson", type: "sight", badge: "🎖️ Bảo tàng", desc: "Khám phá xe tăng, máy bay trực thăng và hầm ngầm kháng chiến bí mật.", speech: "Leo lên xe tăng check-in nè! 🪖", t0: 1070, t1: 1130 },
+      { id: 26, day: 3, start: "11:30", end: "12:00", name: "Di chuyển đến Sri Pantai Ria Seafood", type: "drive", badge: "🚗 Đi ăn trưa", desc: "Xe đưa đoàn ghé làng chài ven biển chuẩn bị tiệc hải sản thịnh soạn.", speech: "Mùi hải sản nướng thơm quá!", t0: 1130, t1: 1155 },
+      { id: 27, day: 3, start: "12:00", end: "13:00", name: "Ăn trưa sớm tại Sri Pantai Ria Seafood", type: "food", badge: "🦀 Đại tiệc hải sản", desc: "Thưởng thức cua sốt ớt (Chilli Crab), tôm sú bơ tỏi và cá hấp tươi rói.", speech: "Cua sốt ớt cay nồng cực phẩm! 🦀", t0: 1155, t1: 1205 },
+      { id: 28, day: 3, start: "13:00", end: "16:30", name: "Lái xe Port Dickson - Woodlands Checkpoint", type: "drive", badge: "🏁 Về đích", desc: "Hành trình cao tốc cuối cùng ~300km đưa đoàn vượt cửa khẩu về lại Singapore an toàn!", speech: "Về đích trọn vẹn! Quá đã Sếp ơi! 🏆", t0: 1205, t1: 1300 }
+    ];
+
+    const TOTAL_TIMELINE = 1300;
+
+    /* ==========================================================================
+       2. PROCEDURAL 2D MESH SKINNED BANANA ENGINE (CÁCH VẼ GIỐNG CÁ KOI)
+       ========================================================================== */
+    class SkinnedBanana {
+      constructor() {
+        this.numJoints = 8;
+        this.spine = [];
+        this.lengths = [18, 20, 22, 22, 20, 18, 14];
+        this.widths = [7, 16, 26, 30, 27, 20, 12, 6]; // Width profile along spine
+        this.heading = 0;
+        this.speed = 0;
+        this.squash = 1;
+        this.wavePhase = 0;
+        this.tailFlap = 0;
+        
+        // Initialize spine nodes
+        for (let i = 0; i < this.numJoints; i++) {
+          this.spine.push({ x: 0, y: 0, angle: 0 });
+        }
+      }
+
+      update(x, y, targetAngle, speed, dt) {
+        this.speed = speed;
+        this.wavePhase += dt * (4 + speed * 12);
+        
+        // Head leads the way
+        const head = this.spine[0];
+        head.x = x;
+        head.y = y;
+        
+        // Smooth heading turn
+        let diff = targetAngle - this.heading;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        this.heading += diff * 0.25;
+        head.angle = this.heading;
+
+        // Kinematic Follow-chain (Spine vertebrae physics)
+        for (let i = 1; i < this.numJoints; i++) {
+          const prev = this.spine[i - 1];
+          const curr = this.spine[i];
+          const len = this.lengths[i - 1];
+          
+          // Travelling sinusoidal undulation (Wiggle as it moves)
+          const lateralWiggle = Math.sin(this.wavePhase - i * 0.55) * (speed > 0.05 ? 3.5 : 1.0);
+          
+          const dx = curr.x - prev.x;
+          const dy = curr.y - prev.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          
+          // Constrain distance
+          curr.x = prev.x + (dx / dist) * len;
+          curr.y = prev.y + (dy / dist) * len;
+          
+          // Add organic banana curvature (A banana is naturally curved!)
+          const naturalCurve = Math.sin(i * 0.4) * 2.2;
+          curr.angle = Math.atan2(prev.y - curr.y, prev.x - curr.x) + (lateralWiggle + naturalCurve) * 0.04;
+        }
+
+        // Squash & stretch pulse
+        this.squash = 1 + Math.sin(this.wavePhase * 1.5) * 0.06;
+      }
+
+      draw(ctx) {
+        ctx.save();
+
+        // 1. Shadow underneath (Soft depth blur)
+        ctx.save();
+        ctx.translate(6, 12);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.beginPath();
+        this.drawMeshOutline(ctx);
+        ctx.fill();
+        ctx.restore();
+
+        // 2. Draw 2D Skinned Banana Body using deformed quad ribbons
+        ctx.beginPath();
+        this.drawMeshOutline(ctx);
+        
+        // 3D Banana Gradient: Sunlight ridge on top, golden yellow body, ochre shadow under belly
+        const grad = ctx.createLinearGradient(
+          this.spine[0].x - 20, this.spine[0].y - 20,
+          this.spine[3].x + 20, this.spine[3].y + 20
+        );
+        grad.addColorStop(0, '#fef9c3'); // Highlight
+        grad.addColorStop(0.25, '#facc15'); // Pure banana yellow
+        grad.addColorStop(0.75, '#eab308'); // Golden body
+        grad.addColorStop(1, '#b45309'); // Ambient underside shade
+        
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#854d0e';
+        ctx.stroke();
+
+        // 3D Cavendish Banana Ridge Facet Line (Curing along spine)
+        ctx.strokeStyle = 'rgba(254, 240, 138, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < this.numJoints; i++) {
+          const pt = this.spine[i];
+          const w = this.widths[i] * this.squash * 0.4;
+          let angle = (i === 0) ? Math.atan2(this.spine[1].y - pt.y, this.spine[1].x - pt.x)
+                                : Math.atan2(pt.y - this.spine[i - 1].y, pt.x - this.spine[i - 1].x);
+          const nx = -Math.sin(angle), ny = Math.cos(angle);
+          if (i === 0) ctx.moveTo(pt.x + nx * w, pt.y + ny * w);
+          else ctx.lineTo(pt.x + nx * w, pt.y + ny * w);
+        }
+        ctx.stroke();
+
+        // Green stem at the tail
+        const tail = this.spine[this.numJoints - 1];
+        ctx.fillStyle = '#65a30d';
+        ctx.beginPath();
+        ctx.arc(tail.x, tail.y, 4.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Brown tip at the head
+        const head = this.spine[0];
+        ctx.fillStyle = '#78350f';
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4. COOL SUNGLASSES (VIP Phượt Thủ Style)
+        ctx.save();
+        ctx.translate(head.x, head.y);
+        ctx.rotate(this.heading);
+        
+        // Sunglasses drop shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.roundRect(-4, -17, 18, 12, 4);
+        ctx.roundRect(-4, 5, 18, 12, 4);
+        ctx.fill();
+
+        // Shiny black frame & dark tinted lenses
+        ctx.fillStyle = '#09090b';
+        ctx.beginPath();
+        ctx.roundRect(-6, -18, 18, 13, 4);
+        ctx.roundRect(-6, 5, 18, 13, 4);
+        ctx.fill();
+
+        // Golden rim accent
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Bridge connecting lenses
+        ctx.fillStyle = '#facc15';
+        ctx.fillRect(-2, -5, 4, 10);
+
+        // Specular white lens glint (The classic anime cool sunglasses gleam!)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, -15); ctx.lineTo(6, -9);
+        ctx.moveTo(0, 8); ctx.lineTo(6, 14);
+        ctx.stroke();
+
+        // Confident, cheerful grin!
+        ctx.strokeStyle = '#713f12';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(4, 0, 8, -0.45, 0.45);
+        ctx.stroke();
+
+        // Cute rosy cheeks
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+        ctx.beginPath();
+        ctx.arc(-2, -18, 4, 0, Math.PI * 2);
+        ctx.arc(-2, 18, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        // 5. FLUTTERING RED RACING SCARF (Dual-band with dynamic sine wave)
+        ctx.save();
+        const scarfJoint = this.spine[2];
+        ctx.translate(scarfJoint.x, scarfJoint.y);
+        const scarfAngle = this.heading + Math.PI + Math.sin(this.wavePhase * 1.8) * 0.45;
+        ctx.rotate(scarfAngle);
+
+        // Scarf knot
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.arc(0, 0, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#991b1b';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Scarf tail 1 (Red ribbon)
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(0, -4);
+        const wave1 = Math.sin(this.wavePhase * 2.2) * 8;
+        const wave2 = Math.cos(this.wavePhase * 2.5) * 12;
+        ctx.quadraticCurveTo(20, wave1, 40, wave2);
+        ctx.lineTo(38, wave2 + 8);
+        ctx.quadraticCurveTo(16, wave1 + 4, 0, 4);
+        ctx.closePath();
+        ctx.fill();
+
+        // Scarf tail 2 (Gold racing stripe)
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath();
+        ctx.moveTo(0, -1);
+        ctx.quadraticCurveTo(18, wave1 * 0.8, 36, wave2 * 0.8);
+        ctx.lineTo(34, wave2 * 0.8 + 3);
+        ctx.quadraticCurveTo(14, wave1 * 0.8 + 2, 0, 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.restore();
+      }
+
+      drawMeshOutline(ctx) {
+        // Compute left and right edge points from spine normal vectors
+        const leftPts = [];
+        const rightPts = [];
+
+        for (let i = 0; i < this.numJoints; i++) {
+          const pt = this.spine[i];
+          const w = this.widths[i] * this.squash;
+          
+          // Tangent angle
+          let angle;
+          if (i === 0) {
+            angle = Math.atan2(this.spine[1].y - pt.y, this.spine[1].x - pt.x);
+          } else {
+            angle = Math.atan2(pt.y - this.spine[i - 1].y, pt.x - this.spine[i - 1].x);
+          }
+          
+          // Normal perpendicular
+          const nx = -Math.sin(angle);
+          const ny = Math.cos(angle);
+
+          leftPts.push({ x: pt.x + nx * w, y: pt.y + ny * w });
+          rightPts.push({ x: pt.x - nx * w, y: pt.y - ny * w });
+        }
+
+        // Trace smooth boundary curve
+        ctx.moveTo(leftPts[0].x, leftPts[0].y);
+        for (let i = 1; i < leftPts.length; i++) {
+          const xc = (leftPts[i].x + leftPts[i - 1].x) / 2;
+          const yc = (leftPts[i].y + leftPts[i - 1].y) / 2;
+          ctx.quadraticCurveTo(leftPts[i - 1].x, leftPts[i - 1].y, xc, yc);
+        }
+        
+        // Round bottom stem
+        const lastR = rightPts[rightPts.length - 1];
+        ctx.lineTo(lastR.x, lastR.y);
+
+        for (let i = rightPts.length - 2; i >= 0; i--) {
+          const xc = (rightPts[i].x + rightPts[i + 1].x) / 2;
+          const yc = (rightPts[i].y + rightPts[i + 1].y) / 2;
+          ctx.quadraticCurveTo(rightPts[i + 1].x, rightPts[i + 1].y, xc, yc);
+        }
+
+        ctx.closePath();
+      }
+    }
+
+    /* ==========================================================================
+       3. MAP WAYPOINTS & SPLINE GENERATION (SINGAPORE TO MALAYSIA)
+       ========================================================================== */
+    // Stylized coordinates mapped onto canvas space
+    const WAYPOINT_COORDS = [
+      { id: 1,  name: "Woodlands Checkpoint", x: 180,  y: 680, day: 1, type: "checkpoint" },
+      { id: 2,  name: "Johor Bahru Customs",  x: 230,  y: 640, day: 1, type: "checkpoint" },
+      { id: 3,  name: "North-South Expressway",x: 320, y: 560, day: 1, type: "highway" },
+      { id: 4,  name: "Kedai Soon Lai (Batu Pahat)", x: 420, y: 490, day: 1, type: "food" },
+      { id: 5,  name: "Old Street Center",    x: 460,  y: 470, day: 1, type: "city" },
+      { id: 6,  name: "Mural Street Art",     x: 500,  y: 460, day: 1, type: "sight" },
+      { id: 7,  name: "Coastal Route",        x: 480,  y: 520, day: 1, type: "scenic" },
+      { id: 8,  name: "Pantai Minyak Beku",   x: 440,  y: 560, day: 1, type: "sight" },
+      { id: 9,  name: "Route 5 to Muar",      x: 540,  y: 410, day: 1, type: "highway" },
+      { id: 10, name: "Glutton Street (Muar)",x: 620,  y: 360, day: 1, type: "food" },
+      { id: 11, name: "Muar Boutique Hotel",  x: 650,  y: 350, day: 1, type: "hotel" },
+
+      { id: 12, name: "Kopi 434 Royal Coffee",x: 630,  y: 330, day: 2, type: "food" },
+      { id: 13, name: "Maharani Mural Lane",  x: 600,  y: 320, day: 2, type: "sight" },
+      { id: 14, name: "Muar Food Corner",     x: 610,  y: 310, day: 2, type: "food" },
+      { id: 15, name: "Muar River Pier",      x: 570,  y: 290, day: 2, type: "cruise" },
+      { id: 16, name: "Coastal Highway Melaka",x: 680, y: 240, day: 2, type: "highway" },
+      { id: 17, name: "Dutch Square & A Famosa",x: 760,y: 200, day: 2, type: "sight" },
+      { id: 18, name: "Jonker Walk Antique St", x: 780,y: 180, day: 2, type: "sight" },
+      { id: 19, name: "Chicken Rice Ball Diner",x: 790,y: 170, day: 2, type: "food" },
+      { id: 20, name: "Melaka River Cruise Pier",x: 770,y: 160, day: 2, type: "cruise" },
+      { id: 21, name: "Expressway to Port Dickson",x: 880,y: 120,day: 2, type: "highway" },
+      { id: 22, name: "PD Ocean Beach Resort", x: 960, y: 90,  day: 2, type: "hotel" },
+
+      { id: 23, name: "Beachside Roti Canai",  x: 950, y: 110, day: 3, type: "food" },
+      { id: 24, name: "PD Army Road",         x: 920,  y: 130, day: 3, type: "drive" },
+      { id: 25, name: "Army Museum PD",       x: 900,  y: 150, day: 3, type: "sight" },
+      { id: 26, name: "Fishing Village Road", x: 930,  y: 180, day: 3, type: "drive" },
+      { id: 27, name: "Sri Pantai Ria Seafood",x: 940, y: 220, day: 3, type: "food" },
+      { id: 28, name: "Finish Line (Woodlands)",x: 180,y: 680, day: 3, type: "finish" }
+    ];
+
+    /* ==========================================================================
+       4. SIMULATION AUDIO SYNTHESIZER (WEB AUDIO API - NO EXTERNAL MP3)
+       ========================================================================== */
+    class RoadtripAudio {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.engineOsc = null;
+        this.engineGain = null;
+      }
+
+      init() {
+        if (this.ctx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContext();
+
+        // Engine drone sound
+        this.engineOsc = this.ctx.createOscillator();
+        this.engineGain = this.ctx.createGain();
+        this.engineOsc.type = 'sawtooth';
+        this.engineOsc.frequency.setValueAtTime(45, this.ctx.currentTime);
+        this.engineGain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(140, this.ctx.currentTime);
+
+        this.engineOsc.connect(filter);
+        filter.connect(this.engineGain);
+        this.engineGain.connect(this.ctx.destination);
+        this.engineOsc.start();
+      }
+
+      setEngineSpeed(speedRatio) {
+        if (!this.ctx || !this.enabled) return;
+        const targetFreq = 42 + speedRatio * 45;
+        this.engineOsc.frequency.setTargetAtTime(targetFreq, this.ctx.currentTime, 0.1);
+      }
+
+      playWaypointDing() {
+        if (!this.ctx || !this.enabled) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, this.ctx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.15); // A5
+
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.45);
+      }
+
+      toggle() {
+        this.enabled = !this.enabled;
+        if (this.engineGain) {
+          this.engineGain.gain.setValueAtTime(this.enabled ? 0.015 : 0, this.ctx.currentTime);
+        }
+        return this.enabled;
+      }
+    }
+
+    /* ==========================================================================
+       5. MAIN APPLICATION CONTROLLER
+       ========================================================================== */
+    const canvas = document.getElementById('sim-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const banana = new SkinnedBanana();
+    const audio = new RoadtripAudio();
+
+    let isPlaying = true;
+    let playSpeed = 1; // Multiplier
+    let timeline = 0; // 0 to TOTAL_TIMELINE
+    let lastTime = performance.now();
+    let currentStopIndex = 0;
+
+    // Camera view offset
+    
+    const initPt = getRoutePoint(0);
+    let camX = window.innerWidth / 2 - initPt.x;
+    let camY = window.innerHeight / 2 - initPt.y;
+
+    let targetCamX = 0, targetCamY = 0;
+    let isDragging = false;
+    let dragStartX = 0, dragStartY = 0;
+    let userCamOffsetX = 0, userCamOffsetY = 0;
+    let userInteractedTime = 0;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      dragStartX = e.clientX - userCamOffsetX;
+      dragStartY = e.clientY - userCamOffsetY;
+      userInteractedTime = performance.now();
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      userCamOffsetX = e.clientX - dragStartX;
+      userCamOffsetY = e.clientY - dragStartY;
+      userInteractedTime = performance.now();
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDragging = false;
+    });
+
+    function resizeCanvas() {
+      const w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0, 800);
+      const h = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, 600);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Populate Gantt Table
+    const ganttBody = document.getElementById('gantt-table-body');
+    ITINERARY.forEach((item, idx) => {
+      const tr = document.createElement('tr');
+      tr.id = `gantt-row-${idx}`;
+      tr.innerHTML = `
+        <td><strong>#${item.id}</strong></td>
+        <td><span style="color:var(--accent-yellow)">Ngày ${item.day}</span></td>
+        <td>${item.start} - ${item.end}</td>
+        <td><strong>${item.name}</strong></td>
+        <td><span class="milestone-badge badge-${item.type}">${item.badge}</span></td>
+        <td style="color:#cbd5e1">${item.desc}</td>
+      `;
+      tr.style.cursor = 'pointer';
+      tr.addEventListener('click', () => {
+        timeline = item.t0;
+        document.getElementById('gantt-overlay').classList.remove('open');
+      });
+      ganttBody.appendChild(tr);
+    });
+
+    // Spline Interpolation for Route
+    function getRoutePoint(tRatio) {
+      const numPts = WAYPOINT_COORDS.length;
+      if (numPts === 0) return { x: 0, y: 0 };
+      if (numPts === 1) return { x: WAYPOINT_COORDS[0].x, y: WAYPOINT_COORDS[0].y };
+
+      const clampedT = Math.max(0, Math.min(0.9999, tRatio));
+      const fIndex = clampedT * (numPts - 1);
+      const i0 = Math.max(0, Math.min(Math.floor(fIndex), numPts - 2));
+      const i1 = i0 + 1;
+      const frac = fIndex - i0;
+
+      const p0 = WAYPOINT_COORDS[Math.max(0, i0 - 1)];
+      const p1 = WAYPOINT_COORDS[i0];
+      const p2 = WAYPOINT_COORDS[i1];
+      const p3 = WAYPOINT_COORDS[Math.min(numPts - 1, i1 + 1)];
+
+      // Catmull-Rom spline interpolation
+      const t = frac;
+      const t2 = t * t;
+      const t3 = t2 * t;
+
+      const x = 0.5 * ((2 * p1.x) +
+        (-p0.x + p2.x) * t +
+        (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+        (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+
+      const y = 0.5 * ((2 * p1.y) +
+        (-p0.y + p2.y) * t +
+        (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+        (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
+
+      return { x, y };
+    }
+
+    // Sky Color Interpolation based on Time of Day
+    function getSkyGradient(currentHour) {
+      // currentHour: 0 to 24
+      if (currentHour >= 5 && currentHour < 8) {
+        // Sunrise golden dawn
+        return ['#1e1b4b', '#7c2d12', '#d97706'];
+      } else if (currentHour >= 8 && currentHour < 17) {
+        // Tropical bright daylight
+        return ['#0284c7', '#38bdf8', '#bae6fd'];
+      } else if (currentHour >= 17 && currentHour < 20) {
+        // Sunset twilight
+        return ['#311042', '#c2410c', '#fb923c'];
+      } else {
+        // Starry night with glowing lanterns
+        return ['#030712', '#0f172a', '#1e1b4b'];
+      }
+    }
+
+    // Main Simulation Loop
+    function animate(now) {
+      const dt = Math.max(0, Math.min((now - lastTime) / 1000, 0.1));
+      lastTime = now;
+
+      // Advance timeline if playing
+      if (isPlaying) {
+        timeline += dt * 45 * playSpeed;
+        if (timeline > TOTAL_TIMELINE) timeline = 0;
+        document.getElementById('time-slider').value = (timeline / TOTAL_TIMELINE) * 1000;
+      }
+      timeline = Math.max(0, Math.min(TOTAL_TIMELINE, timeline));
+
+      // Find current stop
+      let activeIndex = 0;
+      for (let i = 0; i < ITINERARY.length; i++) {
+        if (timeline >= ITINERARY[i].t0) activeIndex = i;
+      }
+
+      // Check if we reached a new waypoint (Ding sound!)
+      if (activeIndex !== currentStopIndex) {
+        currentStopIndex = activeIndex;
+        audio.playWaypointDing();
+        updateHUD(ITINERARY[currentStopIndex]);
+      }
+
+      // Position along route
+      const tRatio = timeline / TOTAL_TIMELINE;
+      const ptCurrent = getRoutePoint(tRatio);
+      const ptAhead = getRoutePoint(Math.min(0.9999, tRatio + 0.005));
+      const targetAngle = Math.atan2(ptAhead.y - ptCurrent.y, ptAhead.x - ptCurrent.x);
+
+      // Update camera smooth follow (with desktop right-offset so HUD card does not occlude)
+      const viewW = window.innerWidth || document.documentElement.clientWidth || 1200;
+      const viewH = window.innerHeight || document.documentElement.clientHeight || 800;
+      const xOffset = viewW > 900 ? 110 : 0;
+      targetCamX = (viewW / 2) + xOffset - ptCurrent.x + userCamOffsetX;
+      targetCamY = (viewH / 2) - 40 - ptCurrent.y + userCamOffsetY;
+      camX += (targetCamX - camX) * 0.08;
+      camY += (targetCamY - camY) * 0.08;
+
+      // Damp user drag offset back to zero smoothly
+      if (!isDragging && (performance.now() - userInteractedTime > 2000)) {
+        userCamOffsetX *= 0.94;
+        userCamOffsetY *= 0.94;
+      }
+
+      // Update Banana Physics
+      banana.update(ptCurrent.x, ptCurrent.y, targetAngle, isPlaying ? 1 : 0, dt);
+      audio.setEngineSpeed(isPlaying ? playSpeed : 0);
+
+      // Render Everything
+      renderFrame(ptCurrent);
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderFrame(bananaPos) {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. DYNAMIC SKY GRADIENT
+      const currentItem = ITINERARY[currentStopIndex];
+      const hourNumber = parseInt(currentItem.start.split(':')[0], 10) || 12;
+      const colors = getSkyGradient(hourNumber);
+      
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+      skyGrad.addColorStop(0, colors[0]);
+      skyGrad.addColorStop(0.5, colors[1]);
+      skyGrad.addColorStop(1, colors[2]);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.translate(camX, camY);
+
+      // 2. DRAW MAP BACKGROUND GRID & WATER MASSES (STRAIT OF MALACCA)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let x = -500; x < 2000; x += 100) {
+        ctx.beginPath(); ctx.moveTo(x, -500); ctx.lineTo(x, 2000); ctx.stroke();
+      }
+      for (let y = -500; y < 2000; y += 100) {
+        ctx.beginPath(); ctx.moveTo(-500, y); ctx.lineTo(2000, y); ctx.stroke();
+      }
+
+      // Coastline & Water of Strait of Malacca (West Coast)
+      ctx.fillStyle = 'rgba(14, 116, 144, 0.2)';
+      ctx.beginPath();
+      ctx.moveTo(-500, -500);
+      ctx.lineTo(250, -500);
+      ctx.bezierCurveTo(380, 0, 520, 300, 680, 600);
+      ctx.bezierCurveTo(740, 750, 850, 900, 920, 1200);
+      ctx.lineTo(-500, 1200);
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. DRAW THE WINDING ASPHALT HIGHWAY (SPLINE ROAD)
+      // Road Shoulder / Glow
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.lineWidth = 36;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      for (let t = 0; t <= 1; t += 0.005) {
+        const p = getRoutePoint(t);
+        if (t === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      // Asphalt Dark Body
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 28;
+      ctx.stroke();
+
+      // Asphalt Surface Inner
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 24;
+      ctx.stroke();
+
+      // Dashed Center Road Stripe
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([12, 12]);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset dash
+
+      // 4. DRAW 28 WAYPOINT STATIONS ALONG THE PATH
+      const CITY_HUBS = {
+        0: { name: "SINGAPORE (WOODLANDS)", icon: "🇸🇬", color: "#38bdf8" },
+        3: { name: "BATU PAHAT", icon: "🌴", color: "#facc15" },
+        9: { name: "THÀNH PHỐ HOÀNG GIA MUAR", icon: "☕", color: "#fb923c" },
+        16: { name: "CỐ ĐÔ MELAKA (UNESCO)", icon: "🏰", color: "#ef4444" },
+        21: { name: "BIỂN PORT DICKSON", icon: "🏖️", color: "#22c55e" }
+      };
+
+      WAYPOINT_COORDS.forEach((wp, idx) => {
+        const isPassed = idx <= currentStopIndex;
+        const isCurrent = idx === currentStopIndex;
+        const hub = CITY_HUBS[idx];
+
+        // Outer beacon glow on current stop
+        if (isCurrent) {
+          ctx.beginPath();
+          const pulseR = 26 + Math.sin(performance.now() * 0.008) * 8;
+          ctx.arc(wp.x, wp.y, pulseR, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(250, 204, 21, 0.35)';
+          ctx.fill();
+        }
+
+        // Node circle
+        ctx.beginPath();
+        ctx.arc(wp.x, wp.y, isCurrent ? 12 : (hub ? 9 : 6), 0, Math.PI * 2);
+        ctx.fillStyle = isCurrent ? '#facc15' : (isPassed ? '#38bdf8' : 'rgba(255, 255, 255, 0.35)');
+        ctx.fill();
+        ctx.strokeStyle = '#020617';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // If it is a Major Regional City Hub, draw a permanent elegant glassmorphic label badge
+        if (hub && !isCurrent) {
+          ctx.font = 'bold 11px "JetBrains Mono"';
+          const text = `${hub.icon} ${hub.name}`;
+          const m = ctx.measureText(text);
+          const px = wp.x + 14, py = wp.y - 12;
+          
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          ctx.beginPath();
+          ctx.roundRect(px - 4, py - 14, m.width + 16, 22, 6);
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          ctx.fillStyle = hub.color;
+          ctx.textAlign = 'left';
+          ctx.fillText(text, px + 4, py + 2);
+        }
+
+        // If it is the CURRENT ACTIVE STOP, draw prominent glowing badge!
+        if (isCurrent) {
+          ctx.font = 'bold 12px "JetBrains Mono"';
+          const text = `📍 #${idx + 1} ${wp.name}`;
+          const m = ctx.measureText(text);
+          const px = wp.x + 16, py = wp.y - 16;
+          
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+          ctx.beginPath();
+          ctx.roundRect(px - 6, py - 16, m.width + 20, 26, 8);
+          ctx.fill();
+          ctx.strokeStyle = '#facc15';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          ctx.fillStyle = '#fef08a';
+          ctx.textAlign = 'left';
+          ctx.fillText(text, px + 4, py + 2);
+        }
+      });
+
+      // 5. DRAW THE SKINNED 2D MESH BANANA AVATAR
+      banana.draw(ctx);
+
+      ctx.restore();
+
+      // Update Speech Bubble Screen Position
+      const bubble = document.getElementById('banana-bubble');
+      bubble.style.left = `${bananaPos.x + camX}px`;
+      bubble.style.top = `${bananaPos.y + camY - 55}px`;
+      bubble.innerText = currentItem.speech;
+    }
+
+    // UI Updates
+    function updateHUD(item) {
+      document.getElementById('hud-title').innerText = item.name;
+      document.getElementById('hud-time').innerHTML = `<span>⏱️ ${item.start} - ${item.end} (Ngày ${item.day})</span>`;
+      document.getElementById('hud-desc').innerText = item.desc;
+      document.getElementById('hud-step').innerText = `Chặng: ${item.id} / 28`;
+      document.getElementById('hud-day').innerText = `NGÀY ${item.day} / 3`;
+
+      const badgeEl = document.getElementById('hud-badge');
+      badgeEl.className = `milestone-badge badge-${item.type}`;
+      badgeEl.innerText = item.badge;
+
+      // Update clock
+      const suffix = parseInt(item.start.split(':')[0], 10) < 12 ? 'SA' : 'CH';
+      document.getElementById('live-clock').innerText = `DAY ${item.day} — ${item.start} ${suffix}`;
+
+      // Highlight active row in Gantt modal
+      document.querySelectorAll('.gantt-table tr').forEach(r => r.classList.remove('active-row'));
+      const row = document.getElementById(`gantt-row-${item.id - 1}`);
+      if (row) row.classList.add('active-row');
+    }
+
+    // Event Listeners for Controls
+    document.getElementById('btn-play-pause').addEventListener('click', () => {
+      audio.init();
+      isPlaying = !isPlaying;
+      document.getElementById('btn-play-pause').innerText = isPlaying ? '⏸️' : '▶️';
+    });
+
+    document.getElementById('time-slider').addEventListener('input', (e) => {
+      audio.init();
+      timeline = (parseFloat(e.target.value) / 1000) * TOTAL_TIMELINE;
+    });
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      audio.init();
+      const prevIdx = Math.max(0, currentStopIndex - 1);
+      timeline = ITINERARY[prevIdx].t0;
+    });
+
+    document.getElementById('btn-next').addEventListener('click', () => {
+      audio.init();
+      const nextIdx = Math.min(ITINERARY.length - 1, currentStopIndex + 1);
+      timeline = ITINERARY[nextIdx].t0;
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      audio.init();
+      timeline = 0;
+    });
+
+    // Speed buttons
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        playSpeed = parseFloat(btn.dataset.speed);
+      });
+    });
+
+    // Sound toggle
+    document.getElementById('btn-toggle-sound').addEventListener('click', () => {
+      audio.init();
+      const on = audio.toggle();
+      document.getElementById('sound-icon').innerText = on ? '🔊' : '🔇';
+      document.getElementById('sound-text').innerText = on ? 'Âm Thanh: Bật' : 'Âm Thanh: Tắt';
+    });
+
+    // Gantt Modal toggle
+    document.getElementById('btn-view-gantt').addEventListener('click', () => {
+      document.getElementById('gantt-overlay').classList.add('open');
+    });
+    document.getElementById('btn-close-gantt').addEventListener('click', () => {
+      document.getElementById('gantt-overlay').classList.remove('open');
+    });
+
+    // Start simulation on first interaction
+    window.addEventListener('pointerdown', () => audio.init(), { once: true });
+
+    // Initial HUD trigger
+    updateHUD(ITINERARY[0]);
+    renderFrame(getRoutePoint(0));
+    animate(performance.now());
+  </script>
+</body>
+</html>
