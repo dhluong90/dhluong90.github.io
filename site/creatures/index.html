@@ -763,13 +763,17 @@
     class TexturedMeshCreature {
       constructor() {
         this.spine = [];
+        this.angles = new Float32Array(48);
+        this.ripplePts = [];
         this.numJoints = 36;
         this.heading = 0;
         this.wavePhase = 0;
+        this.fabric = 0;
         this.speed = 3.6;
 
         for (let i = 0; i < 48; i++) {
-          this.spine.push({ x: 0, y: 0, angle: 0 });
+          this.spine.push({ x: 0, y: 0 });
+          this.ripplePts.push({ x: 0, y: 0, angle: 0 });
         }
       }
 
@@ -778,13 +782,17 @@
         for (let i = 0; i < 48; i++) {
           this.spine[i].x = x - Math.cos(angle) * i * 10;
           this.spine[i].y = y - Math.sin(angle) * i * 10;
-          this.spine[i].angle = angle;
+          this.angles[i] = angle + Math.PI;
+          this.ripplePts[i].x = this.spine[i].x;
+          this.ripplePts[i].y = this.spine[i].y;
+          this.ripplePts[i].angle = angle;
         }
       }
 
       update(targetX, targetY, conf, effectiveLen, dt) {
         this.numJoints = conf.numJoints || 34;
         this.wavePhase += dt * (conf.sWaveFreq || 3.0) * speedMult;
+        this.fabric += dt * 1.6 * speedMult;
 
         const head = this.spine[0];
         const dx = targetX - head.x;
@@ -807,43 +815,77 @@
         const cruiseSpeed = (conf.speed || 3.6) * speedMult;
         const targetSpeed = Math.min(Math.max(2.6, dist * 0.035), 7.0) * speedMult;
         this.speed += (targetSpeed - this.speed) * 0.1;
-        head.x += Math.cos(this.heading) * this.speed;
-        head.y += Math.sin(this.heading) * this.speed;
-        head.angle = this.heading;
+
+        // 1. KOI SECRET 1: Thrust surge on tail stroke + head counter-oscillation
+        const thrust = 1 + 0.05 * Math.sin(this.wavePhase * 2);
+        const headWiggle = Math.sin(this.wavePhase) * 0.075;
+        const swimAngle = this.heading + headWiggle;
+
+        head.x += Math.cos(swimAngle) * this.speed * thrust;
+        head.y += Math.sin(swimAngle) * this.speed * thrust;
 
         // Segment length along spine
         const segLen = effectiveLen / (this.numJoints - 1);
-        const maxBend = conf.maxJointAngle || 0.06;
+        const C = conf.maxJointAngle || 0.065;
 
-        // Follow chain with strict angular constraints (prevents any folding or donuts)
+        // 2. KOI SECRET 2: Hyperbolic Tangent (tanh) Elastic Spine Curvature
+        // Eliminates all rigid angle limits and gives infinitely smooth bending
         for (let i = 1; i < this.numJoints; i++) {
           const prev = this.spine[i - 1];
           const curr = this.spine[i];
 
-          // Ideal angle pointing backwards from prev to curr
-          let desiredAngle = Math.atan2(curr.y - prev.y, curr.x - prev.x);
+          const H = Math.atan2(curr.y - prev.y, curr.x - prev.x);
+          const F = i >= 2 ? this.angles[i - 1] : swimAngle + Math.PI;
 
-          // Angle of previous segment pointing backward
-          let prevBackward = prev.angle + Math.PI;
+          let ie = H - F;
+          while (ie < -Math.PI) ie += Math.PI * 2;
+          while (ie > Math.PI) ie -= Math.PI * 2;
 
-          let bend = desiredAngle - prevBackward;
-          while (bend < -Math.PI) bend += Math.PI * 2;
-          while (bend > Math.PI) bend -= Math.PI * 2;
+          this.angles[i] = F + Math.tanh(ie / C) * C;
+        }
 
-          // Clamp relative bend angle
-          bend = Math.max(-maxBend, Math.min(maxBend, bend));
-          const actualAngle = prevBackward + bend;
+        // 3. KOI SECRET 3: Laplacian Spine Smoothing Pass
+        // Diffuses discrete curvature shockwaves across adjacent vertebrae
+        let prevA = this.angles[1];
+        for (let i = 2; i < this.numJoints - 1; i++) {
+          const uA = prevA;
+          const bA = this.angles[i];
+          const wA = this.angles[i + 1];
+          prevA = bA;
 
-          // Position curr exactly segLen away along actualAngle
-          curr.x = prev.x + Math.cos(actualAngle) * segLen;
-          curr.y = prev.y + Math.sin(actualAngle) * segLen;
+          let diff1 = uA - bA;
+          while (diff1 < -Math.PI) diff1 += Math.PI * 2;
+          while (diff1 > Math.PI) diff1 -= Math.PI * 2;
 
-          // Travelling Sinusoidal S-Wave (swimming motion)
-          const waveAmp = (i / this.numJoints) * (conf.sWaveAmp || 16);
-          const sWave = Math.sin(this.wavePhase - i * 0.35) * waveAmp * 0.0022;
+          let diff2 = wA - bA;
+          while (diff2 < -Math.PI) diff2 += Math.PI * 2;
+          while (diff2 > Math.PI) diff2 -= Math.PI * 2;
 
-          // Angle pointing forward toward head
-          curr.angle = actualAngle - Math.PI + sWave;
+          this.angles[i] = bA + (diff1 + diff2) * 0.18;
+        }
+
+        // Position spine points exactly segLen apart
+        for (let i = 1; i < this.numJoints; i++) {
+          const prev = this.spine[i - 1];
+          const curr = this.spine[i];
+          curr.x = prev.x + Math.cos(this.angles[i]) * segLen;
+          curr.y = prev.y + Math.sin(this.angles[i]) * segLen;
+        }
+
+        // 4. KOI SECRET 4: Quadratic Traveling S-Wave Ripple Points
+        // Amplitudes grow parabolically toward the tail just like real fish/fins
+        for (let i = 0; i < this.numJoints; i++) {
+          const se = i / (this.numJoints - 1);
+          const env = 0.12 + 0.88 * se * se;
+          const wave = Math.sin(this.wavePhase - se * Math.PI * 2) * (conf.sWaveAmp || 16) * env;
+
+          const curA = i === 0 ? swimAngle : this.angles[i] - Math.PI;
+          const perpX = -Math.sin(curA);
+          const perpY = Math.cos(curA);
+
+          this.ripplePts[i].x = this.spine[i].x + perpX * wave;
+          this.ripplePts[i].y = this.spine[i].y + perpY * wave;
+          this.ripplePts[i].angle = curA;
         }
       }
 
@@ -853,8 +895,8 @@
         const i1 = Math.min(numJ - 1, i0 + 1);
         const frac = fIndex - i0;
 
-        const p0 = this.spine[i0];
-        const p1 = this.spine[i1];
+        const p0 = this.ripplePts[i0];
+        const p1 = this.ripplePts[i1];
 
         const x = p0.x + (p1.x - p0.x) * frac;
         const y = p0.y + (p1.y - p0.y) * frac;
@@ -883,16 +925,16 @@
         ctx.save();
         ctx.translate(10, 18);
         ctx.filter = 'blur(12px) brightness(0) opacity(0.35)';
-        this.renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, effectiveH);
+        this.renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, effectiveH, conf);
         ctx.restore();
 
         // 2. MAIN WATERTIGHT TEXTURED MESH
-        this.renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, effectiveH);
+        this.renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, effectiveH, conf);
 
         ctx.restore();
       }
 
-      renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, targetH) {
+      renderWatertightMesh(ctx, img, imgW, imgH, numQuads, numJ, targetH, conf) {
         const halfH = targetH * 0.5;
 
         // Precompute mesh rings along the spine
@@ -905,19 +947,20 @@
           const tSpine = 1.0 - uFrac;
           const pt = this.sampleSpine(tSpine, numJ);
 
+          // 5. KOI SECRET 5: Fabric Ripple on fins/tails/ribbons
+          const clothFlutter = Math.sin(this.fabric * 2.0 - uFrac * 6.5) * (conf.sWaveAmp * 0.12) * (uFrac * uFrac);
+
           // Normal perpendicular to spine (pointing to dorsal / top edge of sprite)
-          // pt.angle points forward (towards head).
-          // Screen Y goes downwards, so dorsal normal (up) is (sin(angle), -cos(angle))
           const nx = Math.sin(pt.angle);
           const ny = -Math.cos(pt.angle);
 
           // Top vertex (v = 0) and Bottom vertex (v = imgH)
           rings.push({
             u: u,
-            topX: pt.x + nx * halfH,
-            topY: pt.y + ny * halfH,
-            botX: pt.x - nx * halfH,
-            botY: pt.y - ny * halfH
+            topX: pt.x + nx * (halfH + clothFlutter),
+            topY: pt.y + ny * (halfH + clothFlutter),
+            botX: pt.x - nx * (halfH - clothFlutter),
+            botY: pt.y - ny * (halfH - clothFlutter)
           });
         }
 
