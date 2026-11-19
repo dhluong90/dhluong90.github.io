@@ -462,6 +462,7 @@ window.BABA_CATALOG = {
       fullTitle: "Miếu Bà Chúa Xứ • Núi Sam, Châu Đốc",
       note: "Gợi ý Hoàng Yến, Đỏ Son hoặc Ngọc Ngà trang nghiêm đi lễ đầu năm",
       image: "images/bg_mieu-ba.jpg",
+      mobilePos: "50% 36%",
       isScenic: true
     },
     {
@@ -472,6 +473,7 @@ window.BABA_CATALOG = {
       fullTitle: "Chùa Hang (Phước Điền Tự) • Triền Núi Sam",
       note: "Gấm Sen Hồng, Thiên Thanh và Ngọc Bích nổi bật giữa nắng chiều Thất Sơn",
       image: "images/bg_chua-hang.jpg",
+      mobilePos: "24% 46%",
       isScenic: true
     },
     {
@@ -482,6 +484,7 @@ window.BABA_CATALOG = {
       fullTitle: "Chùa Tây An Cổ Tự • Chân Núi Sam",
       note: "Kiến trúc cổ giao thoa hòa quyện cùng gấm hoa chìm & khoác lụa Organza",
       image: "images/bg_chua-tay-an.jpg",
+      mobilePos: "54% 44%",
       isScenic: true
     },
     {
@@ -492,6 +495,7 @@ window.BABA_CATALOG = {
       fullTitle: "Rừng Tràm Trà Sư • Tịnh Biên — An Giang",
       note: "Sắc trắng kem, Hoàng Yến và nón lá vẽ sen rạng rỡ giữa thảm bèo xanh ngọc",
       image: "images/bg_tra-su.jpg",
+      mobilePos: "50% 66%",
       isScenic: true
     },
     {
@@ -502,6 +506,7 @@ window.BABA_CATALOG = {
       fullTitle: "Hiên Nhà Cổ Nam Bộ • Xứ Bảy Núi",
       note: "Không gian gỗ gụ trầm ấm tôn lên vẻ đằm thắm của Lãnh Mỹ A & khăn rằn",
       image: "images/bg_nha-co.jpg",
+      mobilePos: "50% 50%",
       isScenic: true
     },
     {
@@ -512,6 +517,7 @@ window.BABA_CATALOG = {
       fullTitle: "Phòng Thử Giấy Dó • Ánh Sáng Tự Nhiên",
       note: "Nền ngà giấy dó trung tính giúp soi chuẩn màu sắc & thớ gấm hoa chìm",
       image: null,
+      mobilePos: "50% 50%",
       isScenic: false
     }
   ],

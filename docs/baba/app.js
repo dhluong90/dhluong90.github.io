@@ -182,12 +182,17 @@
     state.activeWall = wallIdx;
 
     const w = WARDROBES[wallIdx];
-    document.getElementById('showroom-wall-crumb').textContent = `TỦ 0${wallIdx + 1} — ${w.label.toUpperCase()}`;
+    const crumbEl = document.getElementById('showroom-wall-crumb');
+    if (crumbEl && w) crumbEl.textContent = `TỦ 0${wallIdx + 1} — ${w.label.toUpperCase()}`;
     document.querySelectorAll('.dock-tab').forEach(btn => {
       btn.classList.toggle('active', Number(btn.dataset.wall) === wallIdx);
     });
     applyRoomTransform();
     playChime(440 + wallIdx * 65);
+  };
+
+  window.rotateRoomBy = function (step) {
+    window.rotateRoomTo((state.activeWall + step + 4) % 4);
   };
 
   // Subtle 3D look-around tilt + horizontal drag/swipe 360° rotation in Showroom
@@ -435,11 +440,11 @@
 
   function renderEquippedPanel() {
     const slotDefs = [
-      { key: 'hat', label: 'Nón / Khăn Đóng', optional: true, placeholder: 'Chưa đội nón' },
-      { key: 'outer', label: 'Khoác / Khăn Rằn', optional: true, placeholder: 'Chưa khoác ngoài' },
+      { key: 'hat', label: 'Nón / Khăn Đóng', optional: true, placeholder: 'Thêm nón' },
+      { key: 'outer', label: 'Khoác / Khăn Rằn', optional: true, placeholder: 'Thêm áo khoác' },
       { key: 'shirt', label: 'Áo Bà Ba Chính', optional: false },
       { key: 'pants', label: 'Quần Lụa Phối', optional: false },
-      { key: 'acc', label: 'Phụ Kiện Tay', optional: true, placeholder: 'Chưa chọn túi/quạt' },
+      { key: 'acc', label: 'Phụ Kiện Tay', optional: true, placeholder: 'Thêm phụ kiện' },
     ];
 
     let total = 0;
@@ -496,6 +501,9 @@
     `).join('');
 
     const items = PRODUCTS.filter(p => p.wardrobe === state.activeWardrobe);
+    const activeW = WARDROBES.find(w => w.id === state.activeWardrobe);
+    const wLabelEl = document.getElementById('wardrobe-label');
+    if (wLabelEl && activeW) wLabelEl.textContent = activeW.label;
     document.getElementById('wardrobe-count').textContent = `${items.length} mẫu`;
 
     const gridEl = document.getElementById('wardrobe-grid');
@@ -862,13 +870,9 @@
     const layerA = document.getElementById('studio-scene-a');
     const layerB = document.getElementById('studio-scene-b');
     const metaEl = document.getElementById('scene-meta-text');
-    const hintEl = document.getElementById('stage-hint');
 
     sec.classList.toggle('mode-scenic', Boolean(scene.isScenic));
     if (metaEl) metaEl.textContent = scene.fullTitle;
-    if (hintEl && scene.note) {
-      hintEl.textContent = scene.note;
-    }
 
     if (scene.isScenic && scene.image) {
       warmImage(scene.image);
@@ -876,6 +880,7 @@
       const nextEl = nextSlot === 'a' ? layerA : layerB;
       const prevEl = nextSlot === 'a' ? layerB : layerA;
       nextEl.style.backgroundImage = `url('${scene.image}')`;
+      nextEl.style.setProperty('--scene-pos-m', scene.mobilePos || '50% 45%');
       requestAnimationFrame(() => {
         nextEl.classList.add('active');
         prevEl.classList.remove('active');
@@ -893,7 +898,7 @@
     });
 
     if (announce) {
-      showToast(`Bối cảnh: ${scene.fullTitle}`);
+      showToast(scene.fullTitle);
       playChime(523.25);
     }
   }
@@ -1034,7 +1039,7 @@
               <p class="landmark-note">${s.note}</p>
             </div>
             <button class="landmark-cta" onclick="selectSceneAndJump('${s.id}')">
-              <span>Thử đồ tại đây</span>
+              <span>Thử tại đây</span>
               ${SVG_ARROW}
             </button>
           </div>
@@ -1257,7 +1262,7 @@
     const listEl = document.getElementById('cart-items');
     if (!state.cart.length) {
       listEl.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:#8a7f76; font-size:0.86rem;">
-        Giỏ hàng chưa có sản phẩm.<br/>Chọn trang phục từ tủ đồ hoặc kéo thả lên người mẫu để thử.
+        Giỏ hàng hiện đang trống.
       </div>`;
       return;
     }

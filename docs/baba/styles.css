@@ -233,7 +233,7 @@ button { font-family: inherit; }
 }
 
 /* ============================================================================
-   2. SECTION 1 — 3D VIRTUAL FLAGSHIP STORE (TALUS ARCHITECTURE)
+   2. SECTION 1 — CỬA HIỆU BẢY GIÀU (KIẾN TRÚC MÁI CHÙA & GIAN TRƯNG BÀY 3D)
    ============================================================================ */
 .showroom-section {
   position: relative;
@@ -248,36 +248,52 @@ button { font-family: inherit; }
   justify-content: space-between;
 }
 
-.showroom-topbar {
+.pavilion-roof-crown {
   position: relative;
-  z-index: 12;
+  z-index: 16;
+  width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 2.2rem 0;
   pointer-events: none;
+  margin-top: 0.2rem;
+  margin-bottom: -18px;
 }
-
-.showroom-crumb {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-muted);
-  display: flex;
+.pavilion-roof-svg {
+  width: min(820px, 92vw);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 10px 22px rgba(26, 16, 10, 0.22));
+}
+.pavilion-signboard {
+  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  padding: 0.34rem 1.45rem;
+  margin-top: -12px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #7d1e1a 0%, #5b1310 100%);
+  border: 1.5px solid #d9b46c;
+  box-shadow:
+    inset 0 0 0 3px rgba(217, 180, 108, 0.28),
+    0 8px 20px rgba(24, 14, 10, 0.28);
+  text-align: center;
 }
-.showroom-crumb strong { color: var(--ink); }
-
-.showroom-title-badge {
-  font-size: 0.74rem;
-  color: var(--ink-muted);
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(30, 25, 21, 0.08);
-  padding: 0.3rem 0.8rem;
-  border-radius: 9999px;
-  backdrop-filter: blur(10px);
+.signboard-title {
+  font-family: var(--font-display);
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #f6dca2;
+  line-height: 1.15;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+.signboard-sub {
+  font-size: 0.54rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: rgba(246, 220, 162, 0.78);
+  margin-top: 2px;
 }
 
 /* Real CSS 3D 4-Wall Room */
@@ -293,6 +309,34 @@ button { font-family: inherit; }
 }
 .room-viewport.dragging {
   cursor: grabbing;
+}
+
+.room-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 252, 246, 0.78);
+  border: 1px solid rgba(168, 123, 52, 0.34);
+  color: var(--rosewood);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(24, 14, 10, 0.14);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.room-prev { left: 18px; }
+.room-next { right: 18px; }
+.room-nav-arrow:hover {
+  background: rgba(255, 252, 246, 0.95);
+  border-color: var(--lacquer-red);
+  transform: translateY(-50%) scale(1.07);
 }
 
 .room-pivot {
@@ -757,8 +801,8 @@ button { font-family: inherit; }
   opacity: 0;
   transition: opacity 0.72s ease;
   background:
-    radial-gradient(ellipse 38% 66% at 50% 52%, rgba(255, 248, 234, 0.14) 0%, rgba(24, 15, 10, 0.38) 54%, rgba(16, 10, 7, 0.68) 100%),
-    linear-gradient(180deg, rgba(16, 10, 7, 0.45) 0%, transparent 24%, transparent 78%, rgba(16, 10, 7, 0.55) 100%);
+    radial-gradient(ellipse 40% 68% at 50% 50%, rgba(255, 249, 236, 0.12) 0%, rgba(24, 15, 10, 0.24) 55%, rgba(16, 10, 7, 0.58) 100%),
+    linear-gradient(180deg, rgba(16, 10, 7, 0.38) 0%, transparent 22%, transparent 80%, rgba(16, 10, 7, 0.48) 100%);
 }
 .studio-section.mode-scenic .studio-scene-scrim {
   opacity: 1;
@@ -1189,14 +1233,6 @@ button { font-family: inherit; }
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
-}
-.stage-hint {
-  font-size: 0.68rem;
-  color: var(--studio-muted);
-  letter-spacing: 0.01em;
-  margin-bottom: 0.32rem;
-  text-align: center;
-  transition: opacity 0.35s ease;
 }
 
 /* Model Switcher Strip */
@@ -2504,11 +2540,37 @@ input[type="range"] {
   .cubby-cell img { height: 88px; }
   .dock-tab { padding: 0.4rem 0.65rem; font-size: 0.68rem; }
 
-  /* Mobile Dressing Studio: Model dominates center; wardrobe is clean compact bottom strip */
-  .studio-section { padding: 4.1rem 0.75rem 1.8rem; min-height: auto; }
+  /* Mobile Dressing Studio: Scenic Chau Doc clear stage + compact wardrobe below */
+  .studio-section { padding: 3.75rem 0.7rem 1.8rem; min-height: auto; }
+  .studio-section.mode-scenic { background-color: #19110d; }
+  .studio-scene-layer {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 510px;
+    background-size: cover;
+    background-position: var(--scene-pos-m, 50% 45%);
+    filter: saturate(1.08) brightness(0.98);
+  }
+  .studio-scene-scrim {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 515px;
+    background: linear-gradient(
+      180deg,
+      rgba(18, 11, 7, 0.52) 0%,
+      rgba(18, 11, 7, 0.08) 22%,
+      rgba(18, 11, 7, 0.05) 64%,
+      rgba(25, 17, 13, 0.84) 86%,
+      #19110d 100%
+    );
+  }
   .studio-grid {
     grid-template-columns: 1fr;
-    gap: 0.8rem;
+    gap: 0.75rem;
   }
   .studio-center, .wardrobe-panel, .look-panel { min-width: 0; }
   .studio-center { order: 1; }
@@ -2516,6 +2578,7 @@ input[type="range"] {
     justify-content: center;
     overflow: visible;
     padding-bottom: 0;
+    margin-bottom: 0.25rem;
   }
   .scene-switcher {
     display: grid;
@@ -2530,11 +2593,11 @@ input[type="range"] {
     padding: 0.34rem 0.25rem;
     font-size: 0.64rem;
   }
-  .scene-meta-pill {
-    max-width: 100%;
-    font-size: 0.67rem;
-  }
-  .model-rig { height: min(46vh, 395px); }
+  .scene-meta-pill { display: none; }
+  .stage-toolbar { margin-bottom: 0.15rem; }
+  .stage-pill { padding: 0.28rem 0.72rem; font-size: 0.66rem; }
+  .model-rig { height: min(47vh, 390px); }
+  .model-switcher { margin-top: 0.3rem; }
   .wardrobe-panel { order: 2; padding: 0.72rem; }
   .wardrobe-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.25rem; margin-bottom: 0.55rem; }
   .w-tab { font-size: 0.62rem; padding: 0.36rem 0.2rem; white-space: nowrap; }
@@ -2570,4 +2633,122 @@ input[type="range"] {
     transform: translateX(-50%) translateY(10px);
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
+}
+
+/* ============================================================================
+   9. iPHONE 16e & COMPACT PHONE 3D SHOWROOM OPTIMIZATION (<= 640px)
+   ============================================================================ */
+@media (max-width: 640px) {
+  :root {
+    --room-r: 230px;
+    --room-h: 410px;
+    --room-cam-z: -10px;
+  }
+  .showroom-section {
+    height: 100svh;
+    min-height: 580px;
+    max-height: 780px;
+    padding-top: 54px;
+  }
+  .pavilion-roof-crown {
+    margin-top: 0;
+    margin-bottom: -12px;
+  }
+  .pavilion-roof-svg {
+    width: 104vw;
+    max-width: 430px;
+  }
+  .pavilion-signboard {
+    padding: 0.24rem 0.95rem;
+    margin-top: -8px;
+  }
+  .signboard-title {
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+  }
+  .signboard-sub {
+    font-size: 0.46rem;
+    letter-spacing: 0.22em;
+  }
+  .room-viewport {
+    perspective: 760px;
+    perspective-origin: 50% 48%;
+  }
+  .room-nav-arrow {
+    width: 28px;
+    height: 28px;
+  }
+  .room-prev { left: 8px; }
+  .room-next { right: 8px; }
+  .room-wall {
+    padding: 0.75rem 1.05rem 1.65rem;
+  }
+  .room-wall::after { height: 28px; }
+  .wall-crest { display: none; }
+  .wall-header { margin-bottom: 0.55rem; }
+  .wall-heading { font-size: 1.32rem; }
+  .rug-lotus-medallion { width: 170px; height: 170px; }
+
+  /* Wall 0: All 6 Áo Bà Ba in crisp 3x2 grid */
+  .wall-0 .wall-rail-fixture { padding-top: 8px; }
+  .wall-0 .wall-brass-bar { display: none; }
+  .wall-0 .wall-items-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.32rem 0.45rem;
+    overflow: visible;
+    padding: 0;
+  }
+  .wall-0 .wall-garment-tile {
+    min-width: 0;
+    max-width: none;
+    padding-top: 2px;
+  }
+  .wall-0 .wall-garment-tile::before,
+  .wall-0 .wall-hanger-bar { display: none; }
+  .wall-0 .wall-garment-tile img { height: 84px; }
+
+  /* Wall 1: All 4 Outer layers across bronze bar */
+  .wall-1 .wall-items-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.3rem;
+    overflow: visible;
+    padding: 0;
+  }
+  .wall-1 .wall-garment-tile {
+    min-width: 0;
+    max-width: none;
+  }
+  .wall-1 .wall-garment-tile img { height: 132px; }
+
+  /* Wall 2: 2x2 Nón Lá pegboard */
+  .pegboard-panel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border-width: 5px;
+    max-width: 380px;
+  }
+  .peg-item { padding: 0.38rem; }
+  .peg-item img { height: 74px; }
+
+  /* Wall 3: Unclipped 3-col Quần & Túi cubby */
+  .cubby-cabinet {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 7px;
+    max-width: 400px;
+  }
+  .cubby-cell { padding: 0.36rem 0.25rem; }
+  .cubby-cell img { height: 76px; }
+  .cubby-cell .wall-tile-meta,
+  .peg-item .wall-tile-meta { padding: 0.2rem 0.25rem; }
+  .wall-tile-name { font-size: 0.64rem; }
+  .wall-tile-price { font-size: 0.58rem; }
+
+  .showroom-dock-wrap { padding: 0 0.65rem 0.85rem; gap: 0.55rem; }
+  .showroom-dock { padding: 0.24rem; gap: 0.14rem; }
+  .dock-tab { padding: 0.36rem 0.58rem; font-size: 0.67rem; }
+  .dock-num { display: none; }
 }
