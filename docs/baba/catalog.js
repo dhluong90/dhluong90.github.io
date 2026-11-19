@@ -435,7 +435,7 @@ window.BABA_CATALOG = {
       layerForModel: (mId) => `images/layer_acc_${mId}_tui-coi.png`,
       anchorKey: "handBox",
       fabric: "Mây tre đan trụ tròn • Lót linen & Hoa sứ",
-      desc: "Mẫu túi trụ đan tay tinh xảo với dây cói xoắn thừng chắc chắn, lót vải lanh kem thắt hoa sứ trắng thanh thuần — chuẩn hồn quê Sếp gửi."
+      desc: "Mẫu túi trụ đan tay tinh xảo với dây cói xoắn thừng chắc chắn, lót vải lanh kem thắt hoa sứ trắng thanh thuần — đậm hồn quê Nam Bộ thanh tao."
     },
     {
       id: "quat-lua",
@@ -453,26 +453,91 @@ window.BABA_CATALOG = {
     }
   ],
 
+  SCENES: [
+    {
+      id: "mieu-ba",
+      name: "Miếu Bà Núi Sam",
+      shortName: "Miếu Bà",
+      badge: "Di tích Quốc gia",
+      fullTitle: "Miếu Bà Chúa Xứ • Núi Sam, Châu Đốc",
+      note: "Gợi ý Hoàng Yến, Đỏ Son hoặc Ngọc Ngà trang nghiêm đi lễ đầu năm",
+      image: "images/bg_mieu-ba.jpg",
+      isScenic: true
+    },
+    {
+      id: "chua-hang",
+      name: "Chùa Hang",
+      shortName: "Chùa Hang",
+      badge: "Phước Điền Tự",
+      fullTitle: "Chùa Hang (Phước Điền Tự) • Triền Núi Sam",
+      note: "Gấm Sen Hồng, Thiên Thanh và Ngọc Bích nổi bật giữa nắng chiều Thất Sơn",
+      image: "images/bg_chua-hang.jpg",
+      isScenic: true
+    },
+    {
+      id: "chua-tay-an",
+      name: "Chùa Tây An",
+      shortName: "Chùa Tây An",
+      badge: "Cổ tự Đông Dương",
+      fullTitle: "Chùa Tây An Cổ Tự • Chân Núi Sam",
+      note: "Kiến trúc cổ giao thoa hòa quyện cùng gấm hoa chìm & khoác lụa Organza",
+      image: "images/bg_chua-tay-an.jpg",
+      isScenic: true
+    },
+    {
+      id: "tra-su",
+      name: "Rừng Tràm Trà Sư",
+      shortName: "Trà Sư",
+      badge: "Sinh thái An Giang",
+      fullTitle: "Rừng Tràm Trà Sư • Tịnh Biên — An Giang",
+      note: "Sắc trắng kem, Hoàng Yến và nón lá vẽ sen rạng rỡ giữa thảm bèo xanh ngọc",
+      image: "images/bg_tra-su.jpg",
+      isScenic: true
+    },
+    {
+      id: "nha-co",
+      name: "Hiên Nhà Cổ",
+      shortName: "Hiên Cổ",
+      badge: "Nam Bộ Xưa",
+      fullTitle: "Hiên Nhà Cổ Nam Bộ • Xứ Bảy Núi",
+      note: "Không gian gỗ gụ trầm ấm tôn lên vẻ đằm thắm của Lãnh Mỹ A & khăn rằn",
+      image: "images/bg_nha-co.jpg",
+      isScenic: true
+    },
+    {
+      id: "giay-do",
+      name: "Giấy Dó Studio",
+      shortName: "Giấy Dó",
+      badge: "Ánh sáng chuẩn",
+      fullTitle: "Phòng Thử Giấy Dó • Ánh Sáng Tự Nhiên",
+      note: "Nền ngà giấy dó trung tính giúp soi chuẩn màu sắc & thớ gấm hoa chìm",
+      image: null,
+      isScenic: false
+    }
+  ],
+
   LOOKBOOKS: [
     {
-      id: "lb-hoian",
-      location: "Phố Cổ Hội An • Nắng Vàng",
-      title: "Sáng Du Xuân Phố Hội",
-      image: "images/lookbook_hoian.jpg",
-      caption: "Sự kết hợp rạng rỡ giữa Bà Ba Gấm Hoàng Yến, quần lụa trắng kem cùng nón lá vẽ sen dưới giàn hoa giấy phố cổ.",
+      id: "lb-mieuba",
+      location: "Miếu Bà Chúa Xứ • Núi Sam, Châu Đốc",
+      title: "Lễ Sớm Miếu Bà Núi Sam",
+      image: "images/lookbook_mieuba.jpg",
+      sceneId: "mieu-ba",
+      caption: "Áo Bà Ba tơ vàng Hoàng Yến phối quần lụa kem trang nhã, cầm nón lá vẽ sen & túi cói hoa sứ giữa sân đá bình minh Miếu Bà.",
       equip: { shirt: "hoang-yen", pants: "trang-kem", outer: null, hat: "non-ve", acc: "tui-coi" },
       hotspots: [
-        { x: "50%", y: "44%", productId: "hoang-yen" },
-        { x: "41%", y: "67%", productId: "non-ve" },
-        { x: "60%", y: "70%", productId: "tui-coi" }
+        { x: "51%", y: "46%", productId: "hoang-yen" },
+        { x: "26%", y: "68%", productId: "non-ve" },
+        { x: "65%", y: "71%", productId: "tui-coi" }
       ]
     },
     {
-      id: "lb-sen",
-      location: "Thủy Tạ Đầm Sen • Bích Thủy",
-      title: "Chiều Trà Sen Thanh Nhã",
+      id: "lb-chuahang",
+      location: "Hồ Sen Chân Núi Sam • Chùa Hang",
+      title: "Vãn Cảnh Cổ Tự & Đầm Sen",
       image: "images/lookbook_sen.jpg",
-      caption: "Áo Bà Ba Sen Hồng phối khoác lụa Organza xuyên thấu bay bổng và quạt lụa trúc giữa đầm sen tỏa hương.",
+      sceneId: "chua-hang",
+      caption: "Áo Bà Ba Sen Hồng phối khoác lụa Organza xuyên thấu bay bổng và quạt lụa trúc giữa không gian thanh tịnh chùa triền Thất Sơn.",
       equip: { shirt: "sen-hong", pants: "trang-kem", outer: "organza-kem", hat: null, acc: "quat-lua" },
       hotspots: [
         { x: "51%", y: "36%", productId: "sen-hong" },
@@ -481,11 +546,12 @@ window.BABA_CATALOG = {
       ]
     },
     {
-      id: "lb-mientay",
-      location: "Hiên Nhà Gỗ Nam Bộ • Miệt Vườn",
-      title: "Hoàng Hôn Bến Ninh Kiều",
+      id: "lb-tanchau",
+      location: "Làng Lụa Tân Châu • Châu Đốc, An Giang",
+      title: "Hồn Lụa Lãnh Mỹ A An Giang",
       image: "images/lookbook_mientay.jpg",
-      caption: "Bà Ba Lục Ngọc Bích phối cùng quần Lãnh Mỹ A đen huyền thoại và khăn rằn tơ tằm tạo nên vẻ đẹp miệt vườn kinh điển.",
+      sceneId: "nha-co",
+      caption: "Bà Ba Lục Ngọc Bích phối quần Lãnh Mỹ A nhuộm mặc nưa Tân Châu cùng khăn rằn tơ tằm tạo nên vẻ đẹp di sản Châu Đốc kinh điển.",
       equip: { shirt: "ngoc-bich", pants: "linh-den", outer: "khan-ran", hat: null, acc: "tui-coi" },
       hotspots: [
         { x: "52%", y: "39%", productId: "ngoc-bich" },

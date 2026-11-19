@@ -3,14 +3,14 @@
    ============================================================================ */
 
 (function () {
-  const { MODELS, WARDROBES, PRODUCTS, LOOKBOOKS } = window.BABA_CATALOG;
+  const { MODELS, WARDROBES, PRODUCTS, SCENES, LOOKBOOKS } = window.BABA_CATALOG;
   const prodById = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
+  const sceneById = Object.fromEntries(SCENES.map(s => [s.id, s]));
   const fmtVnd = (n) => n.toLocaleString('vi-VN') + '₫';
 
   const SVG_TAG = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9-9-9 9-9Z"/></svg>';
   const SVG_CHECK = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-  const SVG_PORCH = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>';
-  const SVG_GALLERY = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 15l4-4 4 4 4-3 4 3"/></svg>';
+  const SVG_ARROW = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
 
   const CART_STORAGE_KEY = 'shopbaygiau_cart_v1';
   function loadCart() {
@@ -48,7 +48,8 @@
     studioSize: 'M',
     focusSize: 'M',
     focusProductId: null,
-    isCourtyard: false,
+    activeSceneId: 'mieu-ba',
+    activeSceneSlot: 'a',
     isLoupeSticky: false,
     isTransitioning: false,
     cart: loadCart(),
@@ -111,7 +112,7 @@
 
       let innerHTML = `
         <div class="wall-header">
-          <div class="wall-crest">SHOPBAYGIAU</div>
+          <div class="wall-crest">SHOPBAYGIAU • CHÂU ĐỐC</div>
           <h2 class="wall-heading">${w.wallTitle}</h2>
         </div>
       `;
@@ -837,14 +838,74 @@
     modelRig.style.setProperty('--rx', `${(-ny * 2.5).toFixed(2)}deg`);
   });
 
-  window.toggleStudioBackdrop = function () {
-    state.isCourtyard = !state.isCourtyard;
+  function renderSceneSwitcher() {
+    const sw = document.getElementById('scene-switcher');
+    if (!sw) return;
+    sw.innerHTML = SCENES.map(s => `
+      <button class="scene-chip ${s.id === state.activeSceneId ? 'active' : ''}"
+        role="tab" aria-selected="${s.id === state.activeSceneId}"
+        data-scene-id="${s.id}"
+        title="${s.fullTitle}"
+        onclick="selectStudioScene('${s.id}')">
+        <span class="scene-dot" aria-hidden="true"></span>
+        <span>${s.shortName}</span>
+      </button>
+    `).join('');
+  }
+
+  function applyStudioScene(sceneId, announce = true) {
+    const scene = sceneById[sceneId];
+    if (!scene) return;
+    state.activeSceneId = sceneId;
+
     const sec = document.getElementById('dressing-studio');
-    sec.classList.toggle('mode-courtyard', state.isCourtyard);
-    document.getElementById('btn-backdrop-toggle').classList.toggle('active', state.isCourtyard);
-    document.getElementById('studio-bg-icon').innerHTML = state.isCourtyard ? SVG_GALLERY : SVG_PORCH;
-    document.getElementById('studio-bg-label').textContent = state.isCourtyard ? 'Nền giấy dó' : 'Hiên nhà gỗ';
-    showToast(state.isCourtyard ? 'Đã chuyển nền Hiên nhà gỗ' : 'Đã chuyển nền Giấy dó');
+    const layerA = document.getElementById('studio-scene-a');
+    const layerB = document.getElementById('studio-scene-b');
+    const metaEl = document.getElementById('scene-meta-text');
+    const hintEl = document.getElementById('stage-hint');
+
+    sec.classList.toggle('mode-scenic', Boolean(scene.isScenic));
+    if (metaEl) metaEl.textContent = scene.fullTitle;
+    if (hintEl && scene.note) {
+      hintEl.textContent = scene.note;
+    }
+
+    if (scene.isScenic && scene.image) {
+      warmImage(scene.image);
+      const nextSlot = state.activeSceneSlot === 'a' ? 'b' : 'a';
+      const nextEl = nextSlot === 'a' ? layerA : layerB;
+      const prevEl = nextSlot === 'a' ? layerB : layerA;
+      nextEl.style.backgroundImage = `url('${scene.image}')`;
+      requestAnimationFrame(() => {
+        nextEl.classList.add('active');
+        prevEl.classList.remove('active');
+      });
+      state.activeSceneSlot = nextSlot;
+    } else {
+      layerA.classList.remove('active');
+      layerB.classList.remove('active');
+    }
+
+    document.querySelectorAll('#scene-switcher .scene-chip').forEach(btn => {
+      const isAct = btn.dataset.sceneId === sceneId;
+      btn.classList.toggle('active', isAct);
+      btn.setAttribute('aria-selected', String(isAct));
+    });
+
+    if (announce) {
+      showToast(`Bối cảnh: ${scene.fullTitle}`);
+      playChime(523.25);
+    }
+  }
+
+  window.selectStudioScene = function (sceneId) {
+    applyStudioScene(sceneId, true);
+  };
+
+  window.selectSceneAndJump = function (sceneId) {
+    applyStudioScene(sceneId, true);
+    const studio = document.getElementById('dressing-studio');
+    if (studio) studio.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Studio & Modal Size Selector sync
@@ -886,6 +947,10 @@
       svg.innerHTML = `
         <path d="M ${startX} ${baseY} Q ${W * 0.5} ${baseY + sag * 2} ${endX} ${baseY}"
           fill="none" stroke="#8a6c44" stroke-width="4" stroke-linecap="round" />
+        <path d="M ${startX} ${baseY - 1} Q ${W * 0.5} ${baseY + sag * 2 - 1} ${endX} ${baseY - 1}"
+          fill="none" stroke="#d9b46c" stroke-width="1" stroke-opacity="0.55" stroke-linecap="round" />
+        <circle cx="${startX}" cy="${baseY}" r="5.5" fill="#704d28" stroke="#d9b46c" stroke-width="1.5" />
+        <circle cx="${endX}" cy="${baseY}" r="5.5" fill="#704d28" stroke="#d9b46c" stroke-width="1.5" />
       `;
 
       railItems.forEach((p, i) => {
@@ -948,8 +1013,35 @@
   }
 
   /* --------------------------------------------------------------------------
-     7. SECTION 4 — CURATED EDITORIAL LOOKBOOK
+     7. SECTION 4 & 5 — CURATED CHÂU ĐỐC LOOKBOOK & LANDMARK DISCOVERY
      -------------------------------------------------------------------------- */
+  function buildChauDocLandmarks() {
+    const grid = document.getElementById('landmarks-grid');
+    if (!grid) return;
+    const featuredIds = ['mieu-ba', 'chua-hang', 'chua-tay-an', 'tra-su'];
+    grid.innerHTML = featuredIds
+      .map(id => sceneById[id])
+      .filter(Boolean)
+      .map(s => `
+        <article class="landmark-card">
+          <div class="landmark-thumb-wrap">
+            <img src="${s.image}" alt="${s.fullTitle}" loading="lazy" />
+            <span class="landmark-badge">${s.badge}</span>
+          </div>
+          <div class="landmark-body">
+            <div>
+              <h3 class="landmark-title">${s.name}</h3>
+              <p class="landmark-note">${s.note}</p>
+            </div>
+            <button class="landmark-cta" onclick="selectSceneAndJump('${s.id}')">
+              <span>Thử đồ tại đây</span>
+              ${SVG_ARROW}
+            </button>
+          </div>
+        </article>
+      `).join('');
+  }
+
   function buildLookbooks() {
     const grid = document.getElementById('lookbook-grid');
     grid.innerHTML = LOOKBOOKS.map(lb => `
@@ -984,12 +1076,16 @@
     const lb = LOOKBOOKS.find(l => l.id === lbId);
     if (!lb) return;
     Object.assign(state.equipped, lb.equip);
+    if (lb.sceneId && sceneById[lb.sceneId]) {
+      applyStudioScene(lb.sceneId, false);
+    }
     renderModelLayers();
     renderEquippedPanel();
     renderWardrobePanel();
     flashShimmer();
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
-    showToast(`Đã phối trọn bộ ${lb.title}`);
+    const sceneName = lb.sceneId && sceneById[lb.sceneId] ? sceneById[lb.sceneId].name : null;
+    showToast(sceneName ? `Đã phối bộ ${lb.title} tại ${sceneName}` : `Đã phối trọn bộ ${lb.title}`);
     playChime(659.25);
   };
 
@@ -1279,6 +1375,9 @@
 
   // Initialize Complete Website
   buildShowroomWalls();
+  renderSceneSwitcher();
+  applyStudioScene(state.activeSceneId, false);
+  SCENES.forEach(s => { if (s.image) warmImage(s.image); });
   preloadModelAssets(state.modelIdx);
   renderModelLayers();
   renderEquippedPanel();
@@ -1286,6 +1385,7 @@
   renderModelSwitcher();
   initCatenaryRail();
   buildLookbooks();
+  buildChauDocLandmarks();
   calcSmartSize();
   renderCart();
 })();
