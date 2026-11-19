@@ -37,9 +37,9 @@
       <button class="util-pill" onclick="openSearch(true)" title="Tìm kiếm sản phẩm (Ctrl/Cmd + K)">
         <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="hide-sm">Tìm kiếm</span>
       </button>
-      <a href="#dressing-studio" class="util-pill" title="Chọn 3 người mẫu thử đồ">
+      <button class="util-pill" onclick="cycleNextModel()" title="Chuyển nhanh sang người mẫu tiếp theo">
         <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg><span class="hide-sm">Đổi mẫu</span>
-      </a>
+      </button>
       <button class="cart-trigger" id="btn-cart" onclick="openCart(true)">
         <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="hide-sm">Giỏ hàng</span>
@@ -57,7 +57,7 @@
         <strong id="showroom-wall-crumb">TỦ 01 — ÁO BÀ BA GẤM LỤA</strong>
       </div>
       <div class="showroom-title-badge">
-        Di chuột để xoay góc nhìn • Chọn khu trưng bày bên dưới
+        Kéo ngang hoặc chọn khu bên dưới để xoay phòng 360°
       </div>
     </div>
 
@@ -93,7 +93,6 @@
     <div class="studio-typo-bg">
       <div class="studio-bg-word" id="studio-bg-word">SEN HỒNG</div>
     </div>
-    <div class="studio-focus-vignette" aria-hidden="true"></div>
 
     <div class="studio-grid">
       <!-- Left Column: Active Set Breakdown (Shop-the-Look) -->
@@ -140,10 +139,6 @@
             <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
             <span>Soi chất vải</span>
           </button>
-          <button class="stage-pill" id="btn-focus-toggle" onclick="toggleStudioFocusLock()">
-            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V5a1 1 0 0 1 1-1h4"/><path d="M15 4h4a1 1 0 0 1 1 1v4"/><path d="M20 15v4a1 1 0 0 1-1 1h-4"/><path d="M9 20H5a1 1 0 0 1-1-1v-4"/><circle cx="12" cy="12" r="2.5"/></svg>
-            <span>Tập trung mẫu</span>
-          </button>
         </div>
         <div class="stage-hint">Kéo thả hoặc chạm vào từng mẫu ở tủ đồ để mặc thử</div>
 
@@ -187,72 +182,13 @@
       <div class="section-eyebrow">Sào Lụa Trưng Bày</div>
       <h2 class="section-title">Nét Lụa Rủ Duyên</h2>
       <p class="section-sub">
-        Kéo ngang để lướt vô tận qua từng tà Áo Bà Ba &amp; Áo Khoác trên sào đồng — chạm vào sản phẩm để xem cận cảnh và thử ngay.
+        Rê chuột lướt ngang qua sào lụa để cảm nhận độ rủ mềm mại của từng tà Áo Bà Ba &amp; Áo Khoác trên dây đồng — chạm nhẹ để xem chi tiết và mặc thử.
       </p>
     </div>
 
-    <div class="rail-viewport">
-      <div class="catenary-stage" id="catenary-stage">
-        <svg class="catenary-svg" id="catenary-svg" preserveAspectRatio="none"></svg>
-        <div id="pendulum-hangers"></div>
-      </div>
-      <div class="rail-hint">Kéo ngang hoặc cuộn nhẹ để trượt vô tận • Chạm vào mẫu để phóng lớn</div>
-
-      <div class="rail-spotlight" id="rail-spotlight" aria-hidden="true">
-        <div class="rail-spot-card">
-          <div class="rail-spot-visual">
-            <div class="rail-spot-rod"></div>
-            <div class="rail-spot-pendulum">
-              <div class="hanger-hook"></div>
-              <div class="hanger-bar"></div>
-              <img id="rail-spot-img" src="" alt="" />
-            </div>
-            <div class="rail-spot-shadow"></div>
-          </div>
-
-          <div class="rail-spot-info">
-            <div class="rail-spot-nav">
-              <button class="rail-spot-back" onclick="closeRailSpotlight()">
-                <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>
-                <span>Quay lại sào lụa</span>
-              </button>
-              <div class="rail-spot-arrows">
-                <button class="rail-spot-step" onclick="stepRailSpotlight(-1)" aria-label="Sản phẩm trước">
-                  <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <button class="rail-spot-step" onclick="stepRailSpotlight(1)" aria-label="Sản phẩm tiếp theo">
-                  <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="rail-spot-sku num-price" id="rail-spot-sku">BB-01</div>
-            <h3 class="rail-spot-title" id="rail-spot-name">Tên sản phẩm</h3>
-            <div class="rail-spot-price num-price" id="rail-spot-price">680.000₫</div>
-            <p class="rail-spot-desc" id="rail-spot-desc"></p>
-            <div class="rail-spot-fabric" id="rail-spot-fabric"></div>
-
-            <div class="size-mini-row" style="margin-bottom:1.1rem;">
-              <span>Chọn Size:</span>
-              <div class="size-chips" id="rail-spot-sizes">
-                <button class="size-chip" data-size="XS">XS</button>
-                <button class="size-chip" data-size="S">S</button>
-                <button class="size-chip active" data-size="M">M</button>
-                <button class="size-chip" data-size="L">L</button>
-                <button class="size-chip" data-size="XL">XL</button>
-              </div>
-            </div>
-
-            <div class="rail-spot-actions">
-              <button class="lookbook-try-btn" onclick="tryRailSpotlightInStudio()">Mặc thử lên mẫu</button>
-              <button class="btn-buy-set" onclick="addRailSpotlightToCart()">
-                <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-                <span>Thêm vào giỏ</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="catenary-stage" id="catenary-stage">
+      <svg class="catenary-svg" id="catenary-svg" preserveAspectRatio="none"></svg>
+      <div id="pendulum-hangers"></div>
     </div>
   </section>
 
@@ -299,7 +235,7 @@
       <div class="size-advisor-box">
         <div>
           <div class="section-eyebrow" style="margin-bottom:0.35rem;">Gợi Ý Phom Dáng</div>
-          <h3 style="font-family:var(--font-display); font-size:2rem; font-weight:700; margin-bottom:1rem;">
+          <h3 style="font-family:var(--font-display); font-size:2rem; font-weight:500; margin-bottom:1rem;">
             Tư Vấn Chọn Size &amp; May Đo
           </h3>
 
@@ -389,7 +325,7 @@
       </div>
       <div>
         <div class="num-price" style="font-size:0.68rem; letter-spacing:0.18em; color:var(--accent); font-weight:600;" id="focus-sku">BB-01</div>
-        <h2 style="font-family:var(--font-display); font-size:2rem; font-weight:700; line-height:1.1; margin:0.3rem 0;" id="focus-name">Tên sản phẩm</h2>
+        <h2 style="font-family:var(--font-display); font-size:2rem; font-weight:500; line-height:1.1; margin:0.3rem 0;" id="focus-name">Tên sản phẩm</h2>
         <div class="num-price" style="font-size:1.2rem; font-weight:700; margin-bottom:0.8rem;" id="focus-price">680.000₫</div>
         <p style="font-size:0.84rem; color:var(--ink-muted); margin-bottom:0.85rem;" id="focus-desc"></p>
         <div style="font-size:0.74rem; padding:0.4rem 0.75rem; border-radius:10px; background:var(--bg-ivory); display:inline-block; margin-bottom:1.1rem;" id="focus-fabric"></div>

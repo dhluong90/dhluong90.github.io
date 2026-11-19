@@ -12,6 +12,24 @@
   const SVG_PORCH = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>';
   const SVG_GALLERY = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 15l4-4 4 4 4-3 4 3"/></svg>';
 
+  const CART_STORAGE_KEY = 'shopbaygiau_cart_v1';
+  function loadCart() {
+    try {
+      const raw = localStorage.getItem(CART_STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(it => it && prodById[it.id] && Number.isInteger(it.qty) && it.qty > 0 && it.size);
+    } catch (_) {
+      return [];
+    }
+  }
+  function saveCart() {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.cart));
+    } catch (_) {}
+  }
+
   // Application State
   const state = {
     modelIdx: 0,
@@ -32,9 +50,8 @@
     focusProductId: null,
     isCourtyard: false,
     isLoupeSticky: false,
-    isFocusLocked: false,
     isTransitioning: false,
-    cart: [],
+    cart: loadCart(),
   };
 
   /* --------------------------------------------------------------------------
@@ -172,15 +189,50 @@
     playChime(440 + wallIdx * 65);
   };
 
-  // Subtle 3D look-around tilt in Showroom
+  // Subtle 3D look-around tilt + horizontal drag/swipe 360° rotation in Showroom
+  let roomDragStartX = null;
+  let roomDragStartY = null;
+  let roomDragged = false;
+
+  roomViewport.addEventListener('pointerdown', (e) => {
+    roomDragStartX = e.clientX;
+    roomDragStartY = e.clientY;
+    roomDragged = false;
+    roomViewport.classList.add('dragging');
+  });
+
   roomViewport.addEventListener('pointermove', (e) => {
     const rect = roomViewport.getBoundingClientRect();
     const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     state.roomLookX = nx * 5.5;
     state.roomLookY = -ny * 3.2;
+    if (roomDragStartX !== null && Math.abs(e.clientX - roomDragStartX) > 12) {
+      roomDragged = true;
+    }
     applyRoomTransform();
   });
+
+  const endRoomDrag = (e) => {
+    if (roomDragStartX === null) return;
+    const dx = (e.clientX ?? roomDragStartX) - roomDragStartX;
+    const dy = (e.clientY ?? roomDragStartY) - roomDragStartY;
+    roomDragStartX = null;
+    roomDragStartY = null;
+    roomViewport.classList.remove('dragging');
+    if (e.type !== 'pointercancel' && Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy)) {
+      window.rotateRoomTo((state.activeWall + (dx < 0 ? 1 : 3)) % 4);
+    }
+    setTimeout(() => { roomDragged = false; }, 0);
+  };
+  window.addEventListener('pointerup', endRoomDrag);
+  roomViewport.addEventListener('pointercancel', endRoomDrag);
+  roomViewport.addEventListener('click', (e) => {
+    if (roomDragged) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
   roomViewport.addEventListener('pointerleave', () => {
     state.roomLookX = 0;
     state.roomLookY = 0;
@@ -398,14 +450,14 @@
         total += p.price;
         count += 1;
         return `
-          <div class="eq-slot">
-            <img class="eq-thumb" src="${p.thumb}" alt="${p.name}" />
+          <div class="eq-slot clickable" onclick="switchWardrobeTab('${p.wardrobe}')">
+            <img class="eq-thumb" src="${p.thumb}" alt="${p.name}" title="Xem chi tiết ${p.shortName}" onclick="event.stopPropagation(); openFocus('${p.id}')" />
             <div class="eq-info">
               <div class="eq-cat">${s.label}</div>
               <div class="eq-name">${p.name}</div>
               <div class="eq-price">${fmtVnd(p.price)}</div>
             </div>
-            ${s.optional ? `<button class="eq-remove" onclick="clearSlot('${s.key}')" title="Tháo ${s.label}">×</button>` : ''}
+            ${s.optional ? `<button class="eq-remove" onclick="event.stopPropagation(); clearSlot('${s.key}')" title="Tháo ${s.label}">×</button>` : ''}
           </div>
         `;
       }
@@ -485,43 +537,27 @@
     renderWardrobePanel();
   };
 
-  let focusReleaseTimer = null;
-  function setStudioFocus(active, holdMs = 0) {
-    clearTimeout(focusReleaseTimer);
-    const sec = document.getElementById('dressing-studio');
-    if (!sec) return;
-    if (active) {
-      sec.classList.add('focus-model');
-      if (holdMs > 0 && !state.isFocusLocked && !state.isLoupeSticky) {
-        focusReleaseTimer = setTimeout(() => {
-          if (!state.isFocusLocked && !state.isLoupeSticky && !dragSession) {
-            sec.classList.remove('focus-model');
-          }
-        }, holdMs);
-      }
-    } else if (!state.isFocusLocked && !state.isLoupeSticky) {
-      sec.classList.remove('focus-model');
-    }
-  }
-
-  window.toggleStudioFocusLock = function () {
-    state.isFocusLocked = !state.isFocusLocked;
-    const btn = document.getElementById('btn-focus-toggle');
-    if (btn) btn.classList.toggle('active', state.isFocusLocked);
-    setStudioFocus(state.isFocusLocked);
-    showToast(state.isFocusLocked ? 'Đã khóa chế độ tập trung mẫu' : 'Đã tắt khóa tập trung mẫu');
-  };
-
   window.selectModel = function (idx) {
     if (idx === state.modelIdx) return;
     state.modelIdx = idx;
     preloadModelAssets(idx);
     renderModelSwitcher();
     renderModelLayers();
-    setStudioFocus(true, 1750);
     const m = getActiveModel();
     showToast(`Đang thử đồ trên mẫu ${m.name}`);
     playChime(659.25);
+  };
+
+  window.cycleNextModel = function () {
+    const nextIdx = (state.modelIdx + 1) % MODELS.length;
+    window.selectModel(nextIdx);
+    const studio = document.getElementById('dressing-studio');
+    if (studio) {
+      const rect = studio.getBoundingClientRect();
+      if (rect.top > window.innerHeight * 0.45 || rect.bottom < window.innerHeight * 0.35) {
+        studio.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   window.clearSlot = function (slotKey) {
@@ -552,8 +588,6 @@
   window.equipProduct = function (prodId, fromRect = null, skipGlide = false) {
     const prod = prodById[prodId];
     if (!prod) return;
-
-    setStudioFocus(true, 1650);
 
     const finalize = () => {
       state.equipped[prod.slot] = prod.id;
@@ -632,7 +666,6 @@
       const dy = ev.clientY - dragSession.startY;
       if (!dragSession.moved && Math.hypot(dx, dy) > 8) {
         dragSession.moved = true;
-        setStudioFocus(true);
         dragGhost.src = prod.thumb;
         dragGhost.style.transition = 'none';
         dragGhost.style.opacity = '1';
@@ -701,7 +734,6 @@
           dragGhost.style.opacity = '0';
         }, 200);
       } else {
-        setStudioFocus(false);
         dragGhost.style.transition = 'all 0.26s ease';
         dragGhost.style.left = s.startRect.left + 'px';
         dragGhost.style.top = s.startRect.top + 'px';
@@ -727,25 +759,38 @@
     const r = modelRig.getBoundingClientRect();
     const relX = (clientX - r.left) / r.width;
     const relY = (clientY - r.top) / r.height;
+    const m = getActiveModel();
+    const a = m.anchors;
+    const outerProd = state.equipped.outer ? prodById[state.equipped.outer] : null;
     const shirtProd = prodById[state.equipped.shirt];
+    const pantsProd = prodById[state.equipped.pants];
     const zoom = 2.4;
 
-    // Sample hi-res active shirt/model composite cleanly
     loupe.style.left = clientX + 'px';
     loupe.style.top = (clientY - (window.innerWidth <= 768 ? 50 : 0)) + 'px';
 
-    // Map relative coords inside model box
-    const box = getActiveModel().anchors.shirtBox;
-    if (relY >= box.y && relY <= box.y + box.h && relX >= box.x && relX <= box.x + box.w) {
-      const lx = (relX - box.x) / box.w;
-      const ly = (relY - box.y) / box.h;
-      const wScaled = r.width * box.w * zoom;
-      const hScaled = r.height * box.h * zoom;
-      loupe.style.backgroundImage = `url('${shirtProd.layerForModel(getActiveModel().id)}')`;
+    const inBox = (box) => box && relY >= box.y && relY <= box.y + box.h && relX >= box.x && relX <= box.x + box.w;
+    const outerBox = outerProd ? getAnchorBoxForProduct(m, outerProd) : null;
+
+    let sampled = null;
+    if (outerProd && inBox(outerBox)) {
+      sampled = { url: outerProd.layerUrl, box: outerBox };
+    } else if (shirtProd && inBox(a.shirtBox)) {
+      sampled = { url: shirtProd.layerForModel(m.id), box: a.shirtBox };
+    } else if (pantsProd && inBox(a.pantsBox)) {
+      sampled = { url: pantsProd.layerForModel(m.id), box: a.pantsBox };
+    }
+
+    if (sampled) {
+      const lx = (relX - sampled.box.x) / sampled.box.w;
+      const ly = (relY - sampled.box.y) / sampled.box.h;
+      const wScaled = r.width * sampled.box.w * zoom;
+      const hScaled = r.height * sampled.box.h * zoom;
+      loupe.style.backgroundImage = `url('${sampled.url}')`;
       loupe.style.backgroundSize = `${wScaled}px ${hScaled}px`;
       loupe.style.backgroundPosition = `${-(lx * wScaled - 88)}px ${-(ly * hScaled - 88)}px`;
     } else {
-      loupe.style.backgroundImage = `url('${getActiveModel().baseUrl}')`;
+      loupe.style.backgroundImage = `url('${m.baseUrl}')`;
       loupe.style.backgroundSize = `${r.width * zoom}px ${r.height * zoom}px`;
       loupe.style.backgroundPosition = `${-(relX * r.width * zoom - 88)}px ${-(relY * r.height * zoom - 88)}px`;
     }
@@ -761,7 +806,6 @@
   window.toggleLoupeMode = function () {
     state.isLoupeSticky = !state.isLoupeSticky;
     document.getElementById('btn-loupe-toggle').classList.toggle('active', state.isLoupeSticky);
-    setStudioFocus(state.isLoupeSticky);
     if (!state.isLoupeSticky) closeLoupe();
     else showToast('Di chuột lên trang phục để soi thớ vải');
   };
@@ -769,9 +813,6 @@
   modelRig.addEventListener('pointerdown', (e) => {
     clearTimeout(holdTimer);
     holdTimer = setTimeout(() => renderLoupeAt(e.clientX, e.clientY), 220);
-  });
-  modelRig.addEventListener('pointerenter', () => {
-    if (!dragSession) setStudioFocus(true);
   });
   modelRig.addEventListener('pointermove', (e) => {
     if (state.isLoupeSticky || isLoupeOpen) renderLoupeAt(e.clientX, e.clientY);
@@ -786,23 +827,8 @@
     if (!state.isLoupeSticky) closeLoupe();
   });
 
-  document.querySelectorAll('.look-panel, .wardrobe-panel').forEach(panel => {
-    panel.addEventListener('pointerenter', () => {
-      if (!dragSession && !state.isFocusLocked && !state.isLoupeSticky) {
-        setStudioFocus(false);
-      }
-    });
-  });
-
-  const studioSecEl = document.getElementById('dressing-studio');
-  studioSecEl.addEventListener('pointerleave', () => {
-    if (!state.isFocusLocked && !state.isLoupeSticky && !dragSession) {
-      setStudioFocus(false);
-    }
-  });
-
   // Subtle 3D Parallax on model rig
-  studioSecEl.addEventListener('pointermove', (e) => {
+  document.getElementById('dressing-studio').addEventListener('pointermove', (e) => {
     const nx = (e.clientX / window.innerWidth - 0.5) * 2;
     const ny = (e.clientY / window.innerHeight - 0.5) * 2;
     modelRig.style.setProperty('--px', `${(nx * 9).toFixed(1)}px`);
@@ -821,36 +847,24 @@
     showToast(state.isCourtyard ? 'Đã chuyển nền Hiên nhà gỗ' : 'Đã chuyển nền Giấy dó');
   };
 
-  // Studio Size Selector sync
-  document.querySelectorAll('#studio-size-chips .size-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.studioSize = btn.dataset.size;
-      document.querySelectorAll('#studio-size-chips .size-chip').forEach(b => b.classList.toggle('active', b === btn));
+  // Studio & Modal Size Selector sync
+  function syncSizeChips(size) {
+    state.studioSize = size;
+    state.focusSize = size;
+    document.querySelectorAll('#studio-size-chips .size-chip, #focus-size-chips .size-chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.size === size);
     });
-  });
-  document.querySelectorAll('#focus-size-chips .size-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.focusSize = btn.dataset.size;
-      document.querySelectorAll('#focus-size-chips .size-chip').forEach(b => b.classList.toggle('active', b === btn));
-    });
-  });
-  document.querySelectorAll('#rail-spot-sizes .size-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      state.focusSize = btn.dataset.size;
-      document.querySelectorAll('#rail-spot-sizes .size-chip, #focus-size-chips .size-chip').forEach(b => {
-        b.classList.toggle('active', b.dataset.size === state.focusSize);
-      });
-    });
+  }
+  document.querySelectorAll('#studio-size-chips .size-chip, #focus-size-chips .size-chip').forEach(btn => {
+    btn.addEventListener('click', () => syncSizeChips(btn.dataset.size));
   });
 
   /* --------------------------------------------------------------------------
-     6. SECTION 3 — TRUE INFINITE CATENARY SILK RAIL + HERO SPOTLIGHT
+     6. SECTION 3 — CATENARY PHYSICS SILK RAIL (CLASSIC STATIONARY PENDULUM)
      -------------------------------------------------------------------------- */
   const pendulums = [];
-  let spotlightProdId = null;
 
   function initCatenaryRail() {
-    const railSection = document.getElementById('silk-rail');
     const stage = document.getElementById('catenary-stage');
     const svg = document.getElementById('catenary-svg');
     const wrap = document.getElementById('pendulum-hangers');
@@ -859,244 +873,79 @@
     wrap.innerHTML = '';
     pendulums.length = 0;
 
-    let stageW = stage.clientWidth || window.innerWidth || 1200;
-    let isSm = stageW < 860;
-    let spacing = isSm ? 148 : 206;
-    let cardHalfW = isSm ? 69 : 88;
-    let sag = isSm ? 32 : 58;
-    let baseY = isSm ? 18 : 22;
-    let totalTrackW = 0;
-    let trackOffset = 0;
-    let trackVel = 0;
-    let hoveredNode = null;
-    let railDrag = null;
-
-    function buildSlots() {
-      stageW = stage.clientWidth || window.innerWidth || 1200;
-      isSm = stageW < 860;
-      spacing = isSm ? 148 : 206;
-      cardHalfW = isSm ? 69 : 88;
-      sag = isSm ? 32 : 58;
-      baseY = isSm ? 18 : 22;
+    function layoutRail() {
+      const W = stage.clientWidth || 1200;
+      const isSm = W < 860;
+      const startX = isSm ? 26 : 56;
+      const endX = W - startX;
+      const span = endX - startX;
+      const sag = isSm ? 28 : 48;
+      const baseY = 24;
+      const cardHalfW = isSm ? 48 : 65;
 
       svg.innerHTML = `
-        <path d="M -24 ${baseY} Q ${stageW * 0.5} ${baseY + sag * 2} ${stageW + 24} ${baseY}"
+        <path d="M ${startX} ${baseY} Q ${W * 0.5} ${baseY + sag * 2} ${endX} ${baseY}"
           fill="none" stroke="#8a6c44" stroke-width="4" stroke-linecap="round" />
       `;
 
-      const minSpan = Math.max(stageW + spacing * 4, railItems.length * spacing);
-      const reps = Math.max(1, Math.ceil(minSpan / (railItems.length * spacing)));
-      const targetSlots = reps * railItems.length;
-      totalTrackW = targetSlots * spacing;
+      railItems.forEach((p, i) => {
+        const u = (i + 0.5) / railItems.length;
+        const x = startX + u * span;
+        const y = baseY + sag * 4 * u * (1 - u);
 
-      if (pendulums.length !== targetSlots) {
-        wrap.innerHTML = '';
-        pendulums.length = 0;
-        for (let i = 0; i < targetSlots; i++) {
-          const p = railItems[i % railItems.length];
+        let node = pendulums[i];
+        if (!node) {
           const el = document.createElement('div');
           el.className = 'pendulum-hanger';
           el.innerHTML = `
             <div class="hanger-hook"></div>
             <div class="hanger-bar"></div>
             <img src="${p.thumb}" alt="${p.name}" draggable="false" />
-            <div class="hanger-caption">
-              <div class="hanger-name">${p.shortName}</div>
-              <div class="hanger-price">${fmtVnd(p.price)}</div>
-            </div>
+            <div class="hanger-tooltip">${p.shortName} • ${fmtVnd(p.price)}</div>
           `;
-          const node = { el, prod: p, slotIdx: i, x: 0, theta: 0, omega: 0 };
-          el.addEventListener('pointerenter', () => {
-            if (railDrag && railDrag.moved) return;
-            hoveredNode = node;
-            stage.classList.add('has-hover');
-            el.classList.add('is-hovered');
-          });
-          el.addEventListener('pointerleave', () => {
-            if (hoveredNode === node) hoveredNode = null;
-            el.classList.remove('is-hovered');
-            if (!hoveredNode) stage.classList.remove('has-hover');
-          });
+          el.addEventListener('click', () => window.openFocus(p.id));
           wrap.appendChild(el);
+          node = { el, x, y, theta: 0, omega: 0 };
           pendulums.push(node);
+        } else {
+          node.x = x;
+          node.y = y;
         }
-      }
+        node.el.style.left = (node.x - cardHalfW) + 'px';
+        node.el.style.top = (node.y - 2) + 'px';
+      });
     }
 
-    buildSlots();
-    window.addEventListener('resize', buildSlots);
+    layoutRail();
+    window.addEventListener('resize', layoutRail);
 
-    stage.addEventListener('pointerdown', (e) => {
-      if (railSection.classList.contains('spotlight-open')) return;
-      const hangerEl = e.target.closest('.pendulum-hanger');
-      const hitNode = hangerEl ? pendulums.find(n => n.el === hangerEl) : null;
-      railDrag = {
-        startX: e.clientX,
-        startY: e.clientY,
-        lastX: e.clientX,
-        moved: false,
-        hitNode,
-      };
-      trackVel = 0;
-      stage.classList.add('dragging');
-      try { stage.setPointerCapture(e.pointerId); } catch (_) {}
-    });
-
+    let lastMouseX = null;
     stage.addEventListener('pointermove', (e) => {
       const r = stage.getBoundingClientRect();
       const mx = e.clientX - r.left;
+      const vx = lastMouseX === null ? 0 : Math.max(-35, Math.min(35, mx - lastMouseX));
+      lastMouseX = mx;
 
-      if (railDrag) {
-        const dx = e.clientX - railDrag.lastX;
-        const totalDx = e.clientX - railDrag.startX;
-        const totalDy = e.clientY - railDrag.startY;
-        if (!railDrag.moved && Math.hypot(totalDx, totalDy) > 8) {
-          railDrag.moved = true;
-          if (hoveredNode) {
-            hoveredNode.el.classList.remove('is-hovered');
-            hoveredNode = null;
-            stage.classList.remove('has-hover');
-          }
-        }
-        if (railDrag.moved) {
-          trackOffset += dx;
-          trackVel = dx * 0.85;
-          for (const p of pendulums) {
-            p.omega += Math.max(-0.08, Math.min(0.08, -dx * 0.0022));
-          }
-        }
-        railDrag.lastX = e.clientX;
-        return;
-      }
-
-      if (railSection.classList.contains('spotlight-open')) return;
-      for (const p of pendulums) {
+      pendulums.forEach(p => {
         const d = Math.abs(mx - p.x);
-        if (d < 120) {
-          const strength = 1 - d / 120;
-          p.omega += 0.0055 * strength;
+        if (d < 105) {
+          const strength = 1 - d / 105;
+          p.omega += (vx * 0.0028 + (vx === 0 ? 0.015 : 0)) * strength;
         }
-      }
+      });
     });
 
-    const endRailDrag = () => {
-      if (!railDrag) return;
-      const d = railDrag;
-      railDrag = null;
-      stage.classList.remove('dragging');
-      if (!d.moved && d.hitNode) {
-        window.openRailSpotlight(d.hitNode.prod.id);
-      }
-    };
-    stage.addEventListener('pointerup', endRailDrag);
-    stage.addEventListener('pointercancel', endRailDrag);
-
-    stage.addEventListener('wheel', (e) => {
-      if (railSection.classList.contains('spotlight-open')) return;
-      const useHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey;
-      if (!useHorizontal) return;
-      e.preventDefault();
-      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      trackOffset -= delta * 0.85;
-      trackVel = -delta * 0.16;
-      for (const p of pendulums) {
-        p.omega += Math.max(-0.05, Math.min(0.05, delta * 0.001));
-      }
-    }, { passive: false });
-
     function stepPhysics() {
-      const spotOpen = railSection.classList.contains('spotlight-open');
-      if (!railDrag) {
-        if (!spotOpen && hoveredNode === null) {
-          trackOffset -= 0.42;
-        }
-        trackOffset += trackVel;
-        trackVel *= 0.92;
-        if (Math.abs(trackVel) < 0.01) trackVel = 0;
-      }
-
-      // Normalize offset into [0, totalTrackW)
-      const normOffset = ((trackOffset % totalTrackW) + totalTrackW) % totalTrackW;
-      window.__babaRailOffset = normOffset;
-
       for (const p of pendulums) {
-        let rawX = (p.slotIdx * spacing + normOffset) % totalTrackW;
-        if (rawX > totalTrackW - spacing * 1.5) rawX -= totalTrackW;
-        // Center wrap so hangers exist seamlessly slightly past both left and right edges
-        const centerX = rawX - (spacing * 0.5);
-        p.x = centerX;
-
-        const u = Math.max(-0.05, Math.min(1.05, centerX / stageW));
-        const y = baseY + sag * 4 * u * (1 - u);
-
-        const accel = -0.095 * p.theta - 0.07 * p.omega;
+        const accel = -0.095 * p.theta - 0.065 * p.omega;
         p.omega += accel;
         p.theta += p.omega;
-
-        const centerDist = Math.min(1, Math.abs(centerX - stageW * 0.5) / (stageW * 0.52));
-        const isHovered = hoveredNode === p;
-        const scale = isHovered ? 1.18 : (1.05 - centerDist * 0.14);
-
-        p.el.classList.toggle('is-center', centerDist < 0.28);
-        p.el.style.transform = `translate3d(${(centerX - cardHalfW).toFixed(1)}px, ${(y - 2).toFixed(1)}px, 0) scale(${scale.toFixed(3)}) rotate(${(p.theta * 16).toFixed(2)}deg)`;
+        p.el.style.transform = `rotate(${(p.theta * 18).toFixed(2)}deg)`;
       }
       requestAnimationFrame(stepPhysics);
     }
     requestAnimationFrame(stepPhysics);
   }
-
-  window.openRailSpotlight = function (prodId) {
-    const p = prodById[prodId];
-    if (!p) return;
-    spotlightProdId = prodId;
-    document.getElementById('rail-spot-img').src = p.thumb;
-    document.getElementById('rail-spot-img').alt = p.name;
-    document.getElementById('rail-spot-sku').textContent = p.sku;
-    document.getElementById('rail-spot-name').textContent = p.name;
-    document.getElementById('rail-spot-price').textContent = fmtVnd(p.price);
-    document.getElementById('rail-spot-desc').textContent = p.desc;
-    document.getElementById('rail-spot-fabric').textContent = p.fabric;
-    document.querySelectorAll('#rail-spot-sizes .size-chip').forEach(b => {
-      b.classList.toggle('active', b.dataset.size === state.focusSize);
-    });
-    const sec = document.getElementById('silk-rail');
-    sec.classList.add('spotlight-open');
-    document.getElementById('rail-spotlight').setAttribute('aria-hidden', 'false');
-    playChime(659.25);
-  };
-
-  window.closeRailSpotlight = function () {
-    const sec = document.getElementById('silk-rail');
-    if (sec) sec.classList.remove('spotlight-open');
-    const spot = document.getElementById('rail-spotlight');
-    if (spot) spot.setAttribute('aria-hidden', 'true');
-  };
-
-  window.stepRailSpotlight = function (dir) {
-    const railItems = PRODUCTS.filter(p => p.wardrobe === 'shirt' || p.wardrobe === 'outer');
-    if (!railItems.length) return;
-    const curIdx = railItems.findIndex(p => p.id === spotlightProdId);
-    const nextIdx = ((curIdx < 0 ? 0 : curIdx) + dir + railItems.length) % railItems.length;
-    window.openRailSpotlight(railItems[nextIdx].id);
-  };
-
-  window.tryRailSpotlightInStudio = function () {
-    const p = prodById[spotlightProdId];
-    window.closeRailSpotlight();
-    if (!p) return;
-    state.activeWardrobe = p.wardrobe;
-    document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => {
-      window.equipProduct(p.id, null, false);
-    }, 420);
-  };
-
-  window.addRailSpotlightToCart = function () {
-    const p = prodById[spotlightProdId];
-    if (!p) return;
-    const imgEl = document.getElementById('rail-spot-img');
-    addProductToCart(p, state.focusSize, imgEl ? imgEl.getBoundingClientRect() : null);
-  };
 
   /* --------------------------------------------------------------------------
      7. SECTION 4 — CURATED EDITORIAL LOOKBOOK
@@ -1109,8 +958,9 @@
           <img src="${lb.image}" alt="${lb.title}" loading="lazy" />
           ${lb.hotspots.map(h => {
             const p = prodById[h.productId];
+            const flip = parseFloat(h.x) > 55 ? ' flip-left' : '';
             return `
-              <button class="hotspot-pin" style="left:${h.x}; top:${h.y};" onclick="openFocus('${p.id}')">
+              <button class="hotspot-pin${flip}" style="left:${h.x}; top:${h.y};" onclick="openFocus('${p.id}')">
                 <span class="hotspot-tag">${p.shortName} • ${fmtVnd(p.price)}</span>
               </button>
             `;
@@ -1138,7 +988,6 @@
     renderEquippedPanel();
     renderWardrobePanel();
     flashShimmer();
-    setStudioFocus(true, 1750);
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
     showToast(`Đã phối trọn bộ ${lb.title}`);
     playChime(659.25);
@@ -1183,11 +1032,7 @@
   };
 
   window.applyRecommendedSize = function () {
-    state.studioSize = currentRecommended;
-    state.focusSize = currentRecommended;
-    document.querySelectorAll('#studio-size-chips .size-chip, #focus-size-chips .size-chip').forEach(b => {
-      b.classList.toggle('active', b.dataset.size === currentRecommended);
-    });
+    syncSizeChips(currentRecommended);
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
     showToast(`Đã chọn size ${currentRecommended}`);
   };
@@ -1205,6 +1050,7 @@
     document.getElementById('focus-price').textContent = fmtVnd(p.price);
     document.getElementById('focus-desc').textContent = p.desc;
     document.getElementById('focus-fabric').textContent = p.fabric;
+    syncSizeChips(state.focusSize);
     document.getElementById('focus-overlay').classList.add('open');
   };
 
@@ -1301,6 +1147,7 @@
   }
 
   function renderCart() {
+    saveCart();
     const totalQty = state.cart.reduce((s, it) => s + it.qty, 0);
     const rawSum = state.cart.reduce((s, it) => s + prodById[it.id].price * it.qty, 0);
     const hasBundle = totalQty >= 3;
@@ -1416,7 +1263,17 @@
       openSearch(false);
       closeFocus();
       openCart(false);
-      closeRailSpotlight();
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      const anyModal = document.getElementById('focus-overlay').classList.contains('open')
+        || document.getElementById('search-overlay').classList.contains('open')
+        || document.getElementById('cart-drawer').classList.contains('open');
+      if (!anyModal && window.scrollY < window.innerHeight * 0.6) {
+        e.preventDefault();
+        window.rotateRoomTo((state.activeWall + (e.key === 'ArrowRight' ? 1 : 3)) % 4);
+      }
     }
   });
 
