@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -27,21 +27,21 @@
 
     <a href="#showroom-3d" class="brand-center">
       <span class="brand-name">SHOPBAYGIAU</span>
-      <span class="brand-tagline">Atelier Áo Bà Ba Nam Bộ • 3D Flagship</span>
+      <span class="brand-tagline">Áo Bà Ba &amp; Thủ Công Nam Bộ</span>
     </a>
 
     <div class="header-utils">
       <a href="/" class="util-pill" title="Về Luong Dinh's Notes">
-        <span>←</span><span class="hide-sm">Notes</span>
+        <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg><span class="hide-sm">Notes</span>
       </a>
       <button class="util-pill" onclick="openSearch(true)" title="Tìm kiếm sản phẩm (Ctrl/Cmd + K)">
-        <span>🔍</span><span class="hide-sm">Tìm kiếm</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="hide-sm">Tìm kiếm</span>
       </button>
       <a href="#dressing-studio" class="util-pill" title="Chọn 3 người mẫu thử đồ">
-        <span>👤</span><span class="hide-sm">Đổi mẫu</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg><span class="hide-sm">Đổi mẫu</span>
       </a>
       <button class="cart-trigger" id="btn-cart" onclick="openCart(true)">
-        <span>🛍️</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span class="hide-sm">Giỏ hàng</span>
         <span class="cart-badge" id="cart-count">0</span>
       </button>
@@ -52,12 +52,12 @@
   <section id="showroom-3d" class="showroom-section">
     <div class="showroom-topbar">
       <div class="showroom-crumb">
-        <span>🏛️ KHÔNG GIAN 3D</span>
+        <span>KHÔNG GIAN 3D</span>
         <span>/</span>
         <strong id="showroom-wall-crumb">TỦ 01 — ÁO BÀ BA GẤM LỤA</strong>
       </div>
       <div class="showroom-title-badge">
-        Rê chuột để nghiêng góc nhìn • Chọn tủ bên dưới để xoay phòng 360°
+        Di chuột để xoay góc nhìn • Chọn khu trưng bày bên dưới
       </div>
     </div>
 
@@ -74,14 +74,14 @@
 
     <div class="showroom-dock-wrap">
       <div class="showroom-dock" id="showroom-dock">
-        <button class="dock-tab active" data-wall="0" onclick="rotateRoomTo(0)">👘 Áo Bà Ba</button>
-        <button class="dock-tab" data-wall="1" onclick="rotateRoomTo(1)">🧥 Áo Khoác</button>
-        <button class="dock-tab" data-wall="2" onclick="rotateRoomTo(2)">👒 Nón Lá</button>
-        <button class="dock-tab" data-wall="3" onclick="rotateRoomTo(3)">👜 Quần &amp; Túi</button>
+        <button class="dock-tab active" data-wall="0" onclick="rotateRoomTo(0)"><span class="dock-num">01</span>Áo Bà Ba</button>
+        <button class="dock-tab" data-wall="1" onclick="rotateRoomTo(1)"><span class="dock-num">02</span>Áo Khoác</button>
+        <button class="dock-tab" data-wall="2" onclick="rotateRoomTo(2)"><span class="dock-num">03</span>Nón Lá</button>
+        <button class="dock-tab" data-wall="3" onclick="rotateRoomTo(3)"><span class="dock-num">04</span>Quần &amp; Túi</button>
       </div>
       <a href="#dressing-studio" class="cta-studio-btn">
-        <span>✨ Vào Phòng Thử Đồ 3D</span>
-        <span>↓</span>
+        <span>Vào Phòng Thử Đồ</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m7 14 5 5 5-5"/></svg>
       </a>
     </div>
   </section>
@@ -97,21 +97,22 @@
     <div class="studio-grid">
       <!-- Left Column: Active Set Breakdown (Shop-the-Look) -->
       <aside class="look-panel">
-        <div class="look-kicker">Phối Đồ Đa Tầng • 5 Lớp</div>
-        <h2 class="look-heading">Set Đồ Đang Mặc</h2>
+        <div class="look-kicker">Bản Phối Hiện Tại</div>
+        <h2 class="look-heading">Trang Phục Đang Thử</h2>
 
         <div class="equipped-list" id="equipped-list"></div>
 
         <div class="bundle-summary">
           <div class="bundle-discount" id="bundle-discount-badge">
-            🎁 Mặc ≥ 3 món giảm ngay 10% cả set
+            <svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9-9-9 9-9Z"/></svg>
+            <span>Ưu đãi 10% khi chọn từ 3 món</span>
           </div>
           <div class="bundle-row">
-            <span style="font-size:0.8rem; color:var(--studio-muted);">Tổng bộ đang phối</span>
-            <span style="font-family:var(--font-mono); font-size:1.15rem; font-weight:700;" id="set-total">1.060.000₫</span>
+            <span style="font-size:0.8rem; color:var(--studio-muted);">Tổng bộ đang chọn</span>
+            <span class="num-price" style="font-size:1.08rem; font-weight:600;" id="set-total">1.060.000₫</span>
           </div>
           <div class="size-mini-row">
-            <span>Size may mặc:</span>
+            <span>Cỡ áo:</span>
             <div class="size-chips" id="studio-size-chips">
               <button class="size-chip" data-size="XS">XS</button>
               <button class="size-chip" data-size="S">S</button>
@@ -121,7 +122,8 @@
             </div>
           </div>
           <button class="btn-buy-set" onclick="addFullOutfitToCart()">
-            🛍️ Thêm trọn bộ vào giỏ hàng
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            <span>Thêm trọn bộ vào giỏ</span>
           </button>
         </div>
       </aside>
@@ -130,17 +132,15 @@
       <div class="studio-center">
         <div class="stage-toolbar">
           <button class="stage-pill" id="btn-backdrop-toggle" onclick="toggleStudioBackdrop()">
-            <span id="studio-bg-icon">🏡</span>
-            <span id="studio-bg-label">Hiên Nhà Gỗ</span>
+            <span id="studio-bg-icon" class="icon-slot"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg></span>
+            <span id="studio-bg-label">Hiên nhà gỗ</span>
           </button>
           <button class="stage-pill" id="btn-loupe-toggle" onclick="toggleLoupeMode()">
-            <span>🔍</span>
-            <span>Soi gấm lụa 2.4x</span>
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+            <span>Soi chất vải</span>
           </button>
-          <span class="stage-pill" style="cursor:default; opacity:0.85;">
-            ✋ Kéo thả từ Tủ Đồ lên người mẫu
-          </span>
         </div>
+        <div class="stage-hint">Kéo thả hoặc chạm vào từng mẫu ở tủ đồ để mặc thử</div>
 
         <div class="model-rig-wrap">
           <div class="model-rig" id="model-rig">
@@ -179,7 +179,7 @@
   <!-- 4. SECTION 3 — CATENARY PHYSICS SILK RAIL -->
   <section id="silk-rail" class="rail-section">
     <div class="section-head">
-      <div class="section-eyebrow">Vật Lý Con Lắc • Phiên Bản Số 04</div>
+      <div class="section-eyebrow">Sào Lụa Trưng Bày</div>
       <h2 class="section-title">Nét Lụa Rủ Duyên</h2>
       <p class="section-sub">
         Rê chuột lướt ngang qua sào lụa để cảm nhận độ rủ mềm mại của từng tà Áo Bà Ba &amp; Áo Khoác trên đường cong dây võng tự nhiên — chạm nhẹ để mặc thử ngay.
@@ -215,17 +215,17 @@
 
       <div class="craft-cards">
         <article class="craft-card">
-          <div class="craft-icon">🪷</div>
+          <div class="craft-icon"><svg class="ui-icon ui-icon-craft" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4c-2.2 3-3 5.8-3 8.5a3 3 0 0 0 6 0C15 9.8 14.2 7 12 4Z"/><path d="M9 12.5C6.4 11.2 4.5 11.5 3 13c1.6 3.5 4.8 5 9 5s7.4-1.5 9-5c-1.5-1.5-3.4-1.8-6-.5"/></svg></div>
           <h3>Gấm Hoa Chìm Vạn Phúc</h3>
           <p>Dệt mật độ cao từ tơ tằm tự nhiên làng lụa Hà Đông, họa tiết hoa sen chìm hiện lên óng ả khi nghiêng theo từng góc nắng chiều mà vẫn mềm thoáng trên da.</p>
         </article>
         <article class="craft-card">
-          <div class="craft-icon">🖤</div>
+          <div class="craft-icon"><svg class="ui-icon ui-icon-craft" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8c3-2 6 2 9 0s6 2 9 0"/><path d="M3 12.5c3-2 6 2 9 0s6 2 9 0"/><path d="M3 17c3-2 6 2 9 0s6 2 9 0"/></svg></div>
           <h3>Lụa Lãnh Mỹ A Tân Châu</h3>
           <p>Nhuộm hoàn toàn từ trái mặc nưa theo bí quyết trăm năm xứ An Giang — tạo sắc đen tuyền huyền thoại mát rượi mùa hè và cực kỳ bền bỉ theo thời gian.</p>
         </article>
         <article class="craft-card">
-          <div class="craft-icon">👒</div>
+          <div class="craft-icon"><svg class="ui-icon ui-icon-craft" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15 12 6l9 9"/><path d="M2 15c3.2 1.6 6.5 2.2 10 2.2s6.8-.6 10-2.2"/><path d="M9.5 17c.5 2.2 1.5 3.2 2.5 3.2s2-1 2.5-3.2"/></svg></div>
           <h3>Nón Lá Tây Hồ &amp; Làng Chuông</h3>
           <p>Lá cọ non phơi sương trắng mịn ép 16 vành cật trúc mảnh mai, vẽ tay màu nước và hoàn thiện quai lụa thủ công bởi các nghệ nhân Cố Đô Huế.</p>
         </article>
@@ -234,7 +234,7 @@
       <!-- Interactive Smart Size Advisor -->
       <div class="size-advisor-box">
         <div>
-          <div class="section-eyebrow" style="margin-bottom:0.35rem;">Công Cụ Đo Phom Chuẩn</div>
+          <div class="section-eyebrow" style="margin-bottom:0.35rem;">Gợi Ý Phom Dáng</div>
           <h3 style="font-family:var(--font-display); font-size:2rem; font-weight:700; margin-bottom:1rem;">
             Tư Vấn Chọn Size &amp; May Đo
           </h3>
@@ -265,7 +265,7 @@
         </div>
 
         <div class="size-result-card">
-          <div style="font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-muted);">
+          <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-muted);">
             Gợi ý hoàn hảo cho bạn
           </div>
           <div class="rec-badge" id="rec-size">M</div>
@@ -273,7 +273,7 @@
             Phom Bà Ba ôm nhẹ eo, dài tà 62cm tôn dáng thanh thoát.
           </p>
           <button class="btn-buy-set" onclick="applyRecommendedSize()">
-            ✓ Áp dụng Size <span id="rec-btn-size">M</span> vào Phòng Thử Đồ
+            <span>Chọn size <span id="rec-btn-size">M</span> cho phòng thử</span>
           </button>
         </div>
       </div>
@@ -296,7 +296,7 @@
         <p>76 Trần Phú, Phố Cổ Hội An</p>
       </div>
       <div class="footer-col">
-        <h4>Dịch Vụ Atelier</h4>
+        <h4>Dịch Vụ Tại Tiệm</h4>
         <a href="#dressing-studio">Phòng Thử Đồ 3D Trực Tuyến</a>
         <a href="#craft-size">May Đo Theo Số Đo Riêng (3 ngày)</a>
         <a href="#lookbook">Phối Đồ Sự Kiện &amp; Áo Dài Cưới</a>
@@ -304,14 +304,14 @@
       </div>
       <div class="footer-col">
         <h4>Điều Hướng</h4>
-        <a href="#showroom-3d">Lên Đầu Trang ↑</a>
+        <a href="#showroom-3d">Lên đầu trang</a>
         <a href="/koi/">Demo Cá Koi WebGL</a>
         <a href="/">Về Luong Dinh's Notes</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 SHOPBAYGIAU — Designed for Sếp Lương Đình</span>
-      <span>Spatial 3D Commerce Architecture • Built with Pose-Locked Multi-Layer Rendering</span>
+      <span>© 2026 SHOPBAYGIAU — Thủ Công Nam Bộ</span>
+      <span>Cửa hàng trực tuyến • Phối đồ đa tầng 3D</span>
     </div>
   </footer>
 
@@ -319,14 +319,14 @@
   <!-- TALUS Focus Product Inspection Modal -->
   <div class="focus-overlay" id="focus-overlay" onclick="if(event.target===this) closeFocus()">
     <div class="focus-modal">
-      <button class="focus-close" onclick="closeFocus()">✕</button>
+      <button class="focus-close" onclick="closeFocus()" aria-label="Đóng"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       <div class="focus-stage">
         <img id="focus-img" src="" alt="" />
       </div>
       <div>
-        <div style="font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.18em; color:var(--accent); font-weight:600;" id="focus-sku">BB-01</div>
+        <div class="num-price" style="font-size:0.68rem; letter-spacing:0.18em; color:var(--accent); font-weight:600;" id="focus-sku">BB-01</div>
         <h2 style="font-family:var(--font-display); font-size:2rem; font-weight:700; line-height:1.1; margin:0.3rem 0;" id="focus-name">Tên sản phẩm</h2>
-        <div style="font-family:var(--font-mono); font-size:1.2rem; font-weight:700; margin-bottom:0.8rem;" id="focus-price">680.000₫</div>
+        <div class="num-price" style="font-size:1.2rem; font-weight:700; margin-bottom:0.8rem;" id="focus-price">680.000₫</div>
         <p style="font-size:0.84rem; color:var(--ink-muted); margin-bottom:0.85rem;" id="focus-desc"></p>
         <div style="font-size:0.74rem; padding:0.4rem 0.75rem; border-radius:10px; background:var(--bg-ivory); display:inline-block; margin-bottom:1.1rem;" id="focus-fabric"></div>
 
@@ -342,8 +342,8 @@
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
-          <button class="lookbook-try-btn" onclick="tryFocusInStudio()">✨ Mặc thử lên mẫu</button>
-          <button class="btn-buy-set" onclick="addFocusToCart()">🛍️ Thêm vào giỏ</button>
+          <button class="lookbook-try-btn" onclick="tryFocusInStudio()">Mặc thử lên mẫu</button>
+          <button class="btn-buy-set" onclick="addFocusToCart()"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Thêm vào giỏ</span></button>
         </div>
       </div>
     </div>
@@ -353,9 +353,9 @@
   <div class="search-overlay" id="search-overlay" onclick="if(event.target===this) openSearch(false)">
     <div class="search-box">
       <div class="search-input-wrap">
-        <span>🔍</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--ink-muted)"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="text" class="search-input" id="search-input" placeholder="Tìm Áo Bà Ba, Nón lá, Khăn rằn, Lãnh Mỹ A, Túi cói..." oninput="renderSearchResults()" />
-        <button class="focus-close" style="position:static;" onclick="openSearch(false)">✕</button>
+        <button class="focus-close" style="position:static;" onclick="openSearch(false)" aria-label="Đóng"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
       </div>
       <div class="search-results" id="search-results"></div>
     </div>
@@ -366,27 +366,28 @@
   <aside class="cart-drawer" id="cart-drawer">
     <div class="drawer-head">
       <h2>Giỏ Hàng shopbaygiau</h2>
-      <button class="focus-close" style="position:static;" onclick="openCart(false)">✕</button>
+      <button class="focus-close" style="position:static;" onclick="openCart(false)" aria-label="Đóng"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     </div>
     <div class="drawer-items" id="cart-items"></div>
     <div class="drawer-foot">
       <div id="cart-discount-line" style="display:none; justify-content:space-between; font-size:0.78rem; color:#15803d; font-weight:600; margin-bottom:0.4rem;">
-        <span>Ưu đãi phối bộ (≥ 3 món -10%)</span>
+        <span>Ưu đãi chọn từ 3 món (−10%)</span>
         <span id="cart-discount-val">-0₫</span>
       </div>
       <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.9rem;">
         <span style="font-size:0.86rem;">Tổng thanh toán</span>
-        <span style="font-family:var(--font-mono); font-size:1.25rem; font-weight:700; color:var(--accent);" id="cart-total">0₫</span>
+        <span class="num-price" style="font-size:1.25rem; font-weight:700; color:var(--accent);" id="cart-total">0₫</span>
       </div>
       <button class="btn-buy-set" onclick="submitDemoOrder()">
-        Đặt May &amp; Giao Hàng Toàn Quốc →
+        <span>Đặt may &amp; giao hàng toàn quốc</span>
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
       </button>
     </div>
   </aside>
 
   <!-- Floating Drag Ghost, Silk Loupe 2.4x, Toast -->
   <img id="drag-ghost" src="" alt="" />
-  <div id="loupe"><span class="loupe-tag">SOI HOA VĂN GẤM • 2.4x</span></div>
+  <div id="loupe"><span class="loupe-tag">SOI THỚ GẤM LỤA</span></div>
   <div class="toast" id="toast"></div>
 
   <script src="catalog.js"></script>

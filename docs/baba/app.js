@@ -7,6 +7,11 @@
   const prodById = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
   const fmtVnd = (n) => n.toLocaleString('vi-VN') + '₫';
 
+  const SVG_TAG = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 21 12l-9 9-9-9 9-9Z"/></svg>';
+  const SVG_CHECK = '<svg class="ui-icon ui-icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+  const SVG_PORCH = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>';
+  const SVG_GALLERY = '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 15l4-4 4 4 4-3 4 3"/></svg>';
+
   // Application State
   const state = {
     modelIdx: 0,
@@ -398,7 +403,7 @@
               <div class="eq-name">${p.name}</div>
               <div class="eq-price">${fmtVnd(p.price)}</div>
             </div>
-            ${s.optional ? `<button class="eq-remove" onclick="clearSlot('${s.key}')" title="Tháo ${s.label}">✕</button>` : ''}
+            ${s.optional ? `<button class="eq-remove" onclick="clearSlot('${s.key}')" title="Tháo ${s.label}">×</button>` : ''}
           </div>
         `;
       }
@@ -417,9 +422,11 @@
 
     const hasDiscount = count >= 3;
     const finalTotal = hasDiscount ? Math.round(total * 0.9) : total;
-    document.getElementById('bundle-discount-badge').textContent = hasDiscount
-      ? `✓ Đã áp dụng giảm 10% phối ${count} món (-${fmtVnd(total - finalTotal)})`
-      : '🎁 Phối ≥ 3 món giảm ngay 10% cả set';
+    const badgeEl = document.getElementById('bundle-discount-badge');
+    badgeEl.classList.toggle('unlocked', hasDiscount);
+    badgeEl.innerHTML = hasDiscount
+      ? `${SVG_CHECK}<span>Đã giảm 10% cho ${count} món (−${fmtVnd(total - finalTotal)})</span>`
+      : `${SVG_TAG}<span>Ưu đãi 10% khi chọn từ 3 món</span>`;
     document.getElementById('set-total').textContent = fmtVnd(finalTotal);
   }
 
@@ -429,7 +436,7 @@
     tabsEl.innerHTML = WARDROBES.map(w => `
       <button class="w-tab ${w.id === state.activeWardrobe ? 'active' : ''}"
         onclick="switchWardrobeTab('${w.id}')">
-        ${w.icon} ${w.shortLabel}
+        ${w.shortLabel}
       </button>
     `).join('');
 
@@ -441,11 +448,11 @@
 
     // Add quick clear buttons if viewing optional wardrobe
     if (state.activeWardrobe === 'outer' && state.equipped.outer) {
-      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('outer')">✕ Bỏ áo khoác / khăn</button>`);
+      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('outer')">Bỏ áo khoác / khăn</button>`);
     } else if (state.activeWardrobe === 'hat' && state.equipped.hat) {
-      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('hat')">✕ Bỏ nón / khăn đóng</button>`);
+      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('hat')">Bỏ nón / khăn đóng</button>`);
     } else if (state.activeWardrobe === 'bottom_acc' && state.equipped.acc) {
-      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('acc')">✕ Bỏ túi / quạt tay</button>`);
+      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('acc')">Bỏ túi / quạt tay</button>`);
     }
 
     items.forEach(p => {
@@ -483,7 +490,7 @@
     renderModelSwitcher();
     renderModelLayers();
     const m = getActiveModel();
-    showToast(`👤 Người mẫu: ${m.name} (${m.vibe})`);
+    showToast(`Đang thử đồ trên mẫu ${m.name}`);
     playChime(659.25);
   };
 
@@ -498,11 +505,11 @@
      4. TRUE DRAG-TO-WEAR + VESTRA GLIDE-TO-WEAR ANIMATION
      -------------------------------------------------------------------------- */
   const SLOT_DROP_LABELS = {
-    hat: '✨ Thả lên đầu để đội nón',
-    outer: '✨ Thả lên vai để khoác ngoài',
-    shirt: '✨ Thả lên thân để mặc Áo Bà Ba',
-    pants: '✨ Thả để đổi Quần Lụa',
-    acc: '✨ Thả cạnh tay để phối phụ kiện',
+    hat: 'Thả để đội nón',
+    outer: 'Thả để khoác ngoài',
+    shirt: 'Thả để mặc Áo Bà Ba',
+    pants: 'Thả để đổi quần lụa',
+    acc: 'Thả để phối phụ kiện',
   };
 
   function flashShimmer() {
@@ -597,7 +604,7 @@
         dragGhost.style.transition = 'none';
         dragGhost.style.opacity = '1';
         applyBoxStyle(dropGuide, dragSession.target.box);
-        dropLabel.textContent = SLOT_DROP_LABELS[prod.slot] || '✨ Thả vào để mặc';
+        dropLabel.textContent = SLOT_DROP_LABELS[prod.slot] || 'Thả vào để mặc thử';
         dropGuide.classList.add('active');
       }
       if (!dragSession.moved) return;
@@ -637,7 +644,7 @@
       if (!s.moved) {
         if (s.prod.slot !== 'shirt' && s.prod.slot !== 'pants' && state.equipped[s.prod.slot] === s.prod.id) {
           window.clearSlot(s.prod.slot);
-          showToast(`✨ Đã tháo ${s.prod.shortName}`);
+          showToast(`Đã bỏ ${s.prod.shortName}`);
           playChime(440);
         } else {
           window.equipProduct(s.prod.id, s.startRect);
@@ -721,7 +728,7 @@
     state.isLoupeSticky = !state.isLoupeSticky;
     document.getElementById('btn-loupe-toggle').classList.toggle('active', state.isLoupeSticky);
     if (!state.isLoupeSticky) closeLoupe();
-    else showToast('🔍 Rê chuột lên áo trên người mẫu để soi thớ gấm 2.4x');
+    else showToast('Di chuột lên trang phục để soi thớ vải');
   };
 
   modelRig.addEventListener('pointerdown', (e) => {
@@ -756,9 +763,9 @@
     const sec = document.getElementById('dressing-studio');
     sec.classList.toggle('mode-courtyard', state.isCourtyard);
     document.getElementById('btn-backdrop-toggle').classList.toggle('active', state.isCourtyard);
-    document.getElementById('studio-bg-icon').textContent = state.isCourtyard ? '🏛️' : '🏡';
-    document.getElementById('studio-bg-label').textContent = state.isCourtyard ? 'Atelier Giấy Dó' : 'Hiên Nhà Gỗ';
-    showToast(state.isCourtyard ? '🏡 Không gian: Hiên Nhà Gỗ Nam Bộ' : '🏛️ Không gian: Atelier Giấy Dó');
+    document.getElementById('studio-bg-icon').innerHTML = state.isCourtyard ? SVG_GALLERY : SVG_PORCH;
+    document.getElementById('studio-bg-label').textContent = state.isCourtyard ? 'Nền giấy dó' : 'Hiên nhà gỗ';
+    showToast(state.isCourtyard ? 'Đã chuyển nền Hiên nhà gỗ' : 'Đã chuyển nền Giấy dó');
   };
 
   // Studio Size Selector sync
@@ -891,7 +898,7 @@
             <p class="lookbook-text">${lb.caption}</p>
           </div>
           <button class="lookbook-try-btn" onclick="equipLookbook('${lb.id}')">
-            ✨ Mặc thử trọn bộ trong Phòng 3D
+            Mặc thử trọn bộ
           </button>
         </div>
       </article>
@@ -907,7 +914,7 @@
     renderWardrobePanel();
     flashShimmer();
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
-    showToast(`✨ Đã mặc trọn bộ "${lb.title}" lên người mẫu!`);
+    showToast(`Đã phối trọn bộ ${lb.title}`);
     playChime(659.25);
   };
 
@@ -956,7 +963,7 @@
       b.classList.toggle('active', b.dataset.size === currentRecommended);
     });
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
-    showToast(`✓ Đã chọn Size ${currentRecommended} cho Phòng Thử Đồ!`);
+    showToast(`Đã chọn size ${currentRecommended}`);
   };
 
   /* --------------------------------------------------------------------------
@@ -971,7 +978,7 @@
     document.getElementById('focus-name').textContent = p.name;
     document.getElementById('focus-price').textContent = fmtVnd(p.price);
     document.getElementById('focus-desc').textContent = p.desc;
-    document.getElementById('focus-fabric').textContent = '🧵 ' + p.fabric;
+    document.getElementById('focus-fabric').textContent = p.fabric;
     document.getElementById('focus-overlay').classList.add('open');
   };
 
@@ -1011,7 +1018,7 @@
     });
     const rect = getTargetScreenRect(prodById[state.equipped.shirt]);
     launchFlyAnimation(prodById[state.equipped.shirt].thumb, rect);
-    showToast(`🛍️ Đã thêm trọn bộ ${added} món (Size ${state.studioSize}) vào giỏ!`);
+    showToast(`Đã thêm ${added} món (size ${state.studioSize}) vào giỏ hàng`);
   };
 
   function launchFlyAnimation(imgSrc, fromRect) {
@@ -1060,7 +1067,7 @@
 
     if (!silent) {
       launchFlyAnimation(prod.thumb, fromRect);
-      showToast(`🛍️ Đã thêm "${prod.shortName}" (Size ${size})`);
+      showToast(`Đã thêm ${prod.shortName} (size ${size}) vào giỏ`);
     } else {
       renderCart();
     }
@@ -1081,7 +1088,7 @@
     const listEl = document.getElementById('cart-items');
     if (!state.cart.length) {
       listEl.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:#8a7f76; font-size:0.86rem;">
-        Giỏ hàng shopbaygiau chưa có sản phẩm.<br/>Khám phá 4 Tủ Đồ 3D hoặc kéo thử đồ lên mẫu nhé! ✨
+        Giỏ hàng chưa có sản phẩm.<br/>Chọn trang phục từ tủ đồ hoặc kéo thả lên người mẫu để thử.
       </div>`;
       return;
     }
@@ -1094,11 +1101,11 @@
           <div style="flex:1; min-width:0;">
             <div style="font-size:0.82rem; font-weight:600;">${p.name}</div>
             <div style="font-size:0.7rem; color:#6c6157;">Size ${it.size} • ${p.sku}</div>
-            <div style="font-family:var(--font-mono); font-size:0.76rem; color:var(--accent); font-weight:600; margin-top:2px;">${fmtVnd(p.price)}</div>
+            <div class="num-price" style="font-size:0.76rem; color:var(--accent); font-weight:600; margin-top:2px;">${fmtVnd(p.price)}</div>
           </div>
           <div style="display:flex; align-items:center; gap:0.35rem;">
             <button class="eq-remove" onclick="changeCartQty(${idx}, -1)">−</button>
-            <span style="font-family:var(--font-mono); font-size:0.78rem; min-width:16px; text-align:center;">${it.qty}</span>
+            <span class="num-price" style="font-size:0.78rem; min-width:16px; text-align:center;">${it.qty}</span>
             <button class="eq-remove" onclick="changeCartQty(${idx}, 1)">+</button>
           </div>
         </div>
@@ -1120,14 +1127,14 @@
 
   window.submitDemoOrder = function () {
     if (!state.cart.length) {
-      showToast('Giỏ hàng đang trống Sếp ơi!');
+      showToast('Giỏ hàng hiện đang trống');
       return;
     }
     const totalQty = state.cart.reduce((s, it) => s + it.qty, 0);
     window.openCart(false);
     state.cart.length = 0;
     renderCart();
-    showToast(`🎉 Đã đặt may thành công ${totalQty} món tại shopbaygiau!`);
+    showToast(`Đã ghi nhận đơn đặt may ${totalQty} món tại shopbaygiau`);
     playChime(880);
   };
 
@@ -1154,7 +1161,7 @@
         <img src="${p.thumb}" alt="${p.name}" />
         <div style="min-width:0;">
           <div style="font-size:0.78rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-          <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--accent);">${fmtVnd(p.price)}</div>
+          <div class="num-price" style="font-size:0.7rem; color:var(--accent);">${fmtVnd(p.price)}</div>
         </div>
       </div>
     `).join('') || `<div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:#8a7f76;">Không tìm thấy sản phẩm phù hợp.</div>`;
