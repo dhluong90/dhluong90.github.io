@@ -1,5 +1,5 @@
 /* ============================================================================
-   HƯƠNG SEN — Atelier Áo Bà Ba Nam Bộ
+   SHOPBAYGIAU — Atelier Áo Bà Ba Nam Bộ
    3D Spatial Flagship Store + Multi-Layer Drag-to-Wear + Catenary Silk Rail
    ============================================================================ */
 
@@ -111,11 +111,12 @@ button { font-family: inherit; }
 }
 .brand-name {
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: 1.52rem;
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.18em;
   line-height: 1;
   color: var(--ink);
+  white-space: nowrap;
 }
 .brand-tagline {
   font-family: var(--font-mono);
@@ -1557,7 +1558,7 @@ input[type="range"] {
   font-family: var(--font-display);
   font-size: 1.85rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   color: #fff;
 }
 .footer-col h4 {
@@ -1868,7 +1869,7 @@ input[type="range"] {
     height: 54px;
     padding: 0 0.85rem;
   }
-  .brand-name { font-size: 1.2rem; letter-spacing: 0.16em; }
+  .brand-name { font-size: 1.05rem; letter-spacing: 0.12em; }
   .brand-tagline { display: none; }
   .util-pill span.hide-sm, .cart-trigger span.hide-sm { display: none; }
   .util-pill, .cart-trigger { padding: 0.36rem 0.65rem; }

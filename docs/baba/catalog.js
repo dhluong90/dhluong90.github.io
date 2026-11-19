@@ -1,5 +1,5 @@
 /* ============================================================================
-   HƯƠNG SEN — Product Catalog, 3 Calibrated Models & Editorial Lookbooks
+   SHOPBAYGIAU — Product Catalog, 3 Calibrated Models & Editorial Lookbooks
    ============================================================================ */
 
 window.BABA_CATALOG = {

@@ -1,5 +1,5 @@
 /* ============================================================================
-   HƯƠNG SEN — Interactive Engine (3D Room, Multi-Layer Try-On, Catenary Physics)
+   SHOPBAYGIAU — Interactive Engine (3D Room, Multi-Layer Try-On, Catenary Physics)
    ============================================================================ */
 
 (function () {
@@ -1081,7 +1081,7 @@
     const listEl = document.getElementById('cart-items');
     if (!state.cart.length) {
       listEl.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:#8a7f76; font-size:0.86rem;">
-        Giỏ hàng Hương Sen chưa có sản phẩm.<br/>Khám phá 4 Tủ Đồ 3D hoặc kéo thử đồ lên mẫu nhé! ✨
+        Giỏ hàng shopbaygiau chưa có sản phẩm.<br/>Khám phá 4 Tủ Đồ 3D hoặc kéo thử đồ lên mẫu nhé! ✨
       </div>`;
       return;
     }
@@ -1127,7 +1127,7 @@
     window.openCart(false);
     state.cart.length = 0;
     renderCart();
-    showToast(`🎉 Đã đặt may thành công ${totalQty} món tại HƯƠNG SEN Atelier!`);
+    showToast(`🎉 Đã đặt may thành công ${totalQty} món tại shopbaygiau!`);
     playChime(880);
   };
 
