@@ -968,32 +968,65 @@ button { font-family: inherit; }
   z-index: 30;
   object-fit: fill;
 }
-#layer-hair {
+#layer-outer {
   z-index: 40;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(24, 14, 8, 0.10));
+}
+#layer-outer.exact-fit {
+  object-fit: fill;
+  filter: drop-shadow(0 2px 5px rgba(24, 14, 8, 0.08));
+}
+#layer-hair {
+  z-index: 48;
   object-fit: fill;
 }
-#layer-outer {
-  z-index: 50;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 14px rgba(20, 12, 8, 0.14));
-}
 #layer-acc {
-  z-index: 60;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 14px rgba(20, 12, 8, 0.2));
+  z-index: 55;
+  object-fit: fill;
+  transform-origin: 35% 18%;
+  filter: drop-shadow(0 4px 8px rgba(24, 14, 8, 0.10));
 }
 #layer-hat {
-  z-index: 70;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 16px rgba(20, 12, 8, 0.24));
+  z-index: 65;
+  object-fit: fill;
+  transform-origin: 50% 85%;
+  filter: drop-shadow(0 3px 6px rgba(24, 14, 8, 0.07));
 }
 
-.layer-wipe {
-  animation: clothReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+.anim-hat-settle {
+  animation: hatSettle 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-@keyframes clothReveal {
-  0% { opacity: 0.2; filter: brightness(1.18) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.16)); transform: scale(1.03); }
-  100% { opacity: 1; filter: brightness(1) drop-shadow(0 8px 14px rgba(20, 12, 8, 0.14)); transform: scale(1); }
+@keyframes hatSettle {
+  0% { opacity: 0.25; transform: translateY(-16px) scale(1.03) rotate(-1.5deg); }
+  62% { opacity: 1; transform: translateY(2px) scale(0.995) rotate(0.4deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.anim-cloth-drape {
+  animation: clothDrape 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes clothDrape {
+  0% { opacity: 0.4; clip-path: inset(0 0 85% 0); transform: translateY(-6px); }
+  100% { opacity: 1; clip-path: inset(0 0 0% 0); transform: translateY(0); }
+}
+
+.anim-acc-swing {
+  animation: accSwing 680ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes accSwing {
+  0% { opacity: 0.35; transform: translateY(-6px) rotate(8deg); }
+  42% { opacity: 1; transform: translateY(0) rotate(-3.5deg); }
+  74% { opacity: 1; transform: translateY(0) rotate(1.4deg); }
+  100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+.anim-garment-fade {
+  animation: garmentFade 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes garmentFade {
+  0% { opacity: 0.3; filter: brightness(1.08); }
+  100% { opacity: 1; filter: brightness(1); }
 }
 
 /* Magnetic Drop Zone Highlight Overlay */

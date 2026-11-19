@@ -12,17 +12,29 @@ window.BABA_CATALOG = {
       sizeRec: "Size M",
       vibe: "Tóc dài buông vai, cài hoa sứ trắng",
       baseUrl: "images/model_ngoc-ha_base.png",
-      hairUrl: "images/layer_hair_ngoc-ha.png",
+      hairUrl: "images/layer_neck_hair_ngoc-ha.png",
       anchors: {
         shirtBox:     { x: 0.32738, y: 0.20333, w: 0.35714, h: 0.32222 },
-        outerLongBox: { x: 0.31500, y: 0.19100, w: 0.38200, h: 0.56000 },
+        neckHairBox:  { x: 0.32738, y: 0.15444, w: 0.35714, h: 0.23556 },
+        khanRanBox:   { x: 0.41518, y: 0.19556, w: 0.20089, h: 0.34667 },
+        outerLongBox: { x: 0.30200, y: 0.19300, w: 0.40800, h: 0.56200 },
         vestBox:      { x: 0.38000, y: 0.19500, w: 0.25000, h: 0.40800 },
-        jacketBox:    { x: 0.31800, y: 0.19600, w: 0.37600, h: 0.31600 },
-        scarfBox:     { x: 0.36800, y: 0.19600, w: 0.27600, h: 0.29500 },
+        jacketBox:    { x: 0.30800, y: 0.19400, w: 0.39200, h: 0.32800 },
+        scarfBox:     { x: 0.41518, y: 0.19556, w: 0.20089, h: 0.34667 },
         pantsBox:     { x: 0.37202, y: 0.50889, w: 0.25298, h: 0.40333 },
-        headBox:      { x: 0.36200, y: 0.00200, w: 0.27600, h: 0.11400 },
-        bandBox:      { x: 0.41000, y: 0.05800, w: 0.18000, h: 0.07800 },
-        handBox:      { x: 0.65000, y: 0.38500, w: 0.18500, h: 0.26400 }
+        headBox:      { x: 0.33333, y: 0.05600, w: 0.35714, h: 0.15800 },
+        bandBox:      { x: 0.40179, y: 0.05889, w: 0.20089, h: 0.15667 },
+        handBox:      { x: 0.55952, y: 0.47667, w: 0.15327, h: 0.27778 },
+        hatBoxes: {
+          "non-sen":   { x: 0.33333, y: 0.06000, w: 0.35565, h: 0.15556 },
+          "non-ve":    { x: 0.32887, y: 0.05222, w: 0.36458, h: 0.16333 },
+          "non-may":   { x: 0.34077, y: 0.06222, w: 0.36012, h: 0.15333 },
+          "khan-dong": { x: 0.40179, y: 0.05889, w: 0.20089, h: 0.15667 }
+        },
+        accBoxes: {
+          "tui-coi":   { x: 0.55952, y: 0.47667, w: 0.15327, h: 0.27778 },
+          "quat-lua":  { x: 0.41045, y: 0.45172, w: 0.31845, h: 0.39333 }
+        }
       }
     },
     {
@@ -33,17 +45,29 @@ window.BABA_CATALOG = {
       sizeRec: "Size M",
       vibe: "Tóc búi thấp đài các, khuyên ngọc trai",
       baseUrl: "images/model_minh-thu_base.png",
-      hairUrl: "images/layer_hair_minh-thu.png",
+      hairUrl: "images/layer_neck_hair_minh-thu.png",
       anchors: {
         shirtBox:     { x: 0.32589, y: 0.20444, w: 0.35119, h: 0.32000 },
-        outerLongBox: { x: 0.31400, y: 0.19200, w: 0.37600, h: 0.56000 },
+        neckHairBox:  { x: 0.32589, y: 0.15444, w: 0.35119, h: 0.23556 },
+        khanRanBox:   { x: 0.41071, y: 0.19667, w: 0.20089, h: 0.34667 },
+        outerLongBox: { x: 0.30000, y: 0.19400, w: 0.40200, h: 0.56200 },
         vestBox:      { x: 0.37800, y: 0.19600, w: 0.24600, h: 0.40600 },
-        jacketBox:    { x: 0.31700, y: 0.19700, w: 0.37000, h: 0.31500 },
-        scarfBox:     { x: 0.36600, y: 0.19700, w: 0.27200, h: 0.29400 },
+        jacketBox:    { x: 0.30600, y: 0.19500, w: 0.38800, h: 0.32600 },
+        scarfBox:     { x: 0.41071, y: 0.19667, w: 0.20089, h: 0.34667 },
         pantsBox:     { x: 0.36161, y: 0.50778, w: 0.26637, h: 0.40444 },
-        headBox:      { x: 0.37200, y: 0.00400, w: 0.25600, h: 0.10800 },
-        bandBox:      { x: 0.41600, y: 0.06200, w: 0.16800, h: 0.07200 },
-        handBox:      { x: 0.64500, y: 0.38400, w: 0.18200, h: 0.26200 }
+        headBox:      { x: 0.32589, y: 0.05600, w: 0.35714, h: 0.15889 },
+        bandBox:      { x: 0.41815, y: 0.05667, w: 0.16667, h: 0.15889 },
+        handBox:      { x: 0.56399, y: 0.47667, w: 0.16518, h: 0.30000 },
+        hatBoxes: {
+          "non-sen":   { x: 0.32589, y: 0.05667, w: 0.35714, h: 0.15889 },
+          "non-ve":    { x: 0.33185, y: 0.05444, w: 0.34673, h: 0.16111 },
+          "non-may":   { x: 0.33482, y: 0.05667, w: 0.33780, h: 0.15889 },
+          "khan-dong": { x: 0.41815, y: 0.05667, w: 0.16667, h: 0.15889 }
+        },
+        accBoxes: {
+          "tui-coi":   { x: 0.56399, y: 0.47667, w: 0.16518, h: 0.30000 },
+          "quat-lua":  { x: 0.42113, y: 0.41778, w: 0.26637, h: 0.42778 }
+        }
       }
     },
     {
@@ -54,17 +78,29 @@ window.BABA_CATALOG = {
       sizeRec: "Size S",
       vibe: "Tóc buộc nửa gắn nơ lụa kem",
       baseUrl: "images/model_kha-ai_base.png",
-      hairUrl: "images/layer_hair_kha-ai.png",
+      hairUrl: "images/layer_neck_hair_kha-ai.png",
       anchors: {
         shirtBox:     { x: 0.32589, y: 0.20556, w: 0.35417, h: 0.32333 },
-        outerLongBox: { x: 0.31400, y: 0.19300, w: 0.37800, h: 0.56000 },
+        neckHairBox:  { x: 0.32589, y: 0.15444, w: 0.35417, h: 0.23778 },
+        khanRanBox:   { x: 0.41220, y: 0.19779, w: 0.20089, h: 0.34667 },
+        outerLongBox: { x: 0.30100, y: 0.19500, w: 0.40400, h: 0.56200 },
         vestBox:      { x: 0.37800, y: 0.19700, w: 0.24800, h: 0.40800 },
-        jacketBox:    { x: 0.31700, y: 0.19800, w: 0.37200, h: 0.31600 },
-        scarfBox:     { x: 0.36600, y: 0.19800, w: 0.27400, h: 0.29500 },
+        jacketBox:    { x: 0.30700, y: 0.19600, w: 0.39000, h: 0.32800 },
+        scarfBox:     { x: 0.41220, y: 0.19779, w: 0.20089, h: 0.34667 },
         pantsBox:     { x: 0.37202, y: 0.51222, w: 0.25298, h: 0.40000 },
-        headBox:      { x: 0.36600, y: 0.00200, w: 0.26800, h: 0.11200 },
-        bandBox:      { x: 0.41200, y: 0.06200, w: 0.17600, h: 0.07600 },
-        handBox:      { x: 0.64800, y: 0.38600, w: 0.18400, h: 0.26500 }
+        headBox:      { x: 0.32292, y: 0.06300, w: 0.36458, h: 0.15200 },
+        bandBox:      { x: 0.38690, y: 0.06556, w: 0.20089, h: 0.15000 },
+        handBox:      { x: 0.55952, y: 0.47667, w: 0.15327, h: 0.27889 },
+        hatBoxes: {
+          "non-sen":   { x: 0.32292, y: 0.06556, w: 0.36458, h: 0.15000 },
+          "non-ve":    { x: 0.32887, y: 0.06333, w: 0.35119, h: 0.15222 },
+          "non-may":   { x: 0.34673, y: 0.06222, w: 0.31399, h: 0.15333 },
+          "khan-dong": { x: 0.38690, y: 0.06556, w: 0.20089, h: 0.15000 }
+        },
+        accBoxes: {
+          "tui-coi":   { x: 0.55952, y: 0.47667, w: 0.15327, h: 0.27889 },
+          "quat-lua":  { x: 0.40625, y: 0.45222, w: 0.31845, h: 0.39333 }
+        }
       }
     }
   ],
@@ -265,8 +301,9 @@ window.BABA_CATALOG = {
       shortName: "Khăn Rằn Tơ",
       price: 240000,
       thumb: "images/outer_khan-ran.png",
-      layerUrl: "images/outer_khan-ran.png",
-      anchorKey: "scarfBox",
+      layerUrl: "images/layer_outer_khan-ran.png",
+      anchorKey: "khanRanBox",
+      exactFit: true,
       fabric: "Dệt thủ công An Giang • Tua rua thắt tay",
       desc: "Biểu tượng hồn quê Nam Bộ được nâng tầm trên chất liệu tơ lụa mềm mại, họa tiết caro đen trắng cổ điển choàng nhẹ ngang vai đầy duyên dáng."
     },
@@ -295,7 +332,7 @@ window.BABA_CATALOG = {
       shortName: "Nón Bài Thơ",
       price: 260000,
       thumb: "images/hat_non-sen.png",
-      layerUrl: "images/hat_non-sen.png",
+      layerForModel: (mId) => `images/layer_hat_${mId}_non-sen.png`,
       anchorKey: "headBox",
       fabric: "Lá cọ Huế 16 vành • Quai lụa tơ sen",
       desc: "Chế tác thủ công từ làng nón Tây Hồ - Huế với 16 vành cật trúc mảnh mai, kèm dây quai lụa mềm sắc hồng phớt dịu dàng."
@@ -309,7 +346,7 @@ window.BABA_CATALOG = {
       shortName: "Nón Vẽ Sen",
       price: 320000,
       thumb: "images/hat_non-ve.png",
-      layerUrl: "images/hat_non-ve.png",
+      layerForModel: (mId) => `images/layer_hat_${mId}_non-ve.png`,
       anchorKey: "headBox",
       fabric: "Lá non Làng Chuông • Vẽ màu nước thủ công",
       desc: "Tác phẩm họa sen hồng nở rộ trên nón lá truyền thống được nghệ nhân vẽ tay từng cánh hoa, phủ lớp sơn dầu bóng bảo vệ chống thấm."
@@ -323,7 +360,7 @@ window.BABA_CATALOG = {
       shortName: "Nón Đan Mây",
       price: 290000,
       thumb: "images/hat_non-may.png",
-      layerUrl: "images/hat_non-may.png",
+      layerForModel: (mId) => `images/layer_hat_${mId}_non-may.png`,
       anchorKey: "headBox",
       fabric: "Cỏ bàng & mây đan tay • Nơ lụa kem",
       desc: "Sự giao thoa tinh tế giữa chất liệu mây tre miền Tây và dáng nón vành rộng thanh lịch, điểm xuyết ruy-băng lụa kem dịu dàng."
@@ -337,7 +374,7 @@ window.BABA_CATALOG = {
       shortName: "Khăn Đóng",
       price: 350000,
       thumb: "images/hat_khan-dong.png",
-      layerUrl: "images/hat_khan-dong.png",
+      layerForModel: (mId) => `images/layer_hat_${mId}_khan-dong.png`,
       anchorKey: "bandBox",
       fabric: "Lụa vàng kem đính ngọc trai nước ngọt",
       desc: "Vòng khăn đóng cách tân mảnh mai quấn xoắn hai dải lụa kem và vàng đồng, đính ngọc trai nhỏ tỏa sáng dịu dàng trong các dịp lễ."
@@ -392,7 +429,7 @@ window.BABA_CATALOG = {
       shortName: "Túi Cói",
       price: 360000,
       thumb: "images/acc_tui-coi.png",
-      layerUrl: "images/acc_tui-coi.png",
+      layerForModel: (mId) => `images/layer_acc_${mId}_tui-coi.png`,
       anchorKey: "handBox",
       fabric: "Mây tre đan trụ tròn • Lót linen & Hoa sứ",
       desc: "Mẫu túi trụ đan tay tinh xảo với dây cói xoắn thừng chắc chắn, lót vải lanh kem thắt hoa sứ trắng thanh thuần — chuẩn hồn quê Sếp gửi."
@@ -406,7 +443,7 @@ window.BABA_CATALOG = {
       shortName: "Quạt Lụa Sen",
       price: 220000,
       thumb: "images/acc_quat-lua.png",
-      layerUrl: "images/acc_quat-lua.png",
+      layerForModel: (mId) => `images/layer_acc_${mId}_quat-lua.png`,
       anchorKey: "handBox",
       fabric: "Nan trúc già vót tay • Lụa tơ vẽ tay",
       desc: "Chiếc quạt xếp nan trúc chạm khắc thủ công kết hợp mặt lụa vẽ cành sen hồng, tua rua tơ rũ nhẹ đầy chất thơ."

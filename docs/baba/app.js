@@ -211,8 +211,8 @@
     if (prod.slot === 'shirt') return a.shirtBox;
     if (prod.slot === 'pants') return a.pantsBox;
     if (prod.slot === 'outer') return a[prod.anchorKey || 'jacketBox'];
-    if (prod.slot === 'hat') return a[prod.anchorKey || 'headBox'];
-    return a[prod.anchorKey || 'handBox'];
+    if (prod.slot === 'hat') return (a.hatBoxes && a.hatBoxes[prod.id]) || a[prod.anchorKey || 'headBox'];
+    return (a.accBoxes && a.accBoxes[prod.id]) || a[prod.anchorKey || 'handBox'];
   }
 
   function getTargetScreenRect(prod) {
@@ -229,10 +229,70 @@
     };
   }
 
-  function triggerClothReveal(el) {
-    el.classList.remove('layer-wipe');
+  const ANIM_CLASSES = ['anim-hat-settle', 'anim-cloth-drape', 'anim-acc-swing', 'anim-garment-fade'];
+  const SLOT_ANIM_CLASSES = {
+    hat: 'anim-hat-settle',
+    outer: 'anim-cloth-drape',
+    acc: 'anim-acc-swing',
+    shirt: 'anim-garment-fade',
+    pants: 'anim-garment-fade',
+  };
+
+  const preloadCache = new Map();
+  function warmImage(url) {
+    if (!url) return null;
+    if (preloadCache.has(url)) return preloadCache.get(url);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+    preloadCache.set(url, img);
+    return img;
+  }
+
+  function preloadModelAssets(modelIdx) {
+    const m = MODELS[modelIdx];
+    if (!m) return;
+    warmImage(m.baseUrl);
+    warmImage(m.hairUrl);
+    PRODUCTS.forEach(p => {
+      warmImage(p.thumb);
+      const layer = p.layerForModel ? p.layerForModel(m.id) : p.layerUrl;
+      if (layer) warmImage(layer);
+    });
+  }
+
+  function triggerSlotAnim(el, animClass) {
+    if (!animClass) return;
+    el.classList.remove(...ANIM_CLASSES);
     void el.offsetWidth;
-    el.classList.add('layer-wipe');
+    el.classList.add(animClass);
+  }
+
+  function setLayerImage(el, url, box, animClass) {
+    applyBoxStyle(el, box);
+    el.dataset.targetUrl = url;
+    const prevAttr = el.getAttribute('src');
+    if (prevAttr === url) {
+      el.style.opacity = '1';
+      triggerSlotAnim(el, animClass);
+      return;
+    }
+
+    const warm = warmImage(url);
+    el.src = url;
+    if (warm && warm.complete && warm.naturalWidth > 0) {
+      el.style.opacity = '1';
+      triggerSlotAnim(el, animClass);
+      return;
+    }
+
+    const timeout = new Promise(resolve => setTimeout(resolve, 160));
+    const decoded = el.decode ? el.decode().catch(() => {}) : Promise.resolve();
+    Promise.race([decoded, timeout]).then(() => {
+      if (el.dataset.targetUrl !== url) return;
+      el.style.opacity = '1';
+      triggerSlotAnim(el, animClass);
+    });
   }
 
   function renderModelLayers(animateSlot = null) {
@@ -240,49 +300,69 @@
     const a = m.anchors;
 
     layerBase.src = m.baseUrl;
-    layerHair.src = m.hairUrl;
-    applyBoxStyle(layerHair, a.shirtBox);
+    setLayerImage(layerHair, m.hairUrl, a.neckHairBox || a.shirtBox, null);
 
     const pantsProd = prodById[state.equipped.pants];
-    layerPants.src = pantsProd.layerForModel(m.id);
-    applyBoxStyle(layerPants, a.pantsBox);
-    if (animateSlot === 'pants') triggerClothReveal(layerPants);
+    setLayerImage(
+      layerPants,
+      pantsProd.layerForModel(m.id),
+      a.pantsBox,
+      animateSlot === 'pants' ? SLOT_ANIM_CLASSES.pants : null
+    );
 
     const shirtProd = prodById[state.equipped.shirt];
-    layerShirt.src = shirtProd.layerForModel(m.id);
-    applyBoxStyle(layerShirt, a.shirtBox);
-    if (animateSlot === 'shirt') triggerClothReveal(layerShirt);
+    setLayerImage(
+      layerShirt,
+      shirtProd.layerForModel(m.id),
+      a.shirtBox,
+      animateSlot === 'shirt' ? SLOT_ANIM_CLASSES.shirt : null
+    );
 
     // Optional Layer: Outerwear / Scarf
     const outerProd = state.equipped.outer ? prodById[state.equipped.outer] : null;
     if (outerProd) {
-      layerOuter.src = outerProd.layerUrl;
-      applyBoxStyle(layerOuter, a[outerProd.anchorKey || 'jacketBox']);
-      layerOuter.style.opacity = '1';
-      if (animateSlot === 'outer') triggerClothReveal(layerOuter);
+      layerOuter.classList.toggle('exact-fit', Boolean(outerProd.exactFit));
+      setLayerImage(
+        layerOuter,
+        outerProd.layerUrl,
+        getAnchorBoxForProduct(m, outerProd),
+        animateSlot === 'outer' ? SLOT_ANIM_CLASSES.outer : null
+      );
     } else {
+      layerOuter.dataset.targetUrl = '';
+      layerOuter.classList.remove('exact-fit', ...ANIM_CLASSES);
       layerOuter.style.opacity = '0';
     }
 
-    // Optional Layer: Hat / Headband
+    // Optional Layer: Hat / Headband (Per-Model Fitted)
     const hatProd = state.equipped.hat ? prodById[state.equipped.hat] : null;
     if (hatProd) {
-      layerHat.src = hatProd.layerUrl;
-      applyBoxStyle(layerHat, a[hatProd.anchorKey || 'headBox']);
-      layerHat.style.opacity = '1';
-      if (animateSlot === 'hat') triggerClothReveal(layerHat);
+      const hatUrl = hatProd.layerForModel ? hatProd.layerForModel(m.id) : hatProd.layerUrl;
+      setLayerImage(
+        layerHat,
+        hatUrl,
+        getAnchorBoxForProduct(m, hatProd),
+        animateSlot === 'hat' ? SLOT_ANIM_CLASSES.hat : null
+      );
     } else {
+      layerHat.dataset.targetUrl = '';
+      layerHat.classList.remove(...ANIM_CLASSES);
       layerHat.style.opacity = '0';
     }
 
-    // Optional Layer: Hand Accessory
+    // Optional Layer: Hand Accessory (Per-Model Fitted)
     const accProd = state.equipped.acc ? prodById[state.equipped.acc] : null;
     if (accProd) {
-      layerAcc.src = accProd.layerUrl;
-      applyBoxStyle(layerAcc, a[accProd.anchorKey || 'handBox']);
-      layerAcc.style.opacity = '1';
-      if (animateSlot === 'acc') triggerClothReveal(layerAcc);
+      const accUrl = accProd.layerForModel ? accProd.layerForModel(m.id) : accProd.layerUrl;
+      setLayerImage(
+        layerAcc,
+        accUrl,
+        getAnchorBoxForProduct(m, accProd),
+        animateSlot === 'acc' ? SLOT_ANIM_CLASSES.acc : null
+      );
     } else {
+      layerAcc.dataset.targetUrl = '';
+      layerAcc.classList.remove(...ANIM_CLASSES);
       layerAcc.style.opacity = '0';
     }
 
@@ -364,6 +444,8 @@
       gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('outer')">✕ Bỏ áo khoác / khăn</button>`);
     } else if (state.activeWardrobe === 'hat' && state.equipped.hat) {
       gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('hat')">✕ Bỏ nón / khăn đóng</button>`);
+    } else if (state.activeWardrobe === 'bottom_acc' && state.equipped.acc) {
+      gridEl.insertAdjacentHTML('beforeend', `<button class="w-clear-btn" onclick="clearSlot('acc')">✕ Bỏ túi / quạt tay</button>`);
     }
 
     items.forEach(p => {
@@ -397,6 +479,7 @@
   window.selectModel = function (idx) {
     if (idx === state.modelIdx) return;
     state.modelIdx = idx;
+    preloadModelAssets(idx);
     renderModelSwitcher();
     renderModelLayers();
     const m = getActiveModel();
@@ -479,7 +562,7 @@
 
     setTimeout(() => {
       finalize();
-      dragGhost.style.transition = 'opacity 0.22s ease';
+      dragGhost.style.transition = 'opacity 0.16s ease';
       dragGhost.style.opacity = '0';
     }, 390);
   };
@@ -552,7 +635,13 @@
       dropGuide.classList.remove('active', 'snapping');
 
       if (!s.moved) {
-        window.equipProduct(s.prod.id, s.startRect);
+        if (s.prod.slot !== 'shirt' && s.prod.slot !== 'pants' && state.equipped[s.prod.slot] === s.prod.id) {
+          window.clearSlot(s.prod.slot);
+          showToast(`✨ Đã tháo ${s.prod.shortName}`);
+          playChime(440);
+        } else {
+          window.equipProduct(s.prod.id, s.startRect);
+        }
         return;
       }
 
@@ -568,7 +657,7 @@
         dragGhost.style.transform = 'rotate(0deg)';
         setTimeout(() => {
           window.equipProduct(s.prod.id, null, true);
-          dragGhost.style.transition = 'opacity 0.2s ease';
+          dragGhost.style.transition = 'opacity 0.16s ease';
           dragGhost.style.opacity = '0';
         }, 200);
       } else {
@@ -1099,6 +1188,7 @@
 
   // Initialize Complete Website
   buildShowroomWalls();
+  preloadModelAssets(state.modelIdx);
   renderModelLayers();
   renderEquippedPanel();
   renderWardrobePanel();
