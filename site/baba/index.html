@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+  <title>HƯƠNG SEN — Atelier Áo Bà Ba Việt Nam | Trải Nghiệm Thử Đồ 3D Drag-to-Wear</title>
+  <meta name="description" content="Trải nghiệm thương mại điện tử tương tác thế hệ mới: Kéo thả áo Bà Ba gấm lụa Nam Bộ mặc thử trực tiếp lên người mẫu 3D tức thì." />
+  <link rel="icon" href="/koi/favicon.ico" />
+
+  <!-- Vietnamese-native Luxury Editorial Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-tint: #f6edf1;
+      --accent: #c81d77;
+      --accent-soft: rgba(200, 29, 119, 0.14);
+      --ink: #1f1a17;
+      --ink-muted: #6c6159;
+      --surface: rgba(255, 252, 248, 0.84);
+      --surface-border: rgba(31, 26, 23, 0.1);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-ui: 'Be Vietnam Pro', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-tint);
+      color: var(--ink);
+      font-family: var(--font-ui);
+      touch-action: none;
+      transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* =========================================================================
+       1. MULTI-LAYER 3D PARALLAX STAGE
+       ========================================================================= */
+    #stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      perspective: 1400px;
+    }
+
+    /* Layer 1A: Minimal Atelier Giấy Dó Background + Subtle Silk Radial Glow */
+    .atelier-bg {
+      position: absolute;
+      inset: -4%;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0) 58%),
+        radial-gradient(circle at 82% 20%, var(--accent-soft) 0%, transparent 50%),
+        var(--bg-tint);
+      transition: background 0.8s ease, opacity 0.7s ease;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    /* Subtle traditional lotus/trống đồng concentric ring watermark */
+    .heritage-ornament {
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: min(74vh, 74vw);
+      height: min(74vh, 74vw);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 1px solid rgba(31, 26, 23, 0.06);
+      box-shadow: inset 0 0 0 26px rgba(31, 26, 23, 0.015), inset 0 0 0 27px rgba(31, 26, 23, 0.045);
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Layer 1B: Vietnamese Heritage Wooden Courtyard Backdrop (Toggleable) */
+    .courtyard-bg {
+      position: absolute;
+      inset: -5%;
+      background-image: url('images/bg_courtyard.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      z-index: 1;
+      transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+      pointer-events: none;
+    }
+    .courtyard-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 246, 232, 0.28) 0%, rgba(24, 16, 10, 0.56) 100%);
+    }
+
+    body.mode-courtyard .courtyard-bg {
+      opacity: 1;
+    }
+    body.mode-courtyard .heritage-ornament {
+      opacity: 0.15;
+    }
+    body.mode-courtyard {
+      --ink: #fdf8f2;
+      --ink-muted: #e5d8c8;
+      --surface: rgba(28, 20, 14, 0.74);
+      --surface-border: rgba(255, 240, 220, 0.18);
+    }
+    body.mode-courtyard .season-badge {
+      color: #f5d38e;
+    }
+    body.mode-courtyard .season-dot {
+      background: #f5d38e;
+      box-shadow: 0 0 10px #f5d38e;
+    }
+
+    /* Ambient floating petals & sunbeams canvas */
+    #ambient-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Layer 2: Giant Editorial Typography BEHIND the Model (Vesper/Koi Z-index Depth) */
+    .bg-typography {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+      will-change: transform;
+    }
+
+    .bg-word {
+      font-family: var(--font-display);
+      font-size: clamp(5.5rem, 19vw, 19rem);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 0.86;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.12;
+      white-space: nowrap;
+      transition: color 0.7s ease, opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    body.mode-courtyard .bg-word {
+      color: #fff6e6;
+      opacity: 0.16;
+    }
+
+    .bg-subword {
+      font-family: var(--font-mono);
+      font-size: clamp(0.68rem, 1vw, 0.88rem);
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      margin-top: 0.8rem;
+      color: var(--ink);
+      opacity: 0.24;
+    }
+
+    /* =========================================================================
+       2. TOP EDITORIAL NAVIGATION BAR (ULTRA-CLEAN)
+       ========================================================================= */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      padding: 0 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .top-left, .top-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      pointer-events: auto;
+    }
+
+    .brand-mark {
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: var(--ink);
+      transition: color 0.5s ease;
+    }
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      line-height: 1;
+    }
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      opacity: 0.62;
+      margin-top: 3px;
+    }
+
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.42rem 0.85rem;
+      border-radius: 9999px;
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--surface-border);
+      color: var(--ink);
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+    .nav-pill:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+    }
+    .nav-pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .cart-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.42rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 9999px;
+      background: var(--ink);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+    }
+    body.mode-courtyard .cart-btn {
+      background: #fdf8f2;
+      color: #1f1a17;
+    }
+    .cart-btn.bump {
+      transform: scale(1.16);
+    }
+    .cart-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 5px;
+      border-radius: 9999px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    /* =========================================================================
+       3. LEFT EDITORIAL PRODUCT INFO PANEL (VESTRA STYLE)
+       ========================================================================= */
+    .editorial-info {
+      position: fixed;
+      left: 2.5rem;
+      top: 50%;
+      transform: translateY(-54%);
+      width: 290px;
+      z-index: 25;
+      pointer-events: auto;
+    }
+
+    .season-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    .season-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .product-title-wrap {
+      overflow: hidden;
+      margin-bottom: 0.45rem;
+    }
+    .product-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.1rem, 3.3vw, 3rem);
+      font-weight: 600;
+      line-height: 1.04;
+      color: var(--ink);
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+    }
+    .product-title.switching {
+      transform: translateY(22px);
+      opacity: 0;
+    }
+
+    .product-price {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.85rem;
+      transition: opacity 0.3s ease;
+    }
+
+    .product-desc {
+      font-size: 0.84rem;
+      line-height: 1.62;
+      color: var(--ink-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .fabric-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1.3rem;
+    }
+    .fabric-tag {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.62rem;
+      border-radius: 9999px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: var(--ink);
+      backdrop-filter: blur(10px);
+    }
+
+    .color-swatches {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 1.35rem;
+    }
+    .swatch-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    }
+    .swatch-btn:hover {
+      transform: scale(1.16);
+    }
+    .swatch-btn.active {
+      transform: scale(1.22);
+      box-shadow: 0 0 0 2px var(--ink), 0 4px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .hint-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      padding: 0.45rem 0.8rem;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px dashed var(--surface-border);
+      backdrop-filter: blur(12px);
+    }
+
+    /* =========================================================================
+       4. HERO 3D VIETNAMESE MODEL STAGE (CENTER)
+       ========================================================================= */
+    .model-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 72px;
+      padding-top: 56px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .model-rig {
+      position: relative;
+      height: min(82vh, 760px);
+      aspect-ratio: 672 / 900;
+      transform-style: preserve-3d;
+      will-change: transform;
+      pointer-events: auto;
+      cursor: grab;
+      animation: gentleBreath 5.2s ease-in-out infinite;
+    }
+    .model-rig:active {
+      cursor: grabbing;
+    }
+
+    @keyframes gentleBreath {
+      0%, 100% { transform: translate3d(var(--px, 0px), var(--py, 0px), 0) rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)) scale(1); }
+      50% { transform: translate3d(var(--px, 0px), calc(var(--py, 0px) - 3px), 0) rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)) scale(1.005); }
+    }
+
+    /* Realistic Studio Ground Shadow under wooden clogs */
+    .model-shadow {
+      position: absolute;
+      bottom: 2.2%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44%;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(24, 15, 10, 0.34) 0%, rgba(24, 15, 10, 0.1) 52%, transparent 75%);
+      filter: blur(5px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Pose-locked stacked model layers for 0-seam crossfade & wipe */
+    .model-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 28px rgba(25, 16, 12, 0.18));
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    #model-current {
+      z-index: 2;
+      opacity: 1;
+    }
+    #model-next {
+      z-index: 3;
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+    }
+    #model-next.wiping {
+      opacity: 1;
+      animation: silkWipeIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes silkWipeIn {
+      0% {
+        clip-path: inset(15% 0 85% 0);
+        filter: drop-shadow(0 18px 28px rgba(25, 16, 12, 0.18)) brightness(1.16);
+      }
+      100% {
+        clip-path: inset(0 0 0 0);
+        filter: drop-shadow(0 18px 28px rgba(25, 16, 12, 0.18)) brightness(1);
+      }
+    }
+
+    /* Torso Magnetic Drop Zone Ring (Glows softly while dragging a garment!) */
+    .torso-dropzone {
+      position: absolute;
+      /* Exact normalized coordinates from shirtBoxNorm! */
+      left: 31.36%;
+      top: 20.17%;
+      width: 37.28%;
+      height: 32.50%;
+      border-radius: 26% 26% 18% 18%;
+      border: 2px dashed rgba(255, 255, 255, 0);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0) 0%, transparent 70%);
+      z-index: 5;
+      pointer-events: none;
+      transition: all 0.28s ease;
+    }
+    .torso-dropzone.dragging {
+      border-color: var(--accent);
+      background: radial-gradient(circle, var(--accent-soft) 0%, transparent 72%);
+      box-shadow: 0 0 36px var(--accent-soft);
+      animation: pulseGuide 1.3s ease-in-out infinite;
+    }
+    .torso-dropzone.snapping {
+      border-style: solid;
+      border-color: #fff;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, transparent 75%);
+      transform: scale(1.04);
+    }
+
+    @keyframes pulseGuide {
+      0%, 100% { opacity: 0.72; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+
+    .drop-hint-badge {
+      position: absolute;
+      top: -32px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+    .torso-dropzone.dragging .drop-hint-badge {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Silk Shimmer Sweep Effect on Outfit Snap */
+    .shimmer-sweep {
+      position: absolute;
+      left: 26%;
+      top: 18%;
+      width: 48%;
+      height: 38%;
+      background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.65) 50%, transparent 80%);
+      opacity: 0;
+      z-index: 6;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+      border-radius: 30%;
+    }
+    .shimmer-sweep.flash {
+      animation: shimmerFlash 0.65s ease-out forwards;
+    }
+    @keyframes shimmerFlash {
+      0% { opacity: 0; transform: translateX(-35%) skewX(-18deg); }
+      35% { opacity: 0.95; }
+      100% { opacity: 0; transform: translateX(45%) skewX(-18deg); }
+    }
+
+    /* =========================================================================
+       5. RIGHT FLOATING ÁO BÀ BA RACK (DRAG-TO-WEAR RAIL — VESTRA + VERREL)
+       ========================================================================= */
+    .rack-panel {
+      position: fixed;
+      right: 2.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 25;
+      width: 245px;
+    }
+
+    .rack-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+
+    .rack-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.7rem;
+      width: 100%;
+    }
+
+    .garment-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.65rem 0.45rem 0.55rem;
+      border-radius: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1.5px solid var(--surface-border);
+      cursor: grab;
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s, box-shadow 0.25s;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      touch-action: none;
+    }
+    .garment-card:hover {
+      transform: translateY(-5px) scale(1.03);
+      border-color: var(--accent);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.11);
+    }
+    .garment-card:hover .garment-thumb {
+      animation: hangerSwing 1.4s ease-in-out infinite;
+    }
+    .garment-card.active {
+      border-color: var(--accent);
+      background: linear-gradient(160deg, var(--surface) 0%, var(--accent-soft) 100%);
+      box-shadow: 0 10px 26px var(--accent-soft);
+    }
+    .garment-card.active::after {
+      content: 'Đang mặc';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 0.56rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 9999px;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    @keyframes hangerSwing {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-3.5deg); }
+      75% { transform: rotate(3.5deg); }
+    }
+
+    .garment-thumb {
+      width: 78px;
+      height: 92px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.14));
+      transform-origin: top center;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .garment-label {
+      margin-top: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .garment-price-mini {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    /* =========================================================================
+       6. FLOATING DRAG / GLIDE GHOST SHIRT LAYER (PIXEL-LOCKED TO TORSO!)
+       ========================================================================= */
+    #drag-ghost {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 60;
+      opacity: 0;
+      will-change: transform, width, height, opacity;
+      filter: drop-shadow(0 22px 28px rgba(24, 14, 10, 0.28));
+      transform-origin: center center;
+    }
+
+    /* Flying mini garment to cart (Talus Virtual Store micro-interaction!) */
+    .fly-shirt {
+      position: fixed;
+      pointer-events: none;
+      z-index: 95;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.24));
+    }
+
+    /* =========================================================================
+       7. HOLD-TO-ZOOM SILK BROCADE LOUPE (VESPER x RUNE)
+       ========================================================================= */
+    #loupe {
+      position: fixed;
+      width: 176px;
+      height: 176px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(255, 255, 255, 0.92);
+      box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.32),
+        inset 0 0 22px rgba(255, 255, 255, 0.22);
+      pointer-events: none;
+      z-index: 55;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.6);
+      transition: opacity 0.2s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-repeat: no-repeat;
+      background-color: #f4efe8;
+      overflow: hidden;
+    }
+    #loupe.open {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .loupe-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 9px;
+      border-radius: 9999px;
+      background: rgba(20, 14, 10, 0.72);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    /* =========================================================================
+       8. BOTTOM FLOATING QUICK-BUY DOCK (VESTRA EXACT STYLE)
+       ========================================================================= */
+    .quick-buy-dock {
+      position: fixed;
+      bottom: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.45rem 0.55rem 0.45rem 0.7rem;
+      border-radius: 9999px;
+      background: var(--surface);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--surface-border);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.14);
+      z-index: 35;
+      max-width: calc(100vw - 1.5rem);
+    }
+
+    .dock-thumb {
+      width: 34px;
+      height: 38px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .dock-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 120px;
+    }
+    .dock-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .dock-price {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+    }
+
+    .size-group {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.18rem;
+      border-radius: 9999px;
+      background: rgba(31, 26, 23, 0.06);
+    }
+    body.mode-courtyard .size-group {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .size-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--ink-muted);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .size-btn.active {
+      background: var(--ink);
+      color: #fff;
+    }
+    body.mode-courtyard .size-btn.active {
+      background: #fdf8f2;
+      color: #1f1a17;
+    }
+
+    .add-bag-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.62rem 1.2rem;
+      border-radius: 9999px;
+      border: none;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+    body.mode-courtyard .add-bag-btn {
+      background: var(--accent);
+      color: #fff;
+    }
+    .add-bag-btn:hover {
+      transform: scale(1.03);
+      background: var(--accent);
+    }
+    .add-bag-btn.added {
+      background: #15803d !important;
+      color: #fff !important;
+    }
+
+    /* Prev/Next quick arrows beside model */
+    .stage-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      color: var(--ink);
+      font-size: 1rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 30;
+    }
+
+    /* =========================================================================
+       9. CART SLIDE-OVER DRAWER
+       ========================================================================= */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 10, 8, 0.5);
+      backdrop-filter: blur(6px);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(400px, 92vw);
+      height: 100%;
+      background: #fcf9f4;
+      color: #1f1a17;
+      z-index: 90;
+      transform: translateX(100%);
+      transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -16px 0 50px rgba(0, 0, 0, 0.22);
+    }
+    .cart-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      padding: 1.35rem 1.5rem;
+      border-bottom: 1px solid rgba(31, 26, 23, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-head h2 {
+      font-family: var(--font-display);
+      font-size: 1.55rem;
+      font-weight: 700;
+    }
+    .drawer-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(31, 26, 23, 0.12);
+      background: transparent;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #1f1a17;
+    }
+
+    .drawer-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.75rem;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid rgba(31, 26, 23, 0.08);
+    }
+    .cart-item img {
+      width: 52px;
+      height: 62px;
+      object-fit: contain;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-name {
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .cart-item-sub {
+      font-size: 0.72rem;
+      color: #6c6159;
+      margin-top: 2px;
+    }
+    .cart-item-price {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-top: 4px;
+      color: var(--accent);
+    }
+    .qty-ctrl {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .qty-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(31, 26, 23, 0.15);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .drawer-foot {
+      padding: 1.25rem 1.5rem 1.6rem;
+      border-top: 1px solid rgba(31, 26, 23, 0.08);
+      background: #fff;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1rem;
+    }
+    .total-val {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .checkout-btn {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 9999px;
+      border: none;
+      background: #1f1a17;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    .checkout-btn:hover {
+      background: var(--accent);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top: 74px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-14px);
+      padding: 0.5rem 1.1rem;
+      border-radius: 9999px;
+      background: rgba(24, 18, 14, 0.88);
+      color: #fff;
+      font-size: 0.76rem;
+      font-weight: 500;
+      z-index: 98;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      backdrop-filter: blur(12px);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =========================================================================
+       10. MOBILE-FIRST ZERO-OCCLUSION RESPONSIVE LAYOUT
+       ========================================================================= */
+    @media (max-width: 1024px) {
+      .editorial-info {
+        left: 1.2rem;
+        width: 225px;
+      }
+      .rack-panel {
+        right: 1rem;
+        width: 205px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-bar {
+        height: 54px;
+        padding: 0 0.75rem;
+      }
+      .brand-title {
+        font-size: 1.15rem;
+        letter-spacing: 0.16em;
+      }
+      .brand-sub {
+        display: none;
+      }
+      .nav-pill span.hide-sm {
+        display: none;
+      }
+      .nav-pill {
+        padding: 0.38rem 0.6rem;
+        font-size: 0.74rem;
+      }
+      .cart-btn span.hide-sm {
+        display: none;
+      }
+      .cart-btn {
+        padding: 0.38rem 0.65rem;
+      }
+
+      /* Hide left desktop text column on phones so model has 100% open breathing room */
+      .editorial-info {
+        display: none;
+      }
+
+      .model-stage {
+        align-items: center;
+        padding-top: 46px;
+        padding-bottom: 162px;
+      }
+      .model-rig {
+        height: min(63vh, 520px);
+      }
+
+      /* Mobile Horizontal Drag-to-Wear Strip cleanly positioned above Quick-Buy Dock */
+      .rack-panel {
+        top: auto;
+        right: 0;
+        left: 0;
+        bottom: 68px;
+        transform: none;
+        width: 100%;
+        padding: 0 0.7rem;
+        gap: 0.25rem;
+      }
+      .rack-header {
+        justify-content: center;
+        font-size: 0.6rem;
+      }
+      .rack-header span:last-child {
+        display: none;
+      }
+      .rack-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0.5rem;
+        padding: 0.2rem 0.2rem 0.3rem;
+        scrollbar-width: none;
+      }
+      .rack-grid::-webkit-scrollbar {
+        display: none;
+      }
+      .garment-card {
+        flex: 0 0 66px;
+        padding: 0.35rem 0.25rem;
+        border-radius: 14px;
+      }
+      .garment-card.active::after {
+        display: none;
+      }
+      .garment-thumb {
+        width: 48px;
+        height: 54px;
+      }
+      .garment-label {
+        font-size: 0.58rem;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 60px;
+      }
+      .garment-price-mini {
+        display: none;
+      }
+
+      .quick-buy-dock {
+        bottom: 0.65rem;
+        gap: 0.45rem;
+        padding: 0.35rem 0.42rem 0.35rem 0.55rem;
+        width: calc(100vw - 1.2rem);
+        justify-content: space-between;
+      }
+      .dock-thumb {
+        display: none;
+      }
+      .dock-meta {
+        min-width: 0;
+        flex: 1;
+      }
+      .dock-name {
+        font-size: 0.72rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dock-price {
+        font-size: 0.66rem;
+      }
+      .size-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.62rem;
+      }
+      .add-bag-btn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.72rem;
+      }
+      .stage-arrow {
+        display: flex;
+        width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+        top: 40%;
+      }
+      #arrow-prev { left: 0.6rem; }
+      #arrow-next { right: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Editorial Header -->
+  <header class="top-bar">
+    <div class="top-left">
+      <a href="/" class="nav-pill" title="Về trang chủ">
+        <span>←</span>
+        <span class="hide-sm">Notes</span>
+      </a>
+      <button class="nav-pill" id="btn-scene" onclick="toggleBackdrop()" title="Chuyển bối cảnh Atelier / Hiên Nhà Gỗ Miền Tây">
+        <span id="scene-icon">🏡</span>
+        <span class="hide-sm" id="scene-label">Hiên Nhà Gỗ</span>
+      </button>
+      <button class="nav-pill" id="btn-loupe-toggle" onclick="toggleLoupeMode()" title="Bật/tắt kính lúp soi hoa văn gấm lụa">
+        <span>🔍</span>
+        <span class="hide-sm">Soi vải</span>
+      </button>
+    </div>
+
+    <a href="#" class="brand-mark" onclick="event.preventDefault()">
+      <span class="brand-title">HƯƠNG SEN</span>
+      <span class="brand-sub">Atelier Áo Bà Ba Nam Bộ</span>
+    </a>
+
+    <div class="top-right">
+      <button class="cart-btn" id="btn-cart" onclick="openCart(true)">
+        <span>🛍️</span>
+        <span class="hide-sm">Giỏ hàng</span>
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main 3D Parallax Stage -->
+  <main id="stage">
+    <!-- Layer 1: Dual Vietnamese Heritage Backdrops -->
+    <div class="atelier-bg" id="atelier-bg"></div>
+    <div class="heritage-ornament"></div>
+    <div class="courtyard-bg" id="courtyard-bg"></div>
+
+    <!-- Ambient Petals & Golden Sunbeams -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Layer 2: Giant Editorial Vietnamese Typography BEHIND Model -->
+    <div class="bg-typography" id="bg-typography">
+      <div class="bg-word" id="bg-word">SEN HỒNG</div>
+      <div class="bg-subword" id="bg-subword">BỘ SƯU TẬP GẤM LỤA NAM BỘ • 2026</div>
+    </div>
+
+    <!-- Left Editorial Panel (Desktop) -->
+    <aside class="editorial-info">
+      <div class="season-badge">
+        <span class="season-dot"></span>
+        <span id="info-sku">BST THU ĐÔNG • BB-01</span>
+      </div>
+      <div class="product-title-wrap">
+        <h1 class="product-title" id="info-title">Bà Ba Gấm Sen Hồng</h1>
+      </div>
+      <div class="product-price" id="info-price">680.000₫</div>
+      <p class="product-desc" id="info-desc">
+        Tơ gấm dệt hoa văn chìm ánh ngọc, cổ tròn viền mảnh truyền thống, hàng nút ngọc trai thủ công tôn dáng eo thanh mảnh kết hợp quần lụa kem ống rộng.
+      </p>
+      <div class="fabric-tags" id="info-tags">
+        <span class="fabric-tag">100% Gấm Lụa Tơ</span>
+        <span class="fabric-tag">Nút Ngọc Trai</span>
+        <span class="fabric-tag">Xẻ Tà Nam Bộ</span>
+      </div>
+      <div class="color-swatches" id="color-swatches"></div>
+      <div class="hint-box">
+        <span>✨</span>
+        <span>Kéo áo bên phải thả lên người mẫu để mặc thử • Nhấn giữ áo để soi vải</span>
+      </div>
+    </aside>
+
+    <!-- Center 3D Vietnamese Model -->
+    <section class="model-stage">
+      <div class="model-rig" id="model-rig">
+        <div class="model-shadow"></div>
+        <img id="model-current" class="model-img" src="images/model_sen-hong.png" alt="Người mẫu Việt Nam mặc Áo Bà Ba" draggable="false" />
+        <img id="model-next" class="model-img" src="" alt="" draggable="false" />
+        <div class="torso-dropzone" id="torso-dropzone">
+          <div class="drop-hint-badge">✨ Thả vào đây để mặc thử</div>
+        </div>
+        <div class="shimmer-sweep" id="shimmer-sweep"></div>
+      </div>
+    </section>
+
+    <!-- Mobile Quick Arrows -->
+    <button class="stage-arrow" id="arrow-prev" onclick="stepOutfit(-1)" aria-label="Mẫu trước">‹</button>
+    <button class="stage-arrow" id="arrow-next" onclick="stepOutfit(1)" aria-label="Mẫu tiếp">›</button>
+
+    <!-- Right / Bottom Floating Garment Rack (Drag-to-Wear) -->
+    <aside class="rack-panel">
+      <div class="rack-header">
+        <span>✋ Kéo thả mặc thử</span>
+        <span id="rack-counter">01 / 06</span>
+      </div>
+      <div class="rack-grid" id="rack-grid"></div>
+    </aside>
+  </main>
+
+  <!-- Bottom Floating Quick-Buy Dock (Vestra exact style) -->
+  <footer class="quick-buy-dock">
+    <img id="dock-thumb" class="dock-thumb" src="images/shirt_sen-hong.png" alt="" />
+    <div class="dock-meta">
+      <span class="dock-name" id="dock-name">Bà Ba Gấm Sen Hồng</span>
+      <span class="dock-price" id="dock-price">680.000₫</span>
+    </div>
+    <div class="size-group" id="size-group">
+      <button class="size-btn" data-size="S">S</button>
+      <button class="size-btn active" data-size="M">M</button>
+      <button class="size-btn" data-size="L">L</button>
+      <button class="size-btn" data-size="XL">XL</button>
+    </div>
+    <button class="add-bag-btn" id="btn-add-bag" onclick="addToCart()">
+      <span>Thêm vào giỏ</span>
+    </button>
+  </footer>
+
+  <!-- Floating Drag-to-Wear Ghost Garment -->
+  <img id="drag-ghost" src="" alt="" />
+
+  <!-- Circular 2.4x Silk Brocade Magnifier Loupe -->
+  <div id="loupe">
+    <span class="loupe-badge">SOI VẢI GẤM • 2.4x</span>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Shopping Cart Drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop" onclick="openCart(false)"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="drawer-head">
+      <h2>Giỏ Hàng Hương Sen</h2>
+      <button class="drawer-close" onclick="openCart(false)">✕</button>
+    </div>
+    <div class="drawer-items" id="cart-items"></div>
+    <div class="drawer-foot">
+      <div class="total-row">
+        <span>Tạm tính</span>
+        <span class="total-val" id="cart-total">0₫</span>
+      </div>
+      <button class="checkout-btn" onclick="checkoutDemo()">Đặt May &amp; Giao Hàng Toàn Quốc →</button>
+    </div>
+  </aside>
+
+  <script>
+    /* ==========================================================================
+       1. VIETNAMESE ÁO BÀ BA COLLECTION CATALOG & PIXEL-LOCKED CALIBRATION
+       ========================================================================== */
+    const SHIRT_BOX_NORM = {
+      x: 0.31361607142857145,
+      y: 0.20166666666666666,
+      w: 0.37276785714285715,
+      h: 0.325
+    };
+
+    const OUTFITS = [
+      {
+        id: 'sen-hong',
+        sku: 'BB-01',
+        name: 'Bà Ba Gấm Sen Hồng',
+        shortName: 'Sen Hồng',
+        bgWord: 'SEN HỒNG',
+        price: 680000,
+        swatch: '#c81d77',
+        accent: '#c81d77',
+        accentSoft: 'rgba(200, 29, 119, 0.14)',
+        bgTint: '#f6edf1',
+        desc: 'Tơ gấm dệt hoa văn chìm sắc hồng sen rạng rỡ, cổ tròn viền mảnh truyền thống cùng hàng nút ngọc trai tinh xảo, tôn trọn nét duyên con gái Nam Bộ.',
+        tags: ['Gấm Hoa Chìm', 'Nút Ngọc Trai', 'Tay Lỡ Raglan'],
+        modelUrl: 'images/model_sen-hong.png',
+        shirtUrl: 'images/shirt_sen-hong.png'
+      },
+      {
+        id: 'ngoc-bich',
+        sku: 'BB-02',
+        name: 'Bà Ba Lụa Lục Ngọc Bích',
+        shortName: 'Ngọc Bích',
+        bgWord: 'NGỌC BÍCH',
+        price: 720000,
+        swatch: '#16856c',
+        accent: '#158068',
+        accentSoft: 'rgba(21, 128, 104, 0.14)',
+        bgTint: '#ecf5f2',
+        desc: 'Sắc xanh ngọc bích dịu mát tựa làn nước miệt vườn, chất gấm lụa rũ mềm mịn bắt sáng nhẹ nhàng, phối quần lụa trắng kem cực tôn làn da Á Đông.',
+        tags: ['Lụa Tơ Tằm', 'Mát Nhẹ Thoáng Khí', 'Phom Ôm Eo'],
+        modelUrl: 'images/model_ngoc-bich.png',
+        shirtUrl: 'images/shirt_ngoc-bich.png'
+      },
+      {
+        id: 'hoang-yen',
+        sku: 'BB-03',
+        name: 'Bà Ba Tơ Vàng Hoàng Yến',
+        shortName: 'Hoàng Yến',
+        bgWord: 'HOÀNG YẾN',
+        price: 750000,
+        swatch: '#d49b1a',
+        accent: '#b67d10',
+        accentSoft: 'rgba(182, 125, 16, 0.15)',
+        bgTint: '#f7f2e6',
+        desc: 'Ánh vàng hoàng yến Cố Đô sang trọng, hoa văn gấm nổi dệt tinh tế dưới ánh nắng chiều — lựa chọn hoàn hảo cho dịp lễ Tết, du xuân và chụp ảnh di sản.',
+        tags: ['Gấm Ánh Kim', 'Sắc Vàng Cố Đô', 'May Đo Thủ Công'],
+        modelUrl: 'images/model_hoang-yen.png',
+        shirtUrl: 'images/shirt_hoang-yen.png'
+      },
+      {
+        id: 'thien-thanh',
+        sku: 'BB-04',
+        name: 'Bà Ba Gấm Lam Thiên Thanh',
+        shortName: 'Thiên Thanh',
+        bgWord: 'THIÊN THANH',
+        price: 690000,
+        swatch: '#3a7bc0',
+        accent: '#2c68a4',
+        accentSoft: 'rgba(44, 104, 164, 0.14)',
+        bgTint: '#edf3f8',
+        desc: 'Gam xanh lam thiên thanh nhẹ nhàng thanh thoát như mây trời phương Nam, mang đến cảm giác trẻ trung, hiện đại nhưng vẫn vẹn nguyên hồn Việt.',
+        tags: ['Lụa Lam Ngọc', 'Chống Nhăn Tốt', 'Xẻ Tà Duyên Dáng'],
+        modelUrl: 'images/model_thien-thanh.png',
+        shirtUrl: 'images/shirt_thien-thanh.png'
+      },
+      {
+        id: 'do-son',
+        sku: 'BB-05',
+        name: 'Bà Ba Gấm Đỏ Son Trầu Cau',
+        shortName: 'Đỏ Son',
+        bgWord: 'ĐỎ SON',
+        price: 790000,
+        swatch: '#b81d28',
+        accent: '#b81d28',
+        accentSoft: 'rgba(184, 29, 40, 0.14)',
+        bgTint: '#f7eded',
+        desc: 'Sắc đỏ son lễ hội nồng nàn quyền quý, chất gấm dệt mật độ cao đứng phom mềm mại — nổi bật rạng ngời trong mọi khung hình sum vầy.',
+        tags: ['Gấm Thượng Hạng', 'Sắc Đỏ Lễ Hội', 'Hàng Nút Thủ Công'],
+        modelUrl: 'images/model_do-son.png',
+        shirtUrl: 'images/shirt_do-son.png'
+      },
+      {
+        id: 'trang-ngoc',
+        sku: 'BB-06',
+        name: 'Bà Ba Lụa Trắng Ngọc Ngà',
+        shortName: 'Ngọc Ngà',
+        bgWord: 'NGỌC NGÀ',
+        price: 740000,
+        swatch: '#d7cfc4',
+        accent: '#8a7966',
+        accentSoft: 'rgba(138, 121, 102, 0.15)',
+        bgTint: '#f4f0ea',
+        desc: 'Vẻ đẹp tinh khôi vượt thời gian với chất gấm lụa trắng ngà óng ánh như xà cừ, dệt hoa chìm tinh tế, tôn lên thần thái thanh tao thuần khiết.',
+        tags: ['Tơ Ngọc Trai', 'Dệt Hoa Chìm', 'Tối Giản Sang Trọng'],
+        modelUrl: 'images/model_trang-ngoc.png',
+        shirtUrl: 'images/shirt_trang-ngoc.png'
+      }
+    ];
+
+    // Preload all 12 images immediately so Drag-to-Wear has ZERO network latency
+    OUTFITS.forEach(o => {
+      const m = new Image(); m.src = o.modelUrl;
+      const s = new Image(); s.src = o.shirtUrl;
+    });
+
+    let currentIdx = 0;
+    let selectedSize = 'M';
+    let isTransitioning = false;
+    let isLoupeSticky = false;
+    let isCourtyard = false;
+    const cart = [];
+
+    const fmtVnd = (n) => n.toLocaleString('vi-VN') + '₫';
+
+    /* ==========================================================================
+       2. SUBTLE PROCEDURAL SILK CHIME AUDIO (WEB AUDIO API)
+       ========================================================================== */
+    let audioCtx = null;
+    function playSilkChime(freq = 587.33) {
+      try {
+        if (!audioCtx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          audioCtx = new AC();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.25, now + 0.22);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.38);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } catch (e) {}
+    }
+
+    /* ==========================================================================
+       3. RENDER RACK, SWATCHES & UI STATE
+       ========================================================================= */
+    const rackGrid = document.getElementById('rack-grid');
+    const swatchesEl = document.getElementById('color-swatches');
+    const modelCurrent = document.getElementById('model-current');
+    const modelNext = document.getElementById('model-next');
+    const modelRig = document.getElementById('model-rig');
+    const torsoDropzone = document.getElementById('torso-dropzone');
+    const shimmerSweep = document.getElementById('shimmer-sweep');
+    const dragGhost = document.getElementById('drag-ghost');
+
+    function buildUI() {
+      rackGrid.innerHTML = '';
+      swatchesEl.innerHTML = '';
+
+      OUTFITS.forEach((o, idx) => {
+        // Rack Card (Draggable!)
+        const card = document.createElement('div');
+        card.className = 'garment-card' + (idx === currentIdx ? ' active' : '');
+        card.dataset.idx = idx;
+        card.innerHTML = `
+          <img class="garment-thumb" src="${o.shirtUrl}" alt="${o.name}" draggable="false" />
+          <div class="garment-label">${o.shortName}</div>
+          <div class="garment-price-mini">${fmtVnd(o.price)}</div>
+        `;
+        card.addEventListener('pointerdown', (e) => startGarmentDrag(e, idx, card));
+        rackGrid.appendChild(card);
+
+        // Color Swatch
+        const sw = document.createElement('button');
+        sw.className = 'swatch-btn' + (idx === currentIdx ? ' active' : '');
+        sw.style.backgroundColor = o.swatch;
+        sw.title = o.name;
+        sw.onclick = () => glideToOutfit(idx);
+        swatchesEl.appendChild(sw);
+      });
+    }
+
+    function updateMetadata(idx) {
+      const o = OUTFITS[idx];
+      document.documentElement.style.setProperty('--bg-tint', o.bgTint);
+      document.documentElement.style.setProperty('--accent', o.accent);
+      document.documentElement.style.setProperty('--accent-soft', o.accentSoft);
+
+      // Vertical slot animation for editorial title
+      const titleEl = document.getElementById('info-title');
+      titleEl.classList.add('switching');
+      setTimeout(() => {
+        titleEl.textContent = o.name;
+        titleEl.classList.remove('switching');
+      }, 160);
+
+      document.getElementById('info-sku').textContent = `BST DI SẢN • ${o.sku}`;
+      document.getElementById('info-price').textContent = fmtVnd(o.price);
+      document.getElementById('info-desc').textContent = o.desc;
+      document.getElementById('info-tags').innerHTML = o.tags.map(t => `<span class="fabric-tag">${t}</span>`).join('');
+      document.getElementById('bg-word').textContent = o.bgWord;
+      document.getElementById('rack-counter').textContent = `0${idx + 1} / 0${OUTFITS.length}`;
+
+      document.getElementById('dock-thumb').src = o.shirtUrl;
+      document.getElementById('dock-name').textContent = o.name;
+      document.getElementById('dock-price').textContent = fmtVnd(o.price);
+
+      document.querySelectorAll('.garment-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+      document.querySelectorAll('.swatch-btn').forEach((s, i) => s.classList.toggle('active', i === idx));
+    }
+
+    function getTorsoScreenRect() {
+      const r = modelRig.getBoundingClientRect();
+      return {
+        left: r.left + r.width * SHIRT_BOX_NORM.x,
+        top: r.top + r.height * SHIRT_BOX_NORM.y,
+        width: r.width * SHIRT_BOX_NORM.w,
+        height: r.height * SHIRT_BOX_NORM.h,
+        cx: r.left + r.width * (SHIRT_BOX_NORM.x + SHIRT_BOX_NORM.w * 0.5),
+        cy: r.top + r.height * (SHIRT_BOX_NORM.y + SHIRT_BOX_NORM.h * 0.5)
+      };
+    }
+
+    /* ==========================================================================
+       4. CORE ENGINE: PIXEL-LOCKED DRAG-TO-WEAR & VESTRA GLIDE-ON ANIMATION
+       ========================================================================== */
+    function commitOutfitSwap(newIdx) {
+      if (newIdx === currentIdx) return;
+      const o = OUTFITS[newIdx];
+      currentIdx = newIdx;
+
+      // Seamless silk wipe transition onto exact pose-locked model
+      modelNext.classList.remove('wiping');
+      modelNext.src = o.modelUrl;
+      void modelNext.offsetWidth; // Force reflow
+      modelNext.classList.add('wiping');
+
+      shimmerSweep.classList.remove('flash');
+      void shimmerSweep.offsetWidth;
+      shimmerSweep.classList.add('flash');
+
+      updateMetadata(newIdx);
+      playSilkChime(523.25 + newIdx * 55);
+
+      setTimeout(() => {
+        modelCurrent.src = o.modelUrl;
+        modelNext.classList.remove('wiping');
+        isTransitioning = false;
+      }, 580);
+    }
+
+    // One-Tap / Click / Swipe Glide-to-Wear (EXACT VESTRA HORIZONTAL GLIDE MAGIC!)
+    function glideToOutfit(newIdx, fromRect = null) {
+      if (newIdx === currentIdx || isTransitioning) return;
+      isTransitioning = true;
+
+      const o = OUTFITS[newIdx];
+      const target = getTorsoScreenRect();
+      const card = document.querySelector(`.garment-card[data-idx="${newIdx}"] .garment-thumb`);
+      const startRect = fromRect || (card ? card.getBoundingClientRect() : {
+        left: window.innerWidth * 0.78,
+        top: target.top,
+        width: target.width * 0.7,
+        height: target.height * 0.7
+      });
+
+      dragGhost.src = o.shirtUrl;
+      dragGhost.style.transition = 'none';
+      dragGhost.style.left = startRect.left + 'px';
+      dragGhost.style.top = startRect.top + 'px';
+      dragGhost.style.width = startRect.width + 'px';
+      dragGhost.style.height = startRect.height + 'px';
+      dragGhost.style.transform = 'scale(1) rotate(4deg)';
+      dragGhost.style.opacity = '1';
+
+      // Next frame: glide directly over her torso to exact pixel-locked coordinates!
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          dragGhost.style.transition = 'all 0.44s cubic-bezier(0.22, 1, 0.36, 1)';
+          dragGhost.style.left = target.left + 'px';
+          dragGhost.style.top = target.top + 'px';
+          dragGhost.style.width = target.width + 'px';
+          dragGhost.style.height = target.height + 'px';
+          dragGhost.style.transform = 'scale(1) rotate(0deg)';
+        });
+      });
+
+      // Exactly as ghost aligns over torso -> melt seamlessly into full worn model!
+      setTimeout(() => {
+        commitOutfitSwap(newIdx);
+        dragGhost.style.transition = 'opacity 0.24s ease';
+        dragGhost.style.opacity = '0';
+      }, 390);
+    }
+
+    function stepOutfit(delta) {
+      const next = (currentIdx + delta + OUTFITS.length) % OUTFITS.length;
+      glideToOutfit(next);
+    }
+
+    // TRUE MANUAL DRAG-TO-WEAR (Grab garment from rack -> drag with physics -> snap onto model!)
+    let dragState = null;
+
+    function startGarmentDrag(e, idx, cardEl) {
+      if (isTransitioning) return;
+      const thumb = cardEl.querySelector('.garment-thumb');
+      const rect = thumb.getBoundingClientRect();
+
+      dragState = {
+        idx,
+        startX: e.clientX,
+        startY: e.clientY,
+        lastX: e.clientX,
+        moved: false,
+        startRect: rect,
+        target: getTorsoScreenRect(),
+        pointerId: e.pointerId
+      };
+
+      try { cardEl.setPointerCapture(e.pointerId); } catch (_) {}
+
+      const onMove = (ev) => {
+        if (!dragState) return;
+        const dx = ev.clientX - dragState.startX;
+        const dy = ev.clientY - dragState.startY;
+        if (!dragState.moved && Math.hypot(dx, dy) > 8) {
+          dragState.moved = true;
+          dragGhost.src = OUTFITS[idx].shirtUrl;
+          dragGhost.style.transition = 'none';
+          dragGhost.style.opacity = '1';
+          torsoDropzone.classList.add('dragging');
+        }
+        if (!dragState.moved) return;
+
+        const target = dragState.target;
+        const distToTorso = Math.hypot(ev.clientX - target.cx, ev.clientY - target.cy);
+        // Smoothly grow garment from thumbnail size to exact torso size as it nears the model!
+        const prox = Math.max(0, Math.min(1, 1 - (distToTorso - 60) / 360));
+        const curW = dragState.startRect.width + (target.width - dragState.startRect.width) * prox;
+        const curH = dragState.startRect.height + (target.height - dragState.startRect.height) * prox;
+
+        // Magnetic pull when hovering directly over torso
+        const magnet = distToTorso < target.width * 0.72 ? 0.35 : 0;
+        const gx = ev.clientX * (1 - magnet) + target.cx * magnet - curW * 0.5;
+        const gy = ev.clientY * (1 - magnet) + target.cy * magnet - curH * 0.5;
+
+        // Realistic fabric tilt from horizontal velocity
+        const vx = ev.clientX - dragState.lastX;
+        dragState.lastX = ev.clientX;
+        const tilt = Math.max(-14, Math.min(14, vx * 0.85)) * (1 - magnet * 0.8);
+
+        dragGhost.style.left = gx + 'px';
+        dragGhost.style.top = gy + 'px';
+        dragGhost.style.width = curW + 'px';
+        dragGhost.style.height = curH + 'px';
+        dragGhost.style.transform = `rotate(${tilt.toFixed(1)}deg) scale(${(1 + prox * 0.03).toFixed(3)})`;
+
+        torsoDropzone.classList.toggle('snapping', distToTorso < target.width * 0.85);
+      };
+
+      const onUp = (ev) => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        if (!dragState) return;
+
+        const state = dragState;
+        dragState = null;
+        torsoDropzone.classList.remove('dragging', 'snapping');
+
+        // If user merely clicked/tapped the card -> trigger VESTRA Glide-to-Wear!
+        if (!state.moved) {
+          if (state.idx !== currentIdx) {
+            glideToOutfit(state.idx, state.startRect);
+          } else {
+            showToast(`Đang mặc ${OUTFITS[state.idx].name} ✨`);
+          }
+          return;
+        }
+
+        const target = state.target;
+        const distToTorso = Math.hypot(ev.clientX - target.cx, ev.clientY - target.cy);
+        if (distToTorso < Math.max(target.width * 1.15, 165)) {
+          // SNAP ONTO TORSO WITH 0.0PX ERROR!
+          isTransitioning = true;
+          dragGhost.style.transition = 'all 0.24s cubic-bezier(0.22, 1, 0.36, 1)';
+          dragGhost.style.left = target.left + 'px';
+          dragGhost.style.top = target.top + 'px';
+          dragGhost.style.width = target.width + 'px';
+          dragGhost.style.height = target.height + 'px';
+          dragGhost.style.transform = 'rotate(0deg) scale(1)';
+
+          setTimeout(() => {
+            if (state.idx !== currentIdx) {
+              commitOutfitSwap(state.idx);
+            } else {
+              shimmerSweep.classList.remove('flash');
+              void shimmerSweep.offsetWidth;
+              shimmerSweep.classList.add('flash');
+              isTransitioning = false;
+            }
+            dragGhost.style.transition = 'opacity 0.22s ease';
+            dragGhost.style.opacity = '0';
+          }, 210);
+        } else {
+          // Snap back gently to rack
+          dragGhost.style.transition = 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)';
+          dragGhost.style.left = state.startRect.left + 'px';
+          dragGhost.style.top = state.startRect.top + 'px';
+          dragGhost.style.width = state.startRect.width + 'px';
+          dragGhost.style.height = state.startRect.height + 'px';
+          dragGhost.style.transform = 'rotate(0deg) scale(0.95)';
+          dragGhost.style.opacity = '0';
+        }
+      };
+
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    }
+
+    /* ==========================================================================
+       5. SWIPE HORIZONTALLY ON MODEL + HOLD-TO-ZOOM SILK LOUPE (VESPER STYLE)
+       ========================================================================== */
+    const loupe = document.getElementById('loupe');
+    let holdTimer = null;
+    let isLoupeActive = false;
+    let swipeStart = null;
+
+    function updateLoupePosition(clientX, clientY) {
+      const rect = modelRig.getBoundingClientRect();
+      const relX = (clientX - rect.left) / rect.width;
+      const relY = (clientY - rect.top) / rect.height;
+      const zoom = 2.4;
+
+      loupe.style.left = clientX + 'px';
+      loupe.style.top = (clientY - (window.innerWidth <= 768 ? 55 : 0)) + 'px';
+      loupe.style.backgroundImage = `url('${OUTFITS[currentIdx].modelUrl}')`;
+      loupe.style.backgroundSize = `${rect.width * zoom}px ${rect.height * zoom}px`;
+      const bgX = -(relX * rect.width * zoom - 88);
+      const bgY = -(relY * rect.height * zoom - 88);
+      loupe.style.backgroundPosition = `${bgX}px ${bgY}px`;
+    }
+
+    function openLoupe(x, y) {
+      isLoupeActive = true;
+      updateLoupePosition(x, y);
+      loupe.classList.add('open');
+    }
+
+    function closeLoupe() {
+      isLoupeActive = false;
+      loupe.classList.remove('open');
+    }
+
+    function toggleLoupeMode() {
+      isLoupeSticky = !isLoupeSticky;
+      document.getElementById('btn-loupe-toggle').classList.toggle('active', isLoupeSticky);
+      if (!isLoupeSticky) {
+        closeLoupe();
+      } else {
+        showToast('🔍 Rê chuột/ngón tay lên áo để soi hoa văn gấm lụa');
+      }
+    }
+
+    modelRig.addEventListener('pointerdown', (e) => {
+      swipeStart = { x: e.clientX, y: e.clientY, t: performance.now() };
+      clearTimeout(holdTimer);
+      holdTimer = setTimeout(() => {
+        openLoupe(e.clientX, e.clientY);
+      }, 240);
+    });
+
+    modelRig.addEventListener('pointermove', (e) => {
+      if (isLoupeSticky || isLoupeActive) {
+        openLoupe(e.clientX, e.clientY);
+        return;
+      }
+      if (swipeStart && Math.hypot(e.clientX - swipeStart.x, e.clientY - swipeStart.y) > 18) {
+        clearTimeout(holdTimer);
+      }
+    });
+
+    modelRig.addEventListener('pointerleave', () => {
+      if (isLoupeSticky) closeLoupe();
+    });
+
+    window.addEventListener('pointerup', (e) => {
+      clearTimeout(holdTimer);
+      if (isLoupeActive && !isLoupeSticky) {
+        closeLoupe();
+        swipeStart = null;
+        return;
+      }
+      if (swipeStart) {
+        const dx = e.clientX - swipeStart.x;
+        const dy = e.clientY - swipeStart.y;
+        if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+          stepOutfit(dx < 0 ? 1 : -1);
+        }
+        swipeStart = null;
+      }
+    });
+
+    // Mouse wheel horizontal/vertical scrub through outfits on desktop
+    let wheelLock = 0;
+    window.addEventListener('wheel', (e) => {
+      if (document.getElementById('cart-drawer').classList.contains('open')) return;
+      const now = performance.now();
+      if (now - wheelLock < 520) return;
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (Math.abs(delta) > 24) {
+        wheelLock = now;
+        stepOutfit(delta > 0 ? 1 : -1);
+      }
+    }, { passive: true });
+
+    /* ==========================================================================
+       6. 3D PARALLAX DEPTH + FLOATING HOA SỨ PETALS CANVAS
+       ========================================================================== */
+    const atelierBg = document.getElementById('atelier-bg');
+    const courtyardBg = document.getElementById('courtyard-bg');
+    const bgTypo = document.getElementById('bg-typography');
+    let targetNx = 0, targetNy = 0, curNx = 0, curNy = 0;
+
+    window.addEventListener('pointermove', (e) => {
+      targetNx = (e.clientX / window.innerWidth - 0.5) * 2;
+      targetNy = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    const ambCanvas = document.getElementById('ambient-canvas');
+    const ambCtx = ambCanvas.getContext('2d');
+    let petals = [];
+
+    function resizeAmbient() {
+      ambCanvas.width = window.innerWidth;
+      ambCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeAmbient);
+    resizeAmbient();
+
+    for (let i = 0; i < 16; i++) {
+      petals.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: 3.5 + Math.random() * 4.5,
+        vx: 0.25 + Math.random() * 0.45,
+        vy: 0.35 + Math.random() * 0.55,
+        rot: Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.025,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    function animate3D(now) {
+      curNx += (targetNx - curNx) * 0.06;
+      curNy += (targetNy - curNy) * 0.06;
+
+      // Multi-layer 3D depth separation!
+      atelierBg.style.transform = `translate3d(${(-curNx * 12).toFixed(1)}px, ${(-curNy * 8).toFixed(1)}px, 0)`;
+      courtyardBg.style.transform = `translate3d(${(-curNx * 18).toFixed(1)}px, ${(-curNy * 11).toFixed(1)}px, 0) scale(1.04)`;
+      bgTypo.style.transform = `translate3d(${(-curNx * 7).toFixed(1)}px, ${(-curNy * 5).toFixed(1)}px, 0)`;
+
+      modelRig.style.setProperty('--px', `${(curNx * 10).toFixed(1)}px`);
+      modelRig.style.setProperty('--py', `${(curNy * 5).toFixed(1)}px`);
+      modelRig.style.setProperty('--ry', `${(curNx * 4.5).toFixed(2)}deg`);
+      modelRig.style.setProperty('--rx', `${(-curNy * 2.5).toFixed(2)}deg`);
+
+      // Draw gentle drifting frangipani / lotus petals & golden dust
+      ambCtx.clearRect(0, 0, ambCanvas.width, ambCanvas.height);
+      const t = now * 0.001;
+      for (const p of petals) {
+        p.x += p.vx + Math.sin(t + p.phase) * 0.35;
+        p.y += p.vy;
+        p.rot += p.vrot;
+        if (p.y > ambCanvas.height + 20) { p.y = -20; p.x = Math.random() * ambCanvas.width; }
+        if (p.x > ambCanvas.width + 20) { p.x = -20; }
+
+        ambCtx.save();
+        ambCtx.translate(p.x, p.y);
+        ambCtx.rotate(p.rot);
+        ambCtx.fillStyle = isCourtyard ? 'rgba(255, 245, 224, 0.36)' : 'rgba(200, 29, 119, 0.12)';
+        ambCtx.beginPath();
+        ambCtx.ellipse(0, 0, p.r, p.r * 0.55, 0, 0, Math.PI * 2);
+        ambCtx.fill();
+        ambCtx.restore();
+      }
+      requestAnimationFrame(animate3D);
+    }
+    requestAnimationFrame(animate3D);
+
+    /* ==========================================================================
+       7. BACKDROP TOGGLE, SIZE SELECTOR, FLY-TO-CART & SHOPPING CART DRAWER
+       ========================================================================== */
+    function toggleBackdrop() {
+      isCourtyard = !isCourtyard;
+      document.body.classList.toggle('mode-courtyard', isCourtyard);
+      document.getElementById('scene-icon').textContent = isCourtyard ? '🏛️' : '🏡';
+      document.getElementById('scene-label').textContent = isCourtyard ? 'Atelier Giấy Dó' : 'Hiên Nhà Gỗ';
+      document.getElementById('btn-scene').classList.toggle('active', isCourtyard);
+      showToast(isCourtyard ? '🏡 Bối cảnh: Hiên Nhà Gỗ Nam Bộ (3D Parallax)' : '🏛️ Bối cảnh: Atelier Giấy Dó Tối Giản');
+    }
+
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedSize = btn.dataset.size;
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
+    function addToCart() {
+      const o = OUTFITS[currentIdx];
+      const existing = cart.find(item => item.id === o.id && item.size === selectedSize);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...o, size: selectedSize, qty: 1 });
+      }
+
+      // Button green confirmation
+      const btn = document.getElementById('btn-add-bag');
+      btn.classList.add('added');
+      btn.innerHTML = '<span>Đã thêm ✓</span>';
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.innerHTML = '<span>Thêm vào giỏ</span>';
+      }, 1100);
+
+      playSilkChime(783.99);
+
+      // PARABOLIC FLY-TO-CART MICRO-ANIMATION (Talus Virtual Store magic!)
+      const start = getTorsoScreenRect();
+      const cartRect = document.getElementById('btn-cart').getBoundingClientRect();
+      const flyer = document.createElement('img');
+      flyer.src = o.shirtUrl;
+      flyer.className = 'fly-shirt';
+      flyer.style.left = start.cx - 45 + 'px';
+      flyer.style.top = start.cy - 55 + 'px';
+      flyer.style.width = '90px';
+      flyer.style.height = '110px';
+      document.body.appendChild(flyer);
+
+      const p0 = { x: start.cx - 45, y: start.cy - 55 };
+      const p2 = { x: cartRect.left + cartRect.width * 0.5 - 16, y: cartRect.top + cartRect.height * 0.5 - 16 };
+      const p1 = { x: (p0.x + p2.x) * 0.5 + 40, y: Math.min(p0.y, p2.y) - 110 };
+      const startTime = performance.now();
+      const dur = 540;
+
+      function stepFly(now) {
+        const u = Math.min(1, (now - startTime) / dur);
+        const ease = 1 - Math.pow(1 - u, 3);
+        const bx = (1 - ease) * (1 - ease) * p0.x + 2 * (1 - ease) * ease * p1.x + ease * ease * p2.x;
+        const by = (1 - ease) * (1 - ease) * p0.y + 2 * (1 - ease) * ease * p1.y + ease * ease * p2.y;
+        const scale = 1 - ease * 0.72;
+        flyer.style.left = bx + 'px';
+        flyer.style.top = by + 'px';
+        flyer.style.transform = `scale(${scale.toFixed(3)}) rotate(${(ease * 18).toFixed(1)}deg)`;
+        flyer.style.opacity = (1 - ease * 0.3).toFixed(2);
+        if (u < 1) {
+          requestAnimationFrame(stepFly);
+        } else {
+          flyer.remove();
+          renderCart();
+          const cartBtn = document.getElementById('btn-cart');
+          cartBtn.classList.add('bump');
+          setTimeout(() => cartBtn.classList.remove('bump'), 280);
+        }
+      }
+      requestAnimationFrame(stepFly);
+    }
+
+    function renderCart() {
+      const totalQty = cart.reduce((s, it) => s + it.qty, 0);
+      const totalAmt = cart.reduce((s, it) => s + it.price * it.qty, 0);
+      document.getElementById('cart-count').textContent = totalQty;
+      document.getElementById('cart-total').textContent = fmtVnd(totalAmt);
+
+      const list = document.getElementById('cart-items');
+      if (!cart.length) {
+        list.innerHTML = `<div style="text-align:center; padding:3rem 1rem; color:#8a7f76; font-size:0.86rem;">
+          Chưa có mẫu Áo Bà Ba nào trong giỏ.<br/>Hãy kéo thả áo mặc thử trên người mẫu nhé! ✨
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = cart.map((item, i) => `
+        <div class="cart-item">
+          <img src="${item.shirtUrl}" alt="${item.name}" />
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-sub">Size ${item.size} • Kèm quần lụa kem</div>
+            <div class="cart-item-price">${fmtVnd(item.price)}</div>
+          </div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+            <span style="font-family:var(--font-mono); font-size:0.8rem; min-width:16px; text-align:center;">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changeQty(i, delta) {
+      cart[i].qty += delta;
+      if (cart[i].qty <= 0) cart.splice(i, 1);
+      renderCart();
+    }
+
+    function openCart(open) {
+      renderCart();
+      document.getElementById('drawer-backdrop').classList.toggle('open', open);
+      document.getElementById('cart-drawer').classList.toggle('open', open);
+    }
+
+    function checkoutDemo() {
+      if (!cart.length) {
+        showToast('Giỏ hàng đang trống Sếp ơi!');
+        return;
+      }
+      openCart(false);
+      showToast('🎉 Đã ghi nhận đơn đặt may Áo Bà Ba Hương Sen! Cảm ơn quý khách.');
+      cart.length = 0;
+      renderCart();
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+    }
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') stepOutfit(1);
+      if (e.key === 'ArrowLeft') stepOutfit(-1);
+      if (e.key === 'Escape') openCart(false);
+    });
+
+    // Init
+    buildUI();
+    updateMetadata(0);
+    renderCart();
+  </script>
+</body>
+</html>
