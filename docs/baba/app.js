@@ -32,6 +32,7 @@
     focusProductId: null,
     isCourtyard: false,
     isLoupeSticky: false,
+    isFocusLocked: false,
     isTransitioning: false,
     cart: [],
   };
@@ -93,7 +94,7 @@
 
       let innerHTML = `
         <div class="wall-header">
-          <div class="wall-eyebrow">${w.wallEyebrow}</div>
+          <div class="wall-crest">SHOPBAYGIAU</div>
           <h2 class="wall-heading">${w.wallTitle}</h2>
         </div>
       `;
@@ -105,6 +106,7 @@
             <div class="wall-items-row">
               ${items.map(p => `
                 <div class="wall-garment-tile" onclick="openFocus('${p.id}')">
+                  <span class="wall-hanger-bar"></span>
                   <img src="${p.thumb}" alt="${p.name}" />
                   <div class="wall-tile-meta">
                     <div class="wall-tile-name">${p.shortName}</div>
@@ -483,12 +485,40 @@
     renderWardrobePanel();
   };
 
+  let focusReleaseTimer = null;
+  function setStudioFocus(active, holdMs = 0) {
+    clearTimeout(focusReleaseTimer);
+    const sec = document.getElementById('dressing-studio');
+    if (!sec) return;
+    if (active) {
+      sec.classList.add('focus-model');
+      if (holdMs > 0 && !state.isFocusLocked && !state.isLoupeSticky) {
+        focusReleaseTimer = setTimeout(() => {
+          if (!state.isFocusLocked && !state.isLoupeSticky && !dragSession) {
+            sec.classList.remove('focus-model');
+          }
+        }, holdMs);
+      }
+    } else if (!state.isFocusLocked && !state.isLoupeSticky) {
+      sec.classList.remove('focus-model');
+    }
+  }
+
+  window.toggleStudioFocusLock = function () {
+    state.isFocusLocked = !state.isFocusLocked;
+    const btn = document.getElementById('btn-focus-toggle');
+    if (btn) btn.classList.toggle('active', state.isFocusLocked);
+    setStudioFocus(state.isFocusLocked);
+    showToast(state.isFocusLocked ? 'Đã khóa chế độ tập trung mẫu' : 'Đã tắt khóa tập trung mẫu');
+  };
+
   window.selectModel = function (idx) {
     if (idx === state.modelIdx) return;
     state.modelIdx = idx;
     preloadModelAssets(idx);
     renderModelSwitcher();
     renderModelLayers();
+    setStudioFocus(true, 1750);
     const m = getActiveModel();
     showToast(`Đang thử đồ trên mẫu ${m.name}`);
     playChime(659.25);
@@ -522,6 +552,8 @@
   window.equipProduct = function (prodId, fromRect = null, skipGlide = false) {
     const prod = prodById[prodId];
     if (!prod) return;
+
+    setStudioFocus(true, 1650);
 
     const finalize = () => {
       state.equipped[prod.slot] = prod.id;
@@ -600,6 +632,7 @@
       const dy = ev.clientY - dragSession.startY;
       if (!dragSession.moved && Math.hypot(dx, dy) > 8) {
         dragSession.moved = true;
+        setStudioFocus(true);
         dragGhost.src = prod.thumb;
         dragGhost.style.transition = 'none';
         dragGhost.style.opacity = '1';
@@ -668,6 +701,7 @@
           dragGhost.style.opacity = '0';
         }, 200);
       } else {
+        setStudioFocus(false);
         dragGhost.style.transition = 'all 0.26s ease';
         dragGhost.style.left = s.startRect.left + 'px';
         dragGhost.style.top = s.startRect.top + 'px';
@@ -727,6 +761,7 @@
   window.toggleLoupeMode = function () {
     state.isLoupeSticky = !state.isLoupeSticky;
     document.getElementById('btn-loupe-toggle').classList.toggle('active', state.isLoupeSticky);
+    setStudioFocus(state.isLoupeSticky);
     if (!state.isLoupeSticky) closeLoupe();
     else showToast('Di chuột lên trang phục để soi thớ vải');
   };
@@ -734,6 +769,9 @@
   modelRig.addEventListener('pointerdown', (e) => {
     clearTimeout(holdTimer);
     holdTimer = setTimeout(() => renderLoupeAt(e.clientX, e.clientY), 220);
+  });
+  modelRig.addEventListener('pointerenter', () => {
+    if (!dragSession) setStudioFocus(true);
   });
   modelRig.addEventListener('pointermove', (e) => {
     if (state.isLoupeSticky || isLoupeOpen) renderLoupeAt(e.clientX, e.clientY);
@@ -748,8 +786,23 @@
     if (!state.isLoupeSticky) closeLoupe();
   });
 
+  document.querySelectorAll('.look-panel, .wardrobe-panel').forEach(panel => {
+    panel.addEventListener('pointerenter', () => {
+      if (!dragSession && !state.isFocusLocked && !state.isLoupeSticky) {
+        setStudioFocus(false);
+      }
+    });
+  });
+
+  const studioSecEl = document.getElementById('dressing-studio');
+  studioSecEl.addEventListener('pointerleave', () => {
+    if (!state.isFocusLocked && !state.isLoupeSticky && !dragSession) {
+      setStudioFocus(false);
+    }
+  });
+
   // Subtle 3D Parallax on model rig
-  document.getElementById('dressing-studio').addEventListener('pointermove', (e) => {
+  studioSecEl.addEventListener('pointermove', (e) => {
     const nx = (e.clientX / window.innerWidth - 0.5) * 2;
     const ny = (e.clientY / window.innerHeight - 0.5) * 2;
     modelRig.style.setProperty('--px', `${(nx * 9).toFixed(1)}px`);
@@ -781,13 +834,23 @@
       document.querySelectorAll('#focus-size-chips .size-chip').forEach(b => b.classList.toggle('active', b === btn));
     });
   });
+  document.querySelectorAll('#rail-spot-sizes .size-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.focusSize = btn.dataset.size;
+      document.querySelectorAll('#rail-spot-sizes .size-chip, #focus-size-chips .size-chip').forEach(b => {
+        b.classList.toggle('active', b.dataset.size === state.focusSize);
+      });
+    });
+  });
 
   /* --------------------------------------------------------------------------
-     6. SECTION 3 — CATENARY PHYSICS SILK RAIL (MAISON VERREL PENDULUM LOOP)
+     6. SECTION 3 — TRUE INFINITE CATENARY SILK RAIL + HERO SPOTLIGHT
      -------------------------------------------------------------------------- */
   const pendulums = [];
+  let spotlightProdId = null;
 
   function initCatenaryRail() {
+    const railSection = document.getElementById('silk-rail');
     const stage = document.getElementById('catenary-stage');
     const svg = document.getElementById('catenary-svg');
     const wrap = document.getElementById('pendulum-hangers');
@@ -796,82 +859,244 @@
     wrap.innerHTML = '';
     pendulums.length = 0;
 
-    function layoutRail() {
-      const W = stage.clientWidth || 1200;
-      const isSm = W < 640;
-      const startX = isSm ? 24 : 50;
-      const endX = W - startX;
-      const span = endX - startX;
-      const sag = isSm ? 28 : 46;
-      const baseY = 26;
+    let stageW = stage.clientWidth || window.innerWidth || 1200;
+    let isSm = stageW < 860;
+    let spacing = isSm ? 148 : 206;
+    let cardHalfW = isSm ? 69 : 88;
+    let sag = isSm ? 32 : 58;
+    let baseY = isSm ? 18 : 22;
+    let totalTrackW = 0;
+    let trackOffset = 0;
+    let trackVel = 0;
+    let hoveredNode = null;
+    let railDrag = null;
 
-      // Draw brass catenary rope curve
+    function buildSlots() {
+      stageW = stage.clientWidth || window.innerWidth || 1200;
+      isSm = stageW < 860;
+      spacing = isSm ? 148 : 206;
+      cardHalfW = isSm ? 69 : 88;
+      sag = isSm ? 32 : 58;
+      baseY = isSm ? 18 : 22;
+
       svg.innerHTML = `
-        <path d="M ${startX} ${baseY} Q ${W * 0.5} ${baseY + sag * 2} ${endX} ${baseY}"
+        <path d="M -24 ${baseY} Q ${stageW * 0.5} ${baseY + sag * 2} ${stageW + 24} ${baseY}"
           fill="none" stroke="#8a6c44" stroke-width="4" stroke-linecap="round" />
       `;
 
-      // Compute catenary position along quadratic curve at u in [0..1]
-      railItems.forEach((p, i) => {
-        const u = (i + 0.5) / railItems.length;
-        const x = startX + u * span;
-        const y = baseY + sag * 4 * u * (1 - u);
+      const minSpan = Math.max(stageW + spacing * 4, railItems.length * spacing);
+      const reps = Math.max(1, Math.ceil(minSpan / (railItems.length * spacing)));
+      const targetSlots = reps * railItems.length;
+      totalTrackW = targetSlots * spacing;
 
-        let node = pendulums[i];
-        if (!node) {
+      if (pendulums.length !== targetSlots) {
+        wrap.innerHTML = '';
+        pendulums.length = 0;
+        for (let i = 0; i < targetSlots; i++) {
+          const p = railItems[i % railItems.length];
           const el = document.createElement('div');
           el.className = 'pendulum-hanger';
           el.innerHTML = `
             <div class="hanger-hook"></div>
             <div class="hanger-bar"></div>
             <img src="${p.thumb}" alt="${p.name}" draggable="false" />
-            <div class="hanger-tooltip">${p.shortName} • ${fmtVnd(p.price)}</div>
+            <div class="hanger-caption">
+              <div class="hanger-name">${p.shortName}</div>
+              <div class="hanger-price">${fmtVnd(p.price)}</div>
+            </div>
           `;
-          el.addEventListener('click', () => {
-            window.openFocus(p.id);
+          const node = { el, prod: p, slotIdx: i, x: 0, theta: 0, omega: 0 };
+          el.addEventListener('pointerenter', () => {
+            if (railDrag && railDrag.moved) return;
+            hoveredNode = node;
+            stage.classList.add('has-hover');
+            el.classList.add('is-hovered');
+          });
+          el.addEventListener('pointerleave', () => {
+            if (hoveredNode === node) hoveredNode = null;
+            el.classList.remove('is-hovered');
+            if (!hoveredNode) stage.classList.remove('has-hover');
           });
           wrap.appendChild(el);
-          node = { el, x, y, theta: 0, omega: 0 };
           pendulums.push(node);
-        } else {
-          node.x = x;
-          node.y = y;
         }
-        node.el.style.left = (node.x - 60) + 'px';
-        node.el.style.top = (node.y - 2) + 'px';
-      });
+      }
     }
 
-    layoutRail();
-    window.addEventListener('resize', layoutRail);
+    buildSlots();
+    window.addEventListener('resize', buildSlots);
 
-    let lastMouseX = null;
+    stage.addEventListener('pointerdown', (e) => {
+      if (railSection.classList.contains('spotlight-open')) return;
+      const hangerEl = e.target.closest('.pendulum-hanger');
+      const hitNode = hangerEl ? pendulums.find(n => n.el === hangerEl) : null;
+      railDrag = {
+        startX: e.clientX,
+        startY: e.clientY,
+        lastX: e.clientX,
+        moved: false,
+        hitNode,
+      };
+      trackVel = 0;
+      stage.classList.add('dragging');
+      try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+
     stage.addEventListener('pointermove', (e) => {
       const r = stage.getBoundingClientRect();
       const mx = e.clientX - r.left;
-      const vx = lastMouseX === null ? 0 : Math.max(-35, Math.min(35, mx - lastMouseX));
-      lastMouseX = mx;
 
-      pendulums.forEach(p => {
-        const d = Math.abs(mx - p.x);
-        if (d < 95) {
-          const strength = (1 - d / 95);
-          p.omega += (vx * 0.0028 + (vx === 0 ? 0.015 : 0)) * strength;
+      if (railDrag) {
+        const dx = e.clientX - railDrag.lastX;
+        const totalDx = e.clientX - railDrag.startX;
+        const totalDy = e.clientY - railDrag.startY;
+        if (!railDrag.moved && Math.hypot(totalDx, totalDy) > 8) {
+          railDrag.moved = true;
+          if (hoveredNode) {
+            hoveredNode.el.classList.remove('is-hovered');
+            hoveredNode = null;
+            stage.classList.remove('has-hover');
+          }
         }
-      });
+        if (railDrag.moved) {
+          trackOffset += dx;
+          trackVel = dx * 0.85;
+          for (const p of pendulums) {
+            p.omega += Math.max(-0.08, Math.min(0.08, -dx * 0.0022));
+          }
+        }
+        railDrag.lastX = e.clientX;
+        return;
+      }
+
+      if (railSection.classList.contains('spotlight-open')) return;
+      for (const p of pendulums) {
+        const d = Math.abs(mx - p.x);
+        if (d < 120) {
+          const strength = 1 - d / 120;
+          p.omega += 0.0055 * strength;
+        }
+      }
     });
 
-    function stepPhysics() {
+    const endRailDrag = () => {
+      if (!railDrag) return;
+      const d = railDrag;
+      railDrag = null;
+      stage.classList.remove('dragging');
+      if (!d.moved && d.hitNode) {
+        window.openRailSpotlight(d.hitNode.prod.id);
+      }
+    };
+    stage.addEventListener('pointerup', endRailDrag);
+    stage.addEventListener('pointercancel', endRailDrag);
+
+    stage.addEventListener('wheel', (e) => {
+      if (railSection.classList.contains('spotlight-open')) return;
+      const useHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey;
+      if (!useHorizontal) return;
+      e.preventDefault();
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      trackOffset -= delta * 0.85;
+      trackVel = -delta * 0.16;
       for (const p of pendulums) {
-        const accel = -0.095 * p.theta - 0.065 * p.omega;
+        p.omega += Math.max(-0.05, Math.min(0.05, delta * 0.001));
+      }
+    }, { passive: false });
+
+    function stepPhysics() {
+      const spotOpen = railSection.classList.contains('spotlight-open');
+      if (!railDrag) {
+        if (!spotOpen && hoveredNode === null) {
+          trackOffset -= 0.42;
+        }
+        trackOffset += trackVel;
+        trackVel *= 0.92;
+        if (Math.abs(trackVel) < 0.01) trackVel = 0;
+      }
+
+      // Normalize offset into [0, totalTrackW)
+      const normOffset = ((trackOffset % totalTrackW) + totalTrackW) % totalTrackW;
+      window.__babaRailOffset = normOffset;
+
+      for (const p of pendulums) {
+        let rawX = (p.slotIdx * spacing + normOffset) % totalTrackW;
+        if (rawX > totalTrackW - spacing * 1.5) rawX -= totalTrackW;
+        // Center wrap so hangers exist seamlessly slightly past both left and right edges
+        const centerX = rawX - (spacing * 0.5);
+        p.x = centerX;
+
+        const u = Math.max(-0.05, Math.min(1.05, centerX / stageW));
+        const y = baseY + sag * 4 * u * (1 - u);
+
+        const accel = -0.095 * p.theta - 0.07 * p.omega;
         p.omega += accel;
         p.theta += p.omega;
-        p.el.style.transform = `rotate(${(p.theta * 18).toFixed(2)}deg)`;
+
+        const centerDist = Math.min(1, Math.abs(centerX - stageW * 0.5) / (stageW * 0.52));
+        const isHovered = hoveredNode === p;
+        const scale = isHovered ? 1.18 : (1.05 - centerDist * 0.14);
+
+        p.el.classList.toggle('is-center', centerDist < 0.28);
+        p.el.style.transform = `translate3d(${(centerX - cardHalfW).toFixed(1)}px, ${(y - 2).toFixed(1)}px, 0) scale(${scale.toFixed(3)}) rotate(${(p.theta * 16).toFixed(2)}deg)`;
       }
       requestAnimationFrame(stepPhysics);
     }
     requestAnimationFrame(stepPhysics);
   }
+
+  window.openRailSpotlight = function (prodId) {
+    const p = prodById[prodId];
+    if (!p) return;
+    spotlightProdId = prodId;
+    document.getElementById('rail-spot-img').src = p.thumb;
+    document.getElementById('rail-spot-img').alt = p.name;
+    document.getElementById('rail-spot-sku').textContent = p.sku;
+    document.getElementById('rail-spot-name').textContent = p.name;
+    document.getElementById('rail-spot-price').textContent = fmtVnd(p.price);
+    document.getElementById('rail-spot-desc').textContent = p.desc;
+    document.getElementById('rail-spot-fabric').textContent = p.fabric;
+    document.querySelectorAll('#rail-spot-sizes .size-chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.size === state.focusSize);
+    });
+    const sec = document.getElementById('silk-rail');
+    sec.classList.add('spotlight-open');
+    document.getElementById('rail-spotlight').setAttribute('aria-hidden', 'false');
+    playChime(659.25);
+  };
+
+  window.closeRailSpotlight = function () {
+    const sec = document.getElementById('silk-rail');
+    if (sec) sec.classList.remove('spotlight-open');
+    const spot = document.getElementById('rail-spotlight');
+    if (spot) spot.setAttribute('aria-hidden', 'true');
+  };
+
+  window.stepRailSpotlight = function (dir) {
+    const railItems = PRODUCTS.filter(p => p.wardrobe === 'shirt' || p.wardrobe === 'outer');
+    if (!railItems.length) return;
+    const curIdx = railItems.findIndex(p => p.id === spotlightProdId);
+    const nextIdx = ((curIdx < 0 ? 0 : curIdx) + dir + railItems.length) % railItems.length;
+    window.openRailSpotlight(railItems[nextIdx].id);
+  };
+
+  window.tryRailSpotlightInStudio = function () {
+    const p = prodById[spotlightProdId];
+    window.closeRailSpotlight();
+    if (!p) return;
+    state.activeWardrobe = p.wardrobe;
+    document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      window.equipProduct(p.id, null, false);
+    }, 420);
+  };
+
+  window.addRailSpotlightToCart = function () {
+    const p = prodById[spotlightProdId];
+    if (!p) return;
+    const imgEl = document.getElementById('rail-spot-img');
+    addProductToCart(p, state.focusSize, imgEl ? imgEl.getBoundingClientRect() : null);
+  };
 
   /* --------------------------------------------------------------------------
      7. SECTION 4 — CURATED EDITORIAL LOOKBOOK
@@ -913,6 +1138,7 @@
     renderEquippedPanel();
     renderWardrobePanel();
     flashShimmer();
+    setStudioFocus(true, 1750);
     document.getElementById('dressing-studio').scrollIntoView({ behavior: 'smooth' });
     showToast(`Đã phối trọn bộ ${lb.title}`);
     playChime(659.25);
@@ -1190,6 +1416,7 @@
       openSearch(false);
       closeFocus();
       openCart(false);
+      closeRailSpotlight();
     }
   });
 

@@ -113,7 +113,7 @@ window.BABA_CATALOG = {
       icon: "",
       wallIdx: 0,
       wallEyebrow: "Khu Trưng Bày 01 / 04 • Sào Treo Tơ Gấm",
-      wallTitle: "Tủ Áo Bà Ba Gấm Lụa Nam Bộ",
+      wallTitle: "Áo Bà Ba Gấm Lụa",
       slot: "shirt",
       optional: false
     },
@@ -124,7 +124,7 @@ window.BABA_CATALOG = {
       icon: "",
       wallIdx: 1,
       wallEyebrow: "Khu Trưng Bày 02 / 04 • Khoác Lụa & Khăn Rằn",
-      wallTitle: "Tủ Áo Khoác Tơ Tằm & Khăn Rằn",
+      wallTitle: "Áo Khoác & Khăn Rằn",
       slot: "outer",
       optional: true
     },
@@ -135,7 +135,7 @@ window.BABA_CATALOG = {
       icon: "",
       wallIdx: 2,
       wallEyebrow: "Khu Trưng Bày 03 / 04 • Bảng Gỗ Làng Chuông",
-      wallTitle: "Tủ Nón Lá & Khăn Đóng Thủ Công",
+      wallTitle: "Nón Lá & Khăn Đóng",
       slot: "hat",
       optional: true
     },
@@ -146,7 +146,7 @@ window.BABA_CATALOG = {
       icon: "",
       wallIdx: 3,
       wallEyebrow: "Khu Trưng Bày 04 / 04 • Kệ Gỗ Indochine",
-      wallTitle: "Tủ Quần Lụa Lãnh Mỹ A & Phụ Kiện",
+      wallTitle: "Quần Lụa & Phụ Kiện",
       slot: "bottom_acc",
       optional: true
     }
